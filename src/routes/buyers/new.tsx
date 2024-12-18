@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { BuyerFields } from "../../components/BuyerFields";
 import { Spinner } from "../../components/Spinner";
 import { useCreateBuyerMutation, type Buyer } from "../../utils/buyerService";
@@ -8,7 +8,12 @@ export const Route = createFileRoute("/buyers/new")({
 });
 
 function BuyersIndexComponent() {
-  const createBuyerMutation = useCreateBuyerMutation();
+  const navigate = useNavigate();
+  const createBuyerMutation = useCreateBuyerMutation(() => {
+    setTimeout(() => {
+      navigate({ to: "/buyers/list" });
+    }, 3000);
+  });
 
   return (
     <>
@@ -24,7 +29,6 @@ function BuyersIndexComponent() {
           }}
           className="space-y-2"
         >
-          <div>Dodaj kupca:</div>
           <BuyerFields buyer={{} as Buyer} />
           <div>
             <button

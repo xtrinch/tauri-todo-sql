@@ -38,7 +38,7 @@ function RootComponent() {
             {(
               [
                 ["/", "Home"],
-                ["/buyers/list", "Kupci"],
+                ["/buyers", "Kupci"],
                 // ["/profile", "Profile"],
                 // ["/login", "Login"],
               ] as const
@@ -47,13 +47,7 @@ function RootComponent() {
                 <div key={to}>
                   <Link
                     to={to}
-                    activeOptions={
-                      {
-                        // If the route points to the root of it's parent,
-                        // make sure it's only active if it's exact
-                        // exact: to === '.',
-                      }
-                    }
+                    activeOptions={{}}
                     preload="intent"
                     className={`block py-2 px-3 text-blue-700`}
                     // Make "active" links bold

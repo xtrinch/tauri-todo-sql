@@ -1,11 +1,21 @@
-import * as React from 'react'
-import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
+import {
+  Link,
+  Outlet,
+  createFileRoute,
+  useNavigate,
+} from "@tanstack/react-router";
+import * as React from "react";
 
-export const Route = createFileRoute('/buyers')({
+export const Route = createFileRoute("/buyers")({
   component: KupciComponent,
-})
+});
 
 function KupciComponent() {
+  const navigate = useNavigate();
+  React.useEffect(() => {
+    navigate({ to: "/buyers/list" });
+  }, []);
+
   return (
     <>
       <div className="flex items-center border-b">
@@ -14,8 +24,8 @@ function KupciComponent() {
       <div className="flex flex-wrap divide-x">
         {(
           [
-            ['/buyers/list', 'Seznam'],
-            ['/buyers/new', 'Dodaj kupca'],
+            ["/buyers/list", "Seznam"],
+            ["/buyers/new", "Dodaj kupca"],
           ] as const
         ).map(([to, label]) => {
           return (
@@ -27,11 +37,11 @@ function KupciComponent() {
             >
               {label}
             </Link>
-          )
+          );
         })}
       </div>
       <hr />
       <Outlet />
     </>
-  )
+  );
 }

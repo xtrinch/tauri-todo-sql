@@ -61,10 +61,13 @@ export const buyerQueryOptions = (buyerId: number) =>
     queryFn: () => fetchBuyerById(buyerId),
   });
 
-export const useCreateBuyerMutation = () => {
+export const useCreateBuyerMutation = (onSuccess?: () => void) => {
   return useMutation({
     mutationFn: postBuyer,
-    onSuccess: () => queryClient.invalidateQueries(),
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+      if (onSuccess) onSuccess();
+    },
   });
 };
 
