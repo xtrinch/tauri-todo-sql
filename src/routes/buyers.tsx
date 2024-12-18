@@ -7,10 +7,10 @@ import {
 import * as React from "react";
 
 export const Route = createFileRoute("/buyers")({
-  component: KupciComponent,
+  component: BuyersComponent,
 });
 
-function KupciComponent() {
+function BuyersComponent() {
   const navigate = useNavigate();
   React.useEffect(() => {
     navigate({ to: "/buyers/list" });
@@ -19,13 +19,13 @@ function KupciComponent() {
   return (
     <>
       <div className="flex items-center border-b">
-        <h2 className="text-xl p-2">Kupci</h2>
+        <h2 className="text-xl p-2">Buyers</h2>
       </div>
       <div className="flex flex-wrap divide-x">
         {(
           [
-            ["/buyers/list", "Seznam"],
-            ["/buyers/new", "Dodaj kupca"],
+            ["/buyers/list", "List"],
+            ["/buyers/new", "Add new"],
           ] as const
         ).map(([to, label]) => {
           return (

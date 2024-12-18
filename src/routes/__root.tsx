@@ -27,7 +27,7 @@ function RootComponent() {
     <>
       <div className={`min-h-screen flex flex-col`}>
         <div className={`flex items-center border-b gap-2`}>
-          <h1 className={`text-3xl p-2`}>Licitacija</h1>
+          <h1 className={`text-3xl p-2`}>App</h1>
           {/* Show a global spinner when the router is transitioning */}
           <div className={`text-3xl`}>
             <RouterSpinner />
@@ -38,7 +38,7 @@ function RootComponent() {
             {(
               [
                 ["/", "Home"],
-                ["/buyers", "Kupci"],
+                ["/buyers", "Buyers"],
                 // ["/profile", "Profile"],
                 // ["/login", "Login"],
               ] as const
