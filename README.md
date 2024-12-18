@@ -1,6 +1,6 @@
-# Tauri + React + Typescript
+# Tauri + React + Sqlite
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+TODO-like application running React on Tauri using Sqlite as a data source.
 
 ## Recommended IDE Setup
 
