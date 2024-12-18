@@ -1,6 +1,7 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
-import Database from "@tauri-apps/plugin-sql";
+import { info } from "@tauri-apps/plugin-log";
 import { queryClient } from "../main";
+import { getDatabase } from "./database";
 
 type PickAsRequired<TValue, TKey extends keyof TValue> = Omit<TValue, TKey> &
   Required<Pick<TValue, TKey>>;
@@ -14,7 +15,9 @@ const ensureBuyers = async (opts: {
   filterBy?: string;
   sortBy?: "name" | "id" | "email";
 }) => {
-  const db = await Database.load("sqlite:main.db");
+  info("Info");
+
+  const db = await getDatabase();
   const result = await db.select(`SELECT * from "buyers" order by $1`, [
     opts.sortBy || "name",
   ]);
@@ -23,7 +26,7 @@ const ensureBuyers = async (opts: {
 };
 
 export async function fetchBuyerById(id: number) {
-  const db = await Database.load("sqlite:main.db");
+  const db = await getDatabase();
   const result = await db.select(`SELECT * from "buyers" where id = $1`, [id]);
   const buyer = (result as Buyer[])[0];
   return buyer;
@@ -34,21 +37,21 @@ export async function postBuyer(partialBuyer: Partial<Buyer>) {
     throw new Error("Ouch!");
   }
 
-  const invoice = {
+  const buyer = {
     name: partialBuyer.name ?? `New Buyer ${String(Date.now()).slice(0, 5)}`,
   };
 
-  const db = await Database.load("sqlite:main.db");
-  await db.execute(`INSERT INTO "buyers" ("name") values ($1)`, [invoice.name]);
+  const db = await getDatabase();
+  await db.execute(`INSERT INTO "buyers" ("name") values ($1)`, [buyer.name]);
 
-  return invoice;
+  return buyer;
 }
 
 export async function patchBuyer({
   id,
   ...updatedBuyer
 }: PickAsRequired<Partial<Buyer>, "id">) {
-  const db = await Database.load("sqlite:main.db");
+  const db = await getDatabase();
   await db.execute(`UPDATE "buyers" SET "name" = $2 WHERE id=$1`, [
     id,
     updatedBuyer.name,
@@ -76,7 +79,7 @@ export const useUpdateBuyerMutation = (
   onSuccess?: () => void
 ) => {
   return useMutation({
-    mutationKey: ["invoices", "update", buyerId],
+    mutationKey: ["buyers", "update", buyerId],
     mutationFn: patchBuyer,
     onSuccess: () => {
       queryClient.invalidateQueries();

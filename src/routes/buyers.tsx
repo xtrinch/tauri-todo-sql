@@ -2,19 +2,26 @@ import {
   Link,
   Outlet,
   createFileRoute,
+  redirect,
   useNavigate,
 } from "@tanstack/react-router";
-import * as React from "react";
 
 export const Route = createFileRoute("/buyers")({
   component: BuyersComponent,
+  loader: ({ location }) => {
+    const shouldRedirect = [`/buyers`].includes(location.pathname);
+
+    if (shouldRedirect) {
+      redirect({ to: "/buyers/list", throw: true, from: "/buyers" });
+    }
+  },
 });
 
 function BuyersComponent() {
   const navigate = useNavigate();
-  React.useEffect(() => {
-    navigate({ to: "/buyers/list" });
-  }, []);
+  // React.useEffect(() => {
+  //   navigate({ to: "/buyers/list" });
+  // }, []);
 
   return (
     <>
