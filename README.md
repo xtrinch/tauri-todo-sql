@@ -1,6 +1,8 @@
 # Tauri + React + Sqlite
 
-TODO-like application running React on Tauri using Sqlite as a data source.
+TODO-like application running React (+ Tanstack suite) on Tauri using Sqlite as a data source.
+
+![alt tag](https://raw.githubusercontent.com/xTrinch/tauri-todo-sql/master/images/screenshot.png)
 
 ## Recommended IDE Setup
 
