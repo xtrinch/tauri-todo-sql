@@ -39,8 +39,8 @@ function RootComponent() {
               [
                 ["/", "Home"],
                 ["/buyers/list", "Kupci"],
-                ["/profile", "Profile"],
-                ["/login", "Login"],
+                // ["/profile", "Profile"],
+                // ["/login", "Login"],
               ] as const
             ).map(([to, label]) => {
               return (
