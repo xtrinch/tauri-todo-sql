@@ -8,35 +8,19 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
-import { Route as DashboardImport } from './routes/dashboard'
 import { Route as BuyersImport } from './routes/buyers'
-import { Route as LayoutImport } from './routes/_layout'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as IndexImport } from './routes/index'
-import { Route as DashboardIndexImport } from './routes/dashboard.index'
 import { Route as FooBarImport } from './routes/foo/bar'
-import { Route as DashboardUsersImport } from './routes/dashboard.users'
-import { Route as DashboardInvoicesImport } from './routes/dashboard.invoices'
-import { Route as BuyersNewImport } from './routes/buyers.new'
-import { Route as BuyersListImport } from './routes/buyers.list'
-import { Route as LayoutLayoutBImport } from './routes/_layout.layout-b'
-import { Route as LayoutLayoutAImport } from './routes/_layout.layout-a'
+import { Route as BuyersNewImport } from './routes/buyers/new'
+import { Route as BuyersListImport } from './routes/buyers/list'
 import { Route as AuthProfileImport } from './routes/_auth.profile'
-import { Route as DashboardUsersIndexImport } from './routes/dashboard.users.index'
-import { Route as DashboardInvoicesIndexImport } from './routes/dashboard.invoices.index'
-import { Route as DashboardUsersUserImport } from './routes/dashboard.users.user'
-import { Route as DashboardInvoicesInvoiceIdImport } from './routes/dashboard.invoices.$invoiceId'
-import { Route as BuyersListBuyerIdImport } from './routes/buyers.list.$buyerId'
-
-// Create Virtual Routes
-
-const ExpensiveIndexLazyImport = createFileRoute('/expensive/')()
+import { Route as BuyersListBuyerIdImport } from './routes/buyers/list/$buyerId'
+import { Route as BuyersListEditBuyerIdImport } from './routes/buyers/list/edit.$buyerId'
 
 // Create/Update Routes
 
@@ -46,20 +30,9 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const DashboardRoute = DashboardImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const BuyersRoute = BuyersImport.update({
   id: '/buyers',
   path: '/buyers',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const LayoutRoute = LayoutImport.update({
-  id: '/_layout',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -74,36 +47,10 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const ExpensiveIndexLazyRoute = ExpensiveIndexLazyImport.update({
-  id: '/expensive/',
-  path: '/expensive/',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-  import('./routes/expensive/index.lazy').then((d) => d.Route),
-)
-
-const DashboardIndexRoute = DashboardIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardRoute,
-} as any)
-
 const FooBarRoute = FooBarImport.update({
   id: '/foo/bar',
   path: '/foo/bar',
   getParentRoute: () => rootRoute,
-} as any)
-
-const DashboardUsersRoute = DashboardUsersImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => DashboardRoute,
-} as any)
-
-const DashboardInvoicesRoute = DashboardInvoicesImport.update({
-  id: '/invoices',
-  path: '/invoices',
-  getParentRoute: () => DashboardRoute,
 } as any)
 
 const BuyersNewRoute = BuyersNewImport.update({
@@ -118,53 +65,21 @@ const BuyersListRoute = BuyersListImport.update({
   getParentRoute: () => BuyersRoute,
 } as any)
 
-const LayoutLayoutBRoute = LayoutLayoutBImport.update({
-  id: '/layout-b',
-  path: '/layout-b',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
-const LayoutLayoutARoute = LayoutLayoutAImport.update({
-  id: '/layout-a',
-  path: '/layout-a',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
 const AuthProfileRoute = AuthProfileImport.update({
   id: '/profile',
   path: '/profile',
   getParentRoute: () => AuthRoute,
 } as any)
 
-const DashboardUsersIndexRoute = DashboardUsersIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardUsersRoute,
-} as any)
-
-const DashboardInvoicesIndexRoute = DashboardInvoicesIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardInvoicesRoute,
-} as any)
-
-const DashboardUsersUserRoute = DashboardUsersUserImport.update({
-  id: '/user',
-  path: '/user',
-  getParentRoute: () => DashboardUsersRoute,
-} as any)
-
-const DashboardInvoicesInvoiceIdRoute = DashboardInvoicesInvoiceIdImport.update(
-  {
-    id: '/$invoiceId',
-    path: '/$invoiceId',
-    getParentRoute: () => DashboardInvoicesRoute,
-  } as any,
-)
-
 const BuyersListBuyerIdRoute = BuyersListBuyerIdImport.update({
   id: '/$buyerId',
   path: '/$buyerId',
+  getParentRoute: () => BuyersListRoute,
+} as any)
+
+const BuyersListEditBuyerIdRoute = BuyersListEditBuyerIdImport.update({
+  id: '/edit/$buyerId',
+  path: '/edit/$buyerId',
   getParentRoute: () => BuyersListRoute,
 } as any)
 
@@ -186,25 +101,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
     }
-    '/_layout': {
-      id: '/_layout'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof LayoutImport
-      parentRoute: typeof rootRoute
-    }
     '/buyers': {
       id: '/buyers'
       path: '/buyers'
       fullPath: '/buyers'
       preLoaderRoute: typeof BuyersImport
-      parentRoute: typeof rootRoute
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -221,20 +122,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthProfileImport
       parentRoute: typeof AuthImport
     }
-    '/_layout/layout-a': {
-      id: '/_layout/layout-a'
-      path: '/layout-a'
-      fullPath: '/layout-a'
-      preLoaderRoute: typeof LayoutLayoutAImport
-      parentRoute: typeof LayoutImport
-    }
-    '/_layout/layout-b': {
-      id: '/_layout/layout-b'
-      path: '/layout-b'
-      fullPath: '/layout-b'
-      preLoaderRoute: typeof LayoutLayoutBImport
-      parentRoute: typeof LayoutImport
-    }
     '/buyers/list': {
       id: '/buyers/list'
       path: '/list'
@@ -249,39 +136,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyersNewImport
       parentRoute: typeof BuyersImport
     }
-    '/dashboard/invoices': {
-      id: '/dashboard/invoices'
-      path: '/invoices'
-      fullPath: '/dashboard/invoices'
-      preLoaderRoute: typeof DashboardInvoicesImport
-      parentRoute: typeof DashboardImport
-    }
-    '/dashboard/users': {
-      id: '/dashboard/users'
-      path: '/users'
-      fullPath: '/dashboard/users'
-      preLoaderRoute: typeof DashboardUsersImport
-      parentRoute: typeof DashboardImport
-    }
     '/foo/bar': {
       id: '/foo/bar'
       path: '/foo/bar'
       fullPath: '/foo/bar'
       preLoaderRoute: typeof FooBarImport
-      parentRoute: typeof rootRoute
-    }
-    '/dashboard/': {
-      id: '/dashboard/'
-      path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexImport
-      parentRoute: typeof DashboardImport
-    }
-    '/expensive/': {
-      id: '/expensive/'
-      path: '/expensive'
-      fullPath: '/expensive'
-      preLoaderRoute: typeof ExpensiveIndexLazyImport
       parentRoute: typeof rootRoute
     }
     '/buyers/list/$buyerId': {
@@ -291,33 +150,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyersListBuyerIdImport
       parentRoute: typeof BuyersListImport
     }
-    '/dashboard/invoices/$invoiceId': {
-      id: '/dashboard/invoices/$invoiceId'
-      path: '/$invoiceId'
-      fullPath: '/dashboard/invoices/$invoiceId'
-      preLoaderRoute: typeof DashboardInvoicesInvoiceIdImport
-      parentRoute: typeof DashboardInvoicesImport
-    }
-    '/dashboard/users/user': {
-      id: '/dashboard/users/user'
-      path: '/user'
-      fullPath: '/dashboard/users/user'
-      preLoaderRoute: typeof DashboardUsersUserImport
-      parentRoute: typeof DashboardUsersImport
-    }
-    '/dashboard/invoices/': {
-      id: '/dashboard/invoices/'
-      path: '/'
-      fullPath: '/dashboard/invoices/'
-      preLoaderRoute: typeof DashboardInvoicesIndexImport
-      parentRoute: typeof DashboardInvoicesImport
-    }
-    '/dashboard/users/': {
-      id: '/dashboard/users/'
-      path: '/'
-      fullPath: '/dashboard/users/'
-      preLoaderRoute: typeof DashboardUsersIndexImport
-      parentRoute: typeof DashboardUsersImport
+    '/buyers/list/edit/$buyerId': {
+      id: '/buyers/list/edit/$buyerId'
+      path: '/edit/$buyerId'
+      fullPath: '/buyers/list/edit/$buyerId'
+      preLoaderRoute: typeof BuyersListEditBuyerIdImport
+      parentRoute: typeof BuyersListImport
     }
   }
 }
@@ -334,25 +172,14 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
-interface LayoutRouteChildren {
-  LayoutLayoutARoute: typeof LayoutLayoutARoute
-  LayoutLayoutBRoute: typeof LayoutLayoutBRoute
-}
-
-const LayoutRouteChildren: LayoutRouteChildren = {
-  LayoutLayoutARoute: LayoutLayoutARoute,
-  LayoutLayoutBRoute: LayoutLayoutBRoute,
-}
-
-const LayoutRouteWithChildren =
-  LayoutRoute._addFileChildren(LayoutRouteChildren)
-
 interface BuyersListRouteChildren {
   BuyersListBuyerIdRoute: typeof BuyersListBuyerIdRoute
+  BuyersListEditBuyerIdRoute: typeof BuyersListEditBuyerIdRoute
 }
 
 const BuyersListRouteChildren: BuyersListRouteChildren = {
   BuyersListBuyerIdRoute: BuyersListBuyerIdRoute,
+  BuyersListEditBuyerIdRoute: BuyersListEditBuyerIdRoute,
 }
 
 const BuyersListRouteWithChildren = BuyersListRoute._addFileChildren(
@@ -372,115 +199,44 @@ const BuyersRouteChildren: BuyersRouteChildren = {
 const BuyersRouteWithChildren =
   BuyersRoute._addFileChildren(BuyersRouteChildren)
 
-interface DashboardInvoicesRouteChildren {
-  DashboardInvoicesInvoiceIdRoute: typeof DashboardInvoicesInvoiceIdRoute
-  DashboardInvoicesIndexRoute: typeof DashboardInvoicesIndexRoute
-}
-
-const DashboardInvoicesRouteChildren: DashboardInvoicesRouteChildren = {
-  DashboardInvoicesInvoiceIdRoute: DashboardInvoicesInvoiceIdRoute,
-  DashboardInvoicesIndexRoute: DashboardInvoicesIndexRoute,
-}
-
-const DashboardInvoicesRouteWithChildren =
-  DashboardInvoicesRoute._addFileChildren(DashboardInvoicesRouteChildren)
-
-interface DashboardUsersRouteChildren {
-  DashboardUsersUserRoute: typeof DashboardUsersUserRoute
-  DashboardUsersIndexRoute: typeof DashboardUsersIndexRoute
-}
-
-const DashboardUsersRouteChildren: DashboardUsersRouteChildren = {
-  DashboardUsersUserRoute: DashboardUsersUserRoute,
-  DashboardUsersIndexRoute: DashboardUsersIndexRoute,
-}
-
-const DashboardUsersRouteWithChildren = DashboardUsersRoute._addFileChildren(
-  DashboardUsersRouteChildren,
-)
-
-interface DashboardRouteChildren {
-  DashboardInvoicesRoute: typeof DashboardInvoicesRouteWithChildren
-  DashboardUsersRoute: typeof DashboardUsersRouteWithChildren
-  DashboardIndexRoute: typeof DashboardIndexRoute
-}
-
-const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardInvoicesRoute: DashboardInvoicesRouteWithChildren,
-  DashboardUsersRoute: DashboardUsersRouteWithChildren,
-  DashboardIndexRoute: DashboardIndexRoute,
-}
-
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren,
-)
-
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '': typeof LayoutRouteWithChildren
+  '': typeof AuthRouteWithChildren
   '/buyers': typeof BuyersRouteWithChildren
-  '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/profile': typeof AuthProfileRoute
-  '/layout-a': typeof LayoutLayoutARoute
-  '/layout-b': typeof LayoutLayoutBRoute
   '/buyers/list': typeof BuyersListRouteWithChildren
   '/buyers/new': typeof BuyersNewRoute
-  '/dashboard/invoices': typeof DashboardInvoicesRouteWithChildren
-  '/dashboard/users': typeof DashboardUsersRouteWithChildren
   '/foo/bar': typeof FooBarRoute
-  '/dashboard/': typeof DashboardIndexRoute
-  '/expensive': typeof ExpensiveIndexLazyRoute
   '/buyers/list/$buyerId': typeof BuyersListBuyerIdRoute
-  '/dashboard/invoices/$invoiceId': typeof DashboardInvoicesInvoiceIdRoute
-  '/dashboard/users/user': typeof DashboardUsersUserRoute
-  '/dashboard/invoices/': typeof DashboardInvoicesIndexRoute
-  '/dashboard/users/': typeof DashboardUsersIndexRoute
+  '/buyers/list/edit/$buyerId': typeof BuyersListEditBuyerIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '': typeof LayoutRouteWithChildren
+  '': typeof AuthRouteWithChildren
   '/buyers': typeof BuyersRouteWithChildren
   '/login': typeof LoginRoute
   '/profile': typeof AuthProfileRoute
-  '/layout-a': typeof LayoutLayoutARoute
-  '/layout-b': typeof LayoutLayoutBRoute
   '/buyers/list': typeof BuyersListRouteWithChildren
   '/buyers/new': typeof BuyersNewRoute
   '/foo/bar': typeof FooBarRoute
-  '/dashboard': typeof DashboardIndexRoute
-  '/expensive': typeof ExpensiveIndexLazyRoute
   '/buyers/list/$buyerId': typeof BuyersListBuyerIdRoute
-  '/dashboard/invoices/$invoiceId': typeof DashboardInvoicesInvoiceIdRoute
-  '/dashboard/users/user': typeof DashboardUsersUserRoute
-  '/dashboard/invoices': typeof DashboardInvoicesIndexRoute
-  '/dashboard/users': typeof DashboardUsersIndexRoute
+  '/buyers/list/edit/$buyerId': typeof BuyersListEditBuyerIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
-  '/_layout': typeof LayoutRouteWithChildren
   '/buyers': typeof BuyersRouteWithChildren
-  '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/_auth/profile': typeof AuthProfileRoute
-  '/_layout/layout-a': typeof LayoutLayoutARoute
-  '/_layout/layout-b': typeof LayoutLayoutBRoute
   '/buyers/list': typeof BuyersListRouteWithChildren
   '/buyers/new': typeof BuyersNewRoute
-  '/dashboard/invoices': typeof DashboardInvoicesRouteWithChildren
-  '/dashboard/users': typeof DashboardUsersRouteWithChildren
   '/foo/bar': typeof FooBarRoute
-  '/dashboard/': typeof DashboardIndexRoute
-  '/expensive/': typeof ExpensiveIndexLazyRoute
   '/buyers/list/$buyerId': typeof BuyersListBuyerIdRoute
-  '/dashboard/invoices/$invoiceId': typeof DashboardInvoicesInvoiceIdRoute
-  '/dashboard/users/user': typeof DashboardUsersUserRoute
-  '/dashboard/invoices/': typeof DashboardInvoicesIndexRoute
-  '/dashboard/users/': typeof DashboardUsersIndexRoute
+  '/buyers/list/edit/$buyerId': typeof BuyersListEditBuyerIdRoute
 }
 
 export interface FileRouteTypes {
@@ -489,23 +245,13 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/buyers'
-    | '/dashboard'
     | '/login'
     | '/profile'
-    | '/layout-a'
-    | '/layout-b'
     | '/buyers/list'
     | '/buyers/new'
-    | '/dashboard/invoices'
-    | '/dashboard/users'
     | '/foo/bar'
-    | '/dashboard/'
-    | '/expensive'
     | '/buyers/list/$buyerId'
-    | '/dashboard/invoices/$invoiceId'
-    | '/dashboard/users/user'
-    | '/dashboard/invoices/'
-    | '/dashboard/users/'
+    | '/buyers/list/edit/$buyerId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -513,64 +259,40 @@ export interface FileRouteTypes {
     | '/buyers'
     | '/login'
     | '/profile'
-    | '/layout-a'
-    | '/layout-b'
     | '/buyers/list'
     | '/buyers/new'
     | '/foo/bar'
-    | '/dashboard'
-    | '/expensive'
     | '/buyers/list/$buyerId'
-    | '/dashboard/invoices/$invoiceId'
-    | '/dashboard/users/user'
-    | '/dashboard/invoices'
-    | '/dashboard/users'
+    | '/buyers/list/edit/$buyerId'
   id:
     | '__root__'
     | '/'
     | '/_auth'
-    | '/_layout'
     | '/buyers'
-    | '/dashboard'
     | '/login'
     | '/_auth/profile'
-    | '/_layout/layout-a'
-    | '/_layout/layout-b'
     | '/buyers/list'
     | '/buyers/new'
-    | '/dashboard/invoices'
-    | '/dashboard/users'
     | '/foo/bar'
-    | '/dashboard/'
-    | '/expensive/'
     | '/buyers/list/$buyerId'
-    | '/dashboard/invoices/$invoiceId'
-    | '/dashboard/users/user'
-    | '/dashboard/invoices/'
-    | '/dashboard/users/'
+    | '/buyers/list/edit/$buyerId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
-  LayoutRoute: typeof LayoutRouteWithChildren
   BuyersRoute: typeof BuyersRouteWithChildren
-  DashboardRoute: typeof DashboardRouteWithChildren
   LoginRoute: typeof LoginRoute
   FooBarRoute: typeof FooBarRoute
-  ExpensiveIndexLazyRoute: typeof ExpensiveIndexLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
-  LayoutRoute: LayoutRouteWithChildren,
   BuyersRoute: BuyersRouteWithChildren,
-  DashboardRoute: DashboardRouteWithChildren,
   LoginRoute: LoginRoute,
   FooBarRoute: FooBarRoute,
-  ExpensiveIndexLazyRoute: ExpensiveIndexLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -585,12 +307,9 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_auth",
-        "/_layout",
         "/buyers",
-        "/dashboard",
         "/login",
-        "/foo/bar",
-        "/expensive/"
+        "/foo/bar"
       ]
     },
     "/": {
@@ -602,26 +321,11 @@ export const routeTree = rootRoute
         "/_auth/profile"
       ]
     },
-    "/_layout": {
-      "filePath": "_layout.tsx",
-      "children": [
-        "/_layout/layout-a",
-        "/_layout/layout-b"
-      ]
-    },
     "/buyers": {
       "filePath": "buyers.tsx",
       "children": [
         "/buyers/list",
         "/buyers/new"
-      ]
-    },
-    "/dashboard": {
-      "filePath": "dashboard.tsx",
-      "children": [
-        "/dashboard/invoices",
-        "/dashboard/users",
-        "/dashboard/"
       ]
     },
     "/login": {
@@ -631,70 +335,28 @@ export const routeTree = rootRoute
       "filePath": "_auth.profile.tsx",
       "parent": "/_auth"
     },
-    "/_layout/layout-a": {
-      "filePath": "_layout.layout-a.tsx",
-      "parent": "/_layout"
-    },
-    "/_layout/layout-b": {
-      "filePath": "_layout.layout-b.tsx",
-      "parent": "/_layout"
-    },
     "/buyers/list": {
-      "filePath": "buyers.list.tsx",
+      "filePath": "buyers/list.tsx",
       "parent": "/buyers",
       "children": [
-        "/buyers/list/$buyerId"
+        "/buyers/list/$buyerId",
+        "/buyers/list/edit/$buyerId"
       ]
     },
     "/buyers/new": {
-      "filePath": "buyers.new.tsx",
+      "filePath": "buyers/new.tsx",
       "parent": "/buyers"
-    },
-    "/dashboard/invoices": {
-      "filePath": "dashboard.invoices.tsx",
-      "parent": "/dashboard",
-      "children": [
-        "/dashboard/invoices/$invoiceId",
-        "/dashboard/invoices/"
-      ]
-    },
-    "/dashboard/users": {
-      "filePath": "dashboard.users.tsx",
-      "parent": "/dashboard",
-      "children": [
-        "/dashboard/users/user",
-        "/dashboard/users/"
-      ]
     },
     "/foo/bar": {
       "filePath": "foo/bar.tsx"
     },
-    "/dashboard/": {
-      "filePath": "dashboard.index.tsx",
-      "parent": "/dashboard"
-    },
-    "/expensive/": {
-      "filePath": "expensive/index.lazy.tsx"
-    },
     "/buyers/list/$buyerId": {
-      "filePath": "buyers.list.$buyerId.tsx",
+      "filePath": "buyers/list/$buyerId.tsx",
       "parent": "/buyers/list"
     },
-    "/dashboard/invoices/$invoiceId": {
-      "filePath": "dashboard.invoices.$invoiceId.tsx",
-      "parent": "/dashboard/invoices"
-    },
-    "/dashboard/users/user": {
-      "filePath": "dashboard.users.user.tsx",
-      "parent": "/dashboard/users"
-    },
-    "/dashboard/invoices/": {
-      "filePath": "dashboard.invoices.index.tsx",
-      "parent": "/dashboard/invoices"
-    },
-    "/dashboard/users/": {
-      "filePath": "dashboard.users.index.tsx",
-      "parent": "/dashboard/users"
+    "/buyers/list/edit/$buyerId": {
+      "filePath": "buyers/list/edit.$buyerId.tsx",
+      "parent": "/buyers/list"
     }
   }
 }

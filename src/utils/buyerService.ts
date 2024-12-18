@@ -12,9 +12,14 @@ export type Buyer = {
 
 let buyers: Array<Buyer> = null!;
 
-const ensureBuyers = async () => {
+const ensureBuyers = async (opts: {
+  filterBy?: string;
+  sortBy?: "name" | "id" | "email";
+}) => {
   const db = await Database.load("sqlite:licitacija.db");
-  const result = await db.select(`SELECT * from "buyers"`);
+  const result = await db.select(`SELECT * from "buyers" order by $1`, [
+    opts.sortBy || "name",
+  ]);
   buyers = result as Buyer[];
   return buyers;
 };
@@ -65,17 +70,26 @@ export const useCreateBuyerMutation = () => {
   });
 };
 
-export const useUpdateBuyerMutation = (buyerId: number) => {
+export const useUpdateBuyerMutation = (
+  buyerId: number,
+  onSuccess?: () => void
+) => {
   return useMutation({
     mutationKey: ["invoices", "update", buyerId],
     mutationFn: patchBuyer,
-    onSuccess: () => queryClient.invalidateQueries(),
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+      if (onSuccess) onSuccess();
+    },
     gcTime: 1000 * 10,
   });
 };
 
-export const buyersQueryOptions = () =>
+export const buyersQueryOptions = (opts: {
+  filterBy?: string;
+  sortBy?: "name" | "id" | "email";
+}) =>
   queryOptions({
-    queryKey: ["buyers"],
-    queryFn: () => ensureBuyers(),
+    queryKey: ["buyers", opts],
+    queryFn: () => ensureBuyers(opts),
   });

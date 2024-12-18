@@ -39,10 +39,6 @@ function RootComponent() {
               [
                 ["/", "Home"],
                 ["/buyers/list", "Kupci"],
-                ["/dashboard", "Dashboard"],
-                ["/expensive", "Expensive"],
-                ["/layout-a", "Layout A"],
-                ["/layout-b", "Layout B"],
                 ["/profile", "Profile"],
                 ["/login", "Login"],
               ] as const
