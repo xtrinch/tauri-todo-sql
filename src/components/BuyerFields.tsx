@@ -12,7 +12,7 @@ export function BuyerFields({
     <div className="space-y-2">
       <h2 className="font-bold text-lg">
         <input
-          name="title"
+          name="name"
           defaultValue={buyer.name}
           placeholder="Buyer Title"
           className="border border-opacity-50 rounded p-2 w-full"

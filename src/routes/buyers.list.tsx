@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Spinner } from '../components/Spinner'
-import { buyersQueryOptions } from '../utils/queryOptions'
+import { buyersQueryOptions } from '../utils/buyerService'
 
 export const Route = createFileRoute('/buyers/list')({
   loader: (opts) =>

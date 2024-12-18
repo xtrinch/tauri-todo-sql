@@ -2,8 +2,7 @@ import * as React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { BuyerFields } from '../components/BuyerFields'
 import { Spinner } from '../components/Spinner'
-import { useCreateBuyerMutation } from '../utils/queryOptions'
-import type { Buyer } from '../utils/buyerService'
+import { useCreateBuyerMutation, type Buyer } from '../utils/buyerService'
 
 export const Route = createFileRoute('/buyers/new')({
   component: BuyersIndexComponent,

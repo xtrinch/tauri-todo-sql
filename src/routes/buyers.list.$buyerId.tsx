@@ -3,10 +3,7 @@ import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 import { BuyerFields } from '../components/BuyerFields'
-import {
-  buyerQueryOptions,
-  useUpdateBuyerMutation,
-} from '../utils/queryOptions'
+import { buyerQueryOptions, useUpdateBuyerMutation } from '../utils/buyerService'
 
 export const Route = createFileRoute('/buyers/list/$buyerId')({
   params: {
@@ -58,8 +55,7 @@ function BuyerComponent() {
         const formData = new FormData(event.target as HTMLFormElement)
         updateBuyerMutation.mutate({
           id: buyer.id,
-          title: formData.get('title') as string,
-          body: formData.get('body') as string,
+          name: formData.get('name') as string,
         })
       }}
       className="p-2 space-y-2"
