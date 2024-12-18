@@ -21,6 +21,7 @@ const ensureBuyers = async (opts: {
   const result = await db.select(`SELECT * from "buyers" order by $1`, [
     opts.sortBy || "name",
   ]);
+
   const buyers = result as Buyer[];
   return buyers;
 };

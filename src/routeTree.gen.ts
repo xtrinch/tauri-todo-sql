@@ -11,18 +11,28 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as SellersImport } from './routes/sellers'
 import { Route as LoginImport } from './routes/login'
 import { Route as BuyersImport } from './routes/buyers'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as IndexImport } from './routes/index'
-import { Route as FooBarImport } from './routes/foo/bar'
+import { Route as SellersNewImport } from './routes/sellers/new'
+import { Route as SellersListImport } from './routes/sellers/list'
 import { Route as BuyersNewImport } from './routes/buyers/new'
 import { Route as BuyersListImport } from './routes/buyers/list'
 import { Route as AuthProfileImport } from './routes/_auth.profile'
+import { Route as SellersListSellerIdImport } from './routes/sellers/list/$sellerId'
 import { Route as BuyersListBuyerIdImport } from './routes/buyers/list/$buyerId'
+import { Route as SellersListEditSellerIdImport } from './routes/sellers/list/edit.$sellerId'
 import { Route as BuyersListEditBuyerIdImport } from './routes/buyers/list/edit.$buyerId'
 
 // Create/Update Routes
+
+const SellersRoute = SellersImport.update({
+  id: '/sellers',
+  path: '/sellers',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const LoginRoute = LoginImport.update({
   id: '/login',
@@ -47,10 +57,16 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const FooBarRoute = FooBarImport.update({
-  id: '/foo/bar',
-  path: '/foo/bar',
-  getParentRoute: () => rootRoute,
+const SellersNewRoute = SellersNewImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => SellersRoute,
+} as any)
+
+const SellersListRoute = SellersListImport.update({
+  id: '/list',
+  path: '/list',
+  getParentRoute: () => SellersRoute,
 } as any)
 
 const BuyersNewRoute = BuyersNewImport.update({
@@ -71,10 +87,22 @@ const AuthProfileRoute = AuthProfileImport.update({
   getParentRoute: () => AuthRoute,
 } as any)
 
+const SellersListSellerIdRoute = SellersListSellerIdImport.update({
+  id: '/$sellerId',
+  path: '/$sellerId',
+  getParentRoute: () => SellersListRoute,
+} as any)
+
 const BuyersListBuyerIdRoute = BuyersListBuyerIdImport.update({
   id: '/$buyerId',
   path: '/$buyerId',
   getParentRoute: () => BuyersListRoute,
+} as any)
+
+const SellersListEditSellerIdRoute = SellersListEditSellerIdImport.update({
+  id: '/edit/$sellerId',
+  path: '/edit/$sellerId',
+  getParentRoute: () => SellersListRoute,
 } as any)
 
 const BuyersListEditBuyerIdRoute = BuyersListEditBuyerIdImport.update({
@@ -115,6 +143,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
+    '/sellers': {
+      id: '/sellers'
+      path: '/sellers'
+      fullPath: '/sellers'
+      preLoaderRoute: typeof SellersImport
+      parentRoute: typeof rootRoute
+    }
     '/_auth/profile': {
       id: '/_auth/profile'
       path: '/profile'
@@ -136,12 +171,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyersNewImport
       parentRoute: typeof BuyersImport
     }
-    '/foo/bar': {
-      id: '/foo/bar'
-      path: '/foo/bar'
-      fullPath: '/foo/bar'
-      preLoaderRoute: typeof FooBarImport
-      parentRoute: typeof rootRoute
+    '/sellers/list': {
+      id: '/sellers/list'
+      path: '/list'
+      fullPath: '/sellers/list'
+      preLoaderRoute: typeof SellersListImport
+      parentRoute: typeof SellersImport
+    }
+    '/sellers/new': {
+      id: '/sellers/new'
+      path: '/new'
+      fullPath: '/sellers/new'
+      preLoaderRoute: typeof SellersNewImport
+      parentRoute: typeof SellersImport
     }
     '/buyers/list/$buyerId': {
       id: '/buyers/list/$buyerId'
@@ -150,12 +192,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyersListBuyerIdImport
       parentRoute: typeof BuyersListImport
     }
+    '/sellers/list/$sellerId': {
+      id: '/sellers/list/$sellerId'
+      path: '/$sellerId'
+      fullPath: '/sellers/list/$sellerId'
+      preLoaderRoute: typeof SellersListSellerIdImport
+      parentRoute: typeof SellersListImport
+    }
     '/buyers/list/edit/$buyerId': {
       id: '/buyers/list/edit/$buyerId'
       path: '/edit/$buyerId'
       fullPath: '/buyers/list/edit/$buyerId'
       preLoaderRoute: typeof BuyersListEditBuyerIdImport
       parentRoute: typeof BuyersListImport
+    }
+    '/sellers/list/edit/$sellerId': {
+      id: '/sellers/list/edit/$sellerId'
+      path: '/edit/$sellerId'
+      fullPath: '/sellers/list/edit/$sellerId'
+      preLoaderRoute: typeof SellersListEditSellerIdImport
+      parentRoute: typeof SellersListImport
     }
   }
 }
@@ -199,17 +255,48 @@ const BuyersRouteChildren: BuyersRouteChildren = {
 const BuyersRouteWithChildren =
   BuyersRoute._addFileChildren(BuyersRouteChildren)
 
+interface SellersListRouteChildren {
+  SellersListSellerIdRoute: typeof SellersListSellerIdRoute
+  SellersListEditSellerIdRoute: typeof SellersListEditSellerIdRoute
+}
+
+const SellersListRouteChildren: SellersListRouteChildren = {
+  SellersListSellerIdRoute: SellersListSellerIdRoute,
+  SellersListEditSellerIdRoute: SellersListEditSellerIdRoute,
+}
+
+const SellersListRouteWithChildren = SellersListRoute._addFileChildren(
+  SellersListRouteChildren,
+)
+
+interface SellersRouteChildren {
+  SellersListRoute: typeof SellersListRouteWithChildren
+  SellersNewRoute: typeof SellersNewRoute
+}
+
+const SellersRouteChildren: SellersRouteChildren = {
+  SellersListRoute: SellersListRouteWithChildren,
+  SellersNewRoute: SellersNewRoute,
+}
+
+const SellersRouteWithChildren =
+  SellersRoute._addFileChildren(SellersRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof AuthRouteWithChildren
   '/buyers': typeof BuyersRouteWithChildren
   '/login': typeof LoginRoute
+  '/sellers': typeof SellersRouteWithChildren
   '/profile': typeof AuthProfileRoute
   '/buyers/list': typeof BuyersListRouteWithChildren
   '/buyers/new': typeof BuyersNewRoute
-  '/foo/bar': typeof FooBarRoute
+  '/sellers/list': typeof SellersListRouteWithChildren
+  '/sellers/new': typeof SellersNewRoute
   '/buyers/list/$buyerId': typeof BuyersListBuyerIdRoute
+  '/sellers/list/$sellerId': typeof SellersListSellerIdRoute
   '/buyers/list/edit/$buyerId': typeof BuyersListEditBuyerIdRoute
+  '/sellers/list/edit/$sellerId': typeof SellersListEditSellerIdRoute
 }
 
 export interface FileRoutesByTo {
@@ -217,12 +304,16 @@ export interface FileRoutesByTo {
   '': typeof AuthRouteWithChildren
   '/buyers': typeof BuyersRouteWithChildren
   '/login': typeof LoginRoute
+  '/sellers': typeof SellersRouteWithChildren
   '/profile': typeof AuthProfileRoute
   '/buyers/list': typeof BuyersListRouteWithChildren
   '/buyers/new': typeof BuyersNewRoute
-  '/foo/bar': typeof FooBarRoute
+  '/sellers/list': typeof SellersListRouteWithChildren
+  '/sellers/new': typeof SellersNewRoute
   '/buyers/list/$buyerId': typeof BuyersListBuyerIdRoute
+  '/sellers/list/$sellerId': typeof SellersListSellerIdRoute
   '/buyers/list/edit/$buyerId': typeof BuyersListEditBuyerIdRoute
+  '/sellers/list/edit/$sellerId': typeof SellersListEditSellerIdRoute
 }
 
 export interface FileRoutesById {
@@ -231,12 +322,16 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/buyers': typeof BuyersRouteWithChildren
   '/login': typeof LoginRoute
+  '/sellers': typeof SellersRouteWithChildren
   '/_auth/profile': typeof AuthProfileRoute
   '/buyers/list': typeof BuyersListRouteWithChildren
   '/buyers/new': typeof BuyersNewRoute
-  '/foo/bar': typeof FooBarRoute
+  '/sellers/list': typeof SellersListRouteWithChildren
+  '/sellers/new': typeof SellersNewRoute
   '/buyers/list/$buyerId': typeof BuyersListBuyerIdRoute
+  '/sellers/list/$sellerId': typeof SellersListSellerIdRoute
   '/buyers/list/edit/$buyerId': typeof BuyersListEditBuyerIdRoute
+  '/sellers/list/edit/$sellerId': typeof SellersListEditSellerIdRoute
 }
 
 export interface FileRouteTypes {
@@ -246,36 +341,48 @@ export interface FileRouteTypes {
     | ''
     | '/buyers'
     | '/login'
+    | '/sellers'
     | '/profile'
     | '/buyers/list'
     | '/buyers/new'
-    | '/foo/bar'
+    | '/sellers/list'
+    | '/sellers/new'
     | '/buyers/list/$buyerId'
+    | '/sellers/list/$sellerId'
     | '/buyers/list/edit/$buyerId'
+    | '/sellers/list/edit/$sellerId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | ''
     | '/buyers'
     | '/login'
+    | '/sellers'
     | '/profile'
     | '/buyers/list'
     | '/buyers/new'
-    | '/foo/bar'
+    | '/sellers/list'
+    | '/sellers/new'
     | '/buyers/list/$buyerId'
+    | '/sellers/list/$sellerId'
     | '/buyers/list/edit/$buyerId'
+    | '/sellers/list/edit/$sellerId'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/buyers'
     | '/login'
+    | '/sellers'
     | '/_auth/profile'
     | '/buyers/list'
     | '/buyers/new'
-    | '/foo/bar'
+    | '/sellers/list'
+    | '/sellers/new'
     | '/buyers/list/$buyerId'
+    | '/sellers/list/$sellerId'
     | '/buyers/list/edit/$buyerId'
+    | '/sellers/list/edit/$sellerId'
   fileRoutesById: FileRoutesById
 }
 
@@ -284,7 +391,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   BuyersRoute: typeof BuyersRouteWithChildren
   LoginRoute: typeof LoginRoute
-  FooBarRoute: typeof FooBarRoute
+  SellersRoute: typeof SellersRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -292,7 +399,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   BuyersRoute: BuyersRouteWithChildren,
   LoginRoute: LoginRoute,
-  FooBarRoute: FooBarRoute,
+  SellersRoute: SellersRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -309,7 +416,7 @@ export const routeTree = rootRoute
         "/_auth",
         "/buyers",
         "/login",
-        "/foo/bar"
+        "/sellers"
       ]
     },
     "/": {
@@ -331,6 +438,13 @@ export const routeTree = rootRoute
     "/login": {
       "filePath": "login.tsx"
     },
+    "/sellers": {
+      "filePath": "sellers.tsx",
+      "children": [
+        "/sellers/list",
+        "/sellers/new"
+      ]
+    },
     "/_auth/profile": {
       "filePath": "_auth.profile.tsx",
       "parent": "/_auth"
@@ -347,16 +461,33 @@ export const routeTree = rootRoute
       "filePath": "buyers/new.tsx",
       "parent": "/buyers"
     },
-    "/foo/bar": {
-      "filePath": "foo/bar.tsx"
+    "/sellers/list": {
+      "filePath": "sellers/list.tsx",
+      "parent": "/sellers",
+      "children": [
+        "/sellers/list/$sellerId",
+        "/sellers/list/edit/$sellerId"
+      ]
+    },
+    "/sellers/new": {
+      "filePath": "sellers/new.tsx",
+      "parent": "/sellers"
     },
     "/buyers/list/$buyerId": {
       "filePath": "buyers/list/$buyerId.tsx",
       "parent": "/buyers/list"
     },
+    "/sellers/list/$sellerId": {
+      "filePath": "sellers/list/$sellerId.tsx",
+      "parent": "/sellers/list"
+    },
     "/buyers/list/edit/$buyerId": {
       "filePath": "buyers/list/edit.$buyerId.tsx",
       "parent": "/buyers/list"
+    },
+    "/sellers/list/edit/$sellerId": {
+      "filePath": "sellers/list/edit.$sellerId.tsx",
+      "parent": "/sellers/list"
     }
   }
 }

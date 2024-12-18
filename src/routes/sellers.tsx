@@ -5,28 +5,28 @@ import {
   redirect,
 } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/buyers")({
-  component: BuyersComponent,
+export const Route = createFileRoute("/sellers")({
+  component: SellersComponent,
   beforeLoad: ({ location }) => {
-    const shouldRedirect = [`/buyers`].includes(location.pathname);
+    const shouldRedirect = [`/sellers`].includes(location.pathname);
 
     if (shouldRedirect) {
-      redirect({ to: "/buyers/list", throw: true });
+      redirect({ to: "/sellers/list", throw: true });
     }
   },
 });
 
-function BuyersComponent() {
+function SellersComponent() {
   return (
     <>
       <div className="flex items-center border-b">
-        <h2 className="text-xl p-2">Buyers</h2>
+        <h2 className="text-xl p-2">Sellers</h2>
       </div>
       <div className="flex flex-wrap divide-x">
         {(
           [
-            ["/buyers/list", "List"],
-            ["/buyers/new", "Add new"],
+            ["/sellers/list", "List"],
+            ["/sellers/new", "Add new"],
           ] as const
         ).map(([to, label]) => {
           return (

@@ -1,19 +1,19 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { BuyerFields } from "../../components/BuyerFields";
+import { SellerFields } from "../../components/SellerFields";
 import { Spinner } from "../../components/Spinner";
-import { useCreateBuyerMutation, type Buyer } from "../../utils/buyerService";
+import { Seller, useCreateSellerMutation } from "../../utils/sellerService";
 
-export const Route = createFileRoute("/buyers/new")({
-  component: BuyersIndexComponent,
+export const Route = createFileRoute("/sellers/new")({
+  component: SellersIndexComponent,
 });
 
-function BuyersIndexComponent() {
+function SellersIndexComponent() {
   const [timeoutId, setTimeoutId] = useState<number | null>(null);
   const navigate = useNavigate();
-  const createBuyerMutation = useCreateBuyerMutation(() => {
+  const createSellerMutation = useCreateSellerMutation(() => {
     const timeoutId = setTimeout(() => {
-      navigate({ to: "/buyers/list" });
+      navigate({ to: "/sellers/list" });
     }, 3000);
     setTimeoutId(timeoutId);
   });
@@ -32,19 +32,19 @@ function BuyersIndexComponent() {
             event.preventDefault();
             event.stopPropagation();
             const formData = new FormData(event.target as HTMLFormElement);
-            createBuyerMutation.mutate({
+            createSellerMutation.mutate({
               name: formData.get("name") as string,
             });
           }}
           className="space-y-2"
         >
-          <BuyerFields buyer={{} as Buyer} />
+          <SellerFields seller={{} as Seller} />
           <div>
             <button
               className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50"
-              disabled={createBuyerMutation.status === "pending"}
+              disabled={createSellerMutation.status === "pending"}
             >
-              {createBuyerMutation.status === "pending" ? (
+              {createSellerMutation.status === "pending" ? (
                 <>
                   Creating <Spinner />
                 </>
@@ -53,11 +53,11 @@ function BuyersIndexComponent() {
               )}
             </button>
           </div>
-          {createBuyerMutation.status === "success" ? (
+          {createSellerMutation.status === "success" ? (
             <div className="inline-block px-2 py-1 rounded bg-green-500 text-white animate-bounce [animation-iteration-count:2.5] [animation-duration:.3s]">
               Created!
             </div>
-          ) : createBuyerMutation.status === "error" ? (
+          ) : createSellerMutation.status === "error" ? (
             <div className="inline-block px-2 py-1 rounded bg-red-500 text-white animate-bounce [animation-iteration-count:2.5] [animation-duration:.3s]">
               Failed to create.
             </div>

@@ -39,6 +39,7 @@ function RootComponent() {
               [
                 ["/", "Home"],
                 ["/buyers", "Buyers"],
+                ["/sellers", "Sellers"],
                 // ["/profile", "Profile"],
                 // ["/login", "Login"],
               ] as const
@@ -48,7 +49,6 @@ function RootComponent() {
                   <Link
                     to={to}
                     activeOptions={{}}
-                    preload="intent"
                     className={`block py-2 px-3 text-blue-700`}
                     // Make "active" links bold
                     activeProps={{ className: `font-bold` }}
