@@ -9,6 +9,8 @@ type PickAsRequired<TValue, TKey extends keyof TValue> = Omit<TValue, TKey> &
 export type Seller = {
   id: number;
   name: string;
+  address_line1: string;
+  address_line2: string;
 };
 
 const ensureSellers = async (opts: {
@@ -30,22 +32,32 @@ export async function fetchSellerById(id: number) {
   const db = await getDatabase();
   const result = await db.select(`SELECT * from "sellers" where id = $1`, [id]);
   const seller = (result as Seller[])[0];
+  info(JSON.stringify(seller));
   return seller;
 }
 
-export async function postSeller(partialSeller: Partial<Seller>) {
+export async function postSeller(
+  partialSeller: Partial<Seller>
+): Promise<Seller> {
   if (partialSeller.name?.includes("error")) {
     throw new Error("Ouch!");
   }
 
-  const seller = {
+  const seller: Partial<Seller> = {
     name: partialSeller.name ?? `New Seller ${String(Date.now()).slice(0, 5)}`,
   };
 
   const db = await getDatabase();
-  await db.execute(`INSERT INTO "sellers" ("name") values ($1)`, [seller.name]);
+  const result = await db.execute(
+    `INSERT INTO "sellers" ("name", "address_line1", "address_line2") values ($1, $2, $3)`,
+    [seller.name || "", seller.address_line1 || "", seller.address_line2 || ""]
+  );
+  info(JSON.stringify(result));
 
-  return seller;
+  return {
+    ...seller,
+    id: result.lastInsertId,
+  } as Seller;
 }
 
 export async function patchSeller({
@@ -53,10 +65,16 @@ export async function patchSeller({
   ...updatedSeller
 }: PickAsRequired<Partial<Seller>, "id">) {
   const db = await getDatabase();
-  await db.execute(`UPDATE "sellers" SET "name" = $2 WHERE id=$1`, [
-    id,
-    updatedSeller.name,
-  ]);
+  info(JSON.stringify(updatedSeller));
+  await db.execute(
+    `UPDATE "sellers" SET "name" = COALESCE($2, "name"), "address_line1" = COALESCE($3, "address_line1"), "address_line2" = COALESCE($4, "address_line2") WHERE id = $1`,
+    [
+      id,
+      updatedSeller.name,
+      updatedSeller.address_line1,
+      updatedSeller.address_line2,
+    ]
+  );
 }
 
 export const sellerQueryOptions = (sellerId: number) =>
@@ -65,12 +83,14 @@ export const sellerQueryOptions = (sellerId: number) =>
     queryFn: () => fetchSellerById(sellerId),
   });
 
-export const useCreateSellerMutation = (onSuccess?: () => void) => {
+export const useCreateSellerMutation = (
+  onSuccess?: (seller: Seller) => void
+) => {
   return useMutation({
     mutationFn: postSeller,
-    onSuccess: () => {
+    onSuccess: (seller: Seller) => {
       queryClient.invalidateQueries();
-      if (onSuccess) onSuccess();
+      if (onSuccess) onSuccess(seller);
     },
   });
 };

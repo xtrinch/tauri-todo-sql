@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { BuyerFields } from "../../components/BuyerFields";
 import { Spinner } from "../../components/Spinner";
 import { useCreateBuyerMutation, type Buyer } from "../../utils/buyerService";
@@ -9,19 +8,12 @@ export const Route = createFileRoute("/buyers/new")({
 });
 
 function BuyersIndexComponent() {
-  const [timeoutId, setTimeoutId] = useState<number | null>(null);
   const navigate = useNavigate();
-  const createBuyerMutation = useCreateBuyerMutation(() => {
-    const timeoutId = setTimeout(() => {
-      navigate({ to: "/buyers/list" });
-    }, 3000);
-    setTimeoutId(timeoutId);
-  });
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(timeoutId!);
-    };
+  const createBuyerMutation = useCreateBuyerMutation((buyer: Buyer) => {
+    navigate({
+      to: "/buyers/list/$buyerId",
+      params: { buyerId: buyer.id },
+    });
   });
 
   return (

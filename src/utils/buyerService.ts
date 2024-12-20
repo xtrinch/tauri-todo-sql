@@ -33,7 +33,7 @@ export async function fetchBuyerById(id: number) {
   return buyer;
 }
 
-export async function postBuyer(partialBuyer: Partial<Buyer>) {
+export async function postBuyer(partialBuyer: Partial<Buyer>): Promise<Buyer> {
   if (partialBuyer.name?.includes("error")) {
     throw new Error("Ouch!");
   }
@@ -43,9 +43,11 @@ export async function postBuyer(partialBuyer: Partial<Buyer>) {
   };
 
   const db = await getDatabase();
-  await db.execute(`INSERT INTO "buyers" ("name") values ($1)`, [buyer.name]);
+  const result = await db.execute(`INSERT INTO "buyers" ("name") values ($1)`, [
+    buyer.name,
+  ]);
 
-  return buyer;
+  return { ...buyer, id: result.lastInsertId } as Buyer;
 }
 
 export async function patchBuyer({
@@ -65,12 +67,12 @@ export const buyerQueryOptions = (buyerId: number) =>
     queryFn: () => fetchBuyerById(buyerId),
   });
 
-export const useCreateBuyerMutation = (onSuccess?: () => void) => {
+export const useCreateBuyerMutation = (onSuccess?: (buyer: Buyer) => void) => {
   return useMutation({
     mutationFn: postBuyer,
-    onSuccess: () => {
+    onSuccess: (buyer: Buyer) => {
       queryClient.invalidateQueries();
-      if (onSuccess) onSuccess();
+      if (onSuccess) onSuccess(buyer);
     },
   });
 };

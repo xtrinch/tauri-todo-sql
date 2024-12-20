@@ -1,6 +1,12 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  redirect,
+} from "@tanstack/react-router";
 import { z } from "zod";
+import { SellerTable } from "../../../components/SellerTable";
 import { sellerQueryOptions } from "../../../utils/sellerService";
 
 export const Route = createFileRoute("/sellers/list/$sellerId")({
@@ -15,11 +21,24 @@ export const Route = createFileRoute("/sellers/list/$sellerId")({
       sellerQueryOptions(opts.params.sellerId)
     ),
   component: SellerComponent,
+  beforeLoad: ({ location, params }) => {
+    const shouldRedirect = [`/sellers/list/${params.sellerId}`].includes(
+      location.pathname
+    );
+
+    if (shouldRedirect) {
+      redirect({
+        to: "/sellers/list/$sellerId/wood-pieces-list",
+        throw: true,
+        params: { sellerId: params.sellerId },
+      });
+    }
+  },
 });
 
 function SellerComponent() {
-  const search = Route.useParams();
-  const sellerQuery = useSuspenseQuery(sellerQueryOptions(search.sellerId));
+  const params = Route.useParams();
+  const sellerQuery = useSuspenseQuery(sellerQueryOptions(params.sellerId));
   const seller = sellerQuery.data;
 
   return (
@@ -40,6 +59,8 @@ function SellerComponent() {
       <pre className="text-sm whitespace-pre-wrap">
         {JSON.stringify(seller, null, 2)}
       </pre>
+      <SellerTable seller={seller} />
+      <Outlet />
     </>
   );
 }

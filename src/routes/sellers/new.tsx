@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { SellerFields } from "../../components/SellerFields";
 import { Spinner } from "../../components/Spinner";
 import { Seller, useCreateSellerMutation } from "../../utils/sellerService";
@@ -9,19 +8,12 @@ export const Route = createFileRoute("/sellers/new")({
 });
 
 function SellersIndexComponent() {
-  const [timeoutId, setTimeoutId] = useState<number | null>(null);
   const navigate = useNavigate();
-  const createSellerMutation = useCreateSellerMutation(() => {
-    const timeoutId = setTimeout(() => {
-      navigate({ to: "/sellers/list" });
-    }, 3000);
-    setTimeoutId(timeoutId);
-  });
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(timeoutId!);
-    };
+  const createSellerMutation = useCreateSellerMutation((seller: Seller) => {
+    navigate({
+      to: "/sellers/list/$sellerId",
+      params: { sellerId: seller.id },
+    });
   });
 
   return (
