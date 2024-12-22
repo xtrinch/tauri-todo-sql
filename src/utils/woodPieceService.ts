@@ -27,8 +27,8 @@ const ensureWoodPieces = async (opts: {
   const db = await getDatabase();
   const params = compact([opts.sortBy || "id", opts.sellerId]);
   const sql = `
-    SELECT * from "wood_pieces" 
-    --- LEFT JOIN "tree_species" ON "tree_species".id = "wood_pieces"."tree_species_id"
+    SELECT *, "wood_pieces".id as id from "wood_pieces" 
+    LEFT JOIN "tree_species" ON "wood_pieces"."tree_species_id"="tree_species"."id"
     ${opts.sellerId ? `WHERE "seller_id"=$2` : ""}
     ORDER BY $1`;
   const result = await db.select(sql, params);
@@ -64,8 +64,15 @@ export async function postWoodPiece(
   const db = await getDatabase();
   info(`${partialWoodPiece.seller_id}`);
   const result = await db.execute(
-    `INSERT INTO "wood_pieces" ("length", "width", "max_price", "plate_no", "seller_id") values ($1, $2, $3, $4, $5)`,
-    [0, 0, 0, 0, partialWoodPiece.seller_id]
+    `INSERT INTO "wood_pieces" ("length", "width", "max_price", "plate_no", "seller_id", "tree_species_id") values ($1, $2, $3, $4, $5, $6)`,
+    [
+      0,
+      0,
+      0,
+      0,
+      partialWoodPiece.seller_id,
+      1, // set it to first val in DB, so id=1
+    ]
   );
   info("UNSERTTTTT");
   info(JSON.stringify(result));
@@ -79,6 +86,8 @@ export async function postWoodPiece(
 export async function removeWoodPiece(
   partialWoodPiece: Partial<WoodPiece>
 ): Promise<WoodPiece> {
+  info("DEE:ET:EETET");
+  info(JSON.stringify(partialWoodPiece));
   const db = await getDatabase();
   await db.execute(`DELETE FROM "wood_pieces" WHERE "id" = $1`, [
     partialWoodPiece.id,

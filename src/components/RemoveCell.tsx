@@ -13,7 +13,7 @@ export const RemoveCell = <TableItem,>({
   const removeRow = () => {
     const onRemove = (meta as CustomTableMeta)?.onRemove;
     if (onRemove) {
-      onRemove(row.getValue("id"));
+      onRemove((row.original as { id: number }).id);
     }
   };
 

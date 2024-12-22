@@ -5,6 +5,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { info } from "@tauri-apps/plugin-log";
 import { useMemo } from "react";
 import { CustomTable } from "../../../../components/CustomTable";
 import { DropdownCell } from "../../../../components/DropdownCell";
@@ -33,7 +34,7 @@ function WoodPiecesList() {
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
       {
-        accessorKey: "tree_species",
+        accessorKey: "tree_species_id",
         header: () => "Tree species",
         size: 200,
 
@@ -116,6 +117,8 @@ function WoodPiecesList() {
         createWoodPieceMutation.mutate({ seller_id: params.sellerId });
       },
       onRemove: (woodPieceId: number) => {
+        info("MUT");
+        info(`${woodPieceId}`);
         removeWoodPieceMutation.mutate({ id: woodPieceId });
       },
       onEdit: (data: WoodPiece) => {
