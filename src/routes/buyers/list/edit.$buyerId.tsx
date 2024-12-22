@@ -46,6 +46,7 @@ function BuyerComponent() {
 
   return (
     <form
+      spellCheck={false}
       key={buyer.id}
       onSubmit={(event) => {
         event.preventDefault();

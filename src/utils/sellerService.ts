@@ -1,7 +1,7 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
+import { info } from "@tauri-apps/plugin-log";
 import { queryClient } from "../main";
 import { getDatabase } from "./database";
-
 type PickAsRequired<TValue, TKey extends keyof TValue> = Omit<TValue, TKey> &
   Required<Pick<TValue, TKey>>;
 
@@ -20,6 +20,7 @@ const ensureSellers = async (opts: {
   const result = await db.select(`SELECT * from "sellers" order by $1`, [
     opts.sortBy || "name",
   ]);
+  info(JSON.stringify(result));
 
   const sellers = result as Seller[];
   return sellers;
@@ -112,3 +113,42 @@ export const sellersQueryOptions = (opts: {
     queryKey: ["sellers", opts],
     queryFn: () => ensureSellers(opts),
   });
+
+export async function removeSeller(
+  partialWoodPiece: Partial<Seller>
+): Promise<Seller> {
+  const db = await getDatabase();
+  info("REMOVE");
+  info(JSON.stringify(partialWoodPiece));
+  const resp = await db.select(`SELECT COUNT(*) FROM "sellers" WHERE ID = $1`, [
+    partialWoodPiece.id,
+  ]);
+  info(JSON.stringify(resp));
+  try {
+    await db.execute(`DELETE FROM "sellers" WHERE "id" = $1`, [
+      partialWoodPiece.id,
+    ]);
+  } catch (e) {
+    info(JSON.stringify(e));
+  }
+  info("AFTER");
+  const resp1 = await db.select(
+    `SELECT COUNT(*) FROM "sellers" WHERE ID = $1`,
+    [partialWoodPiece.id]
+  );
+  info(JSON.stringify(resp1));
+
+  return partialWoodPiece as Seller;
+}
+
+export const useRemoveSellerMutation = (
+  onSuccess?: (seller: Seller) => void
+) => {
+  return useMutation({
+    mutationFn: removeSeller,
+    onSuccess: (seller: Seller) => {
+      queryClient.invalidateQueries({ queryKey: ["sellers"] });
+      if (onSuccess) onSuccess(seller);
+    },
+  });
+};

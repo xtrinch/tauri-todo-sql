@@ -11,7 +11,11 @@ import {
 import * as React from "react";
 import { z } from "zod";
 import { Spinner } from "../../components/Spinner";
-import { sellersQueryOptions } from "../../utils/sellerService";
+import {
+  Seller,
+  sellersQueryOptions,
+  useCreateSellerMutation,
+} from "../../utils/sellerService";
 
 type SellersViewSortBy = "name" | "id";
 
@@ -51,6 +55,18 @@ function SellersComponent() {
     setFilterDraft(filterBy ?? "");
   }, [filterBy]);
 
+  const createSellerMutation = useCreateSellerMutation((seller: Seller) => {
+    navigate({
+      to: "/sellers/list/$sellerId",
+      params: { sellerId: seller.id },
+    });
+  });
+
+  const onAdd = () => {
+    createSellerMutation.mutate({
+      name: "New seller",
+    });
+  };
   const sortedSellers = React.useMemo(() => {
     if (!sellers) return [];
 
@@ -122,6 +138,12 @@ function SellersComponent() {
             className="min-w-0 flex-1 border p-1 px-2 rounded"
           />
         </div>
+        <button
+          className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 w-100 h-10"
+          onClick={onAdd}
+        >
+          Add new
+        </button>
         {filteredSellers?.map((seller) => {
           return (
             <div key={seller.id}>

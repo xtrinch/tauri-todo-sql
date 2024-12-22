@@ -49,7 +49,7 @@ export function CustomTable<TableItem>({ table }: { table: Table<TableItem> }) {
           </tr>
         ))}
       </tbody>
-      {meta?.onRemove && (
+      {meta?.onAdd && (
         <tfoot>
           <tr>
             <th colSpan={table.getCenterLeafColumns().length} align="right">

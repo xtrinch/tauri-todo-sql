@@ -20,6 +20,7 @@ function SellersIndexComponent() {
     <>
       <div className="p-2">
         <form
+          spellCheck={false}
           onSubmit={(event) => {
             event.preventDefault();
             event.stopPropagation();

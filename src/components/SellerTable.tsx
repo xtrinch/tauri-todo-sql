@@ -1,11 +1,18 @@
+import { useNavigate } from "@tanstack/react-router";
 import {
   ColumnDef,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo } from "react";
-import { Seller, useUpdateSellerMutation } from "../utils/sellerService";
+import { info } from "@tauri-apps/plugin-log";
+import { useEffect, useMemo } from "react";
+import {
+  Seller,
+  useRemoveSellerMutation,
+  useUpdateSellerMutation,
+} from "../utils/sellerService";
 import { CustomTable } from "./CustomTable";
+import { RemoveCell } from "./RemoveCell";
 import { TableCell } from "./TableCell";
 
 export function SellerTable(data: { seller: Seller }) {
@@ -21,6 +28,13 @@ export function SellerTable(data: { seller: Seller }) {
   const columns = useMemo<ColumnDef<Seller>[]>(
     () => [
       {
+        accessorKey: "id",
+        header: () => "Id",
+        meta: {
+          readonly: true,
+        },
+      },
+      {
         accessorKey: "name",
         header: () => "Name",
         meta: {},
@@ -35,11 +49,29 @@ export function SellerTable(data: { seller: Seller }) {
         header: () => "Address line 2",
         meta: {},
       },
+      {
+        id: "1",
+        header: () => "",
+        accessorFn: () => 1,
+        meta: {
+          readonly: true,
+        },
+        cell: RemoveCell,
+      },
     ],
     []
   );
+  const navigate = useNavigate();
+  const removeSellerMutation = useRemoveSellerMutation(() => {
+    navigate({ to: "/sellers/list" });
+  });
 
-  const sellerData = useMemo(() => [data.seller], [data.seller.id]);
+  const sellerData = useMemo(() => {
+    info("SELLER CHANGES");
+    info(JSON.stringify(data.seller));
+    return [data.seller];
+  }, [data.seller.id]);
+
   const table = useReactTable({
     data: sellerData,
     columns,
@@ -49,8 +81,15 @@ export function SellerTable(data: { seller: Seller }) {
       onEdit: (data: Seller) => {
         updateSellerMutation.mutate(data);
       },
+      onRemove: (woodPieceId: number) => {
+        removeSellerMutation.mutate({ id: woodPieceId });
+      },
     },
   });
+
+  useEffect(() => {
+    // table.reset();
+  }, [data.seller.id]);
   return (
     <>
       <CustomTable table={table} />

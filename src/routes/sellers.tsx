@@ -26,7 +26,7 @@ function SellersComponent() {
         {(
           [
             ["/sellers/list", "List"],
-            ["/sellers/new", "Add new"],
+            // ["/sellers/new", "Add new"],
           ] as const
         ).map(([to, label]) => {
           return (

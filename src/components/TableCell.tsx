@@ -13,9 +13,9 @@ export interface CustomColumnMeta extends ColumnMeta<{}, undefined> {
   readonly?: boolean;
 }
 export interface CustomTableMeta extends TableMeta<{}> {
-  onAdd?: () => {};
-  onRemove?: (id: number) => {};
-  onEdit: (data: Partial<{}>) => {};
+  onAdd?: () => void;
+  onRemove?: (id: number) => void;
+  onEdit: (data: Partial<{}>) => void;
 }
 
 export const TableCell = <TableItem,>({
@@ -30,6 +30,8 @@ export const TableCell = <TableItem,>({
   table: Table<TableItem>;
 }) => {
   const initialValue = getValue();
+  const rowId = (row.original as { id: number }).id;
+
   // We need to keep and update the state of the cell normally
   const [value, setValue] = useState(initialValue);
   const [valueOnFocus, setValueOnFocus] = useState(initialValue);
@@ -69,22 +71,27 @@ export const TableCell = <TableItem,>({
     setValue(val);
   };
 
+  const onChange = (e: any) => {
+    setValue(e.target.value);
+  };
   // If the initialValue is changed external, sync it up with our state
   useEffect(() => {
-    setValue(getFormattedVal(initialValue));
-  }, [initialValue]);
+    setValue(getFormattedVal(initialValue || ""));
+  }, [initialValue, rowId]);
 
   return (
-    <input
-      value={value as string}
-      className="bg-green h-10 min-w-[100%] max-w-[100%]"
-      onChange={(e) => setValue(e.target.value)}
-      onBlur={onBlur}
-      readOnly={(column.columnDef.meta as CustomColumnMeta)?.readonly}
-      tabIndex={
-        (column.columnDef.meta as CustomColumnMeta)?.readonly ? -1 : undefined
-      }
-      onFocus={onFocus}
-    />
+    <>
+      <input
+        value={value as string}
+        className="bg-green h-10 min-w-[100%] max-w-[100%]"
+        onChange={onChange}
+        onBlur={onBlur} // TODO: save after some time of inactivity
+        readOnly={(column.columnDef.meta as CustomColumnMeta)?.readonly}
+        tabIndex={
+          (column.columnDef.meta as CustomColumnMeta)?.readonly ? -1 : undefined
+        }
+        onFocus={onFocus}
+      />
+    </>
   );
 };
