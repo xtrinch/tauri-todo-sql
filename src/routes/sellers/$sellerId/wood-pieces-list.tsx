@@ -121,11 +121,11 @@ function WoodPiecesList() {
       onAdd: () => {
         createWoodPieceMutation.mutate({ seller_id: params.sellerId });
       },
-      onRemove: (woodPieceId: number) => {
-        removeWoodPieceMutation.mutate({ id: woodPieceId });
-      },
       onEdit: (data: WoodPiece) => {
         updateWoodPieceMutation.mutate(data);
+      },
+      onRemove: (woodPieceId: number) => {
+        removeWoodPieceMutation.mutate({ id: woodPieceId });
       },
     },
   });
