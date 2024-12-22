@@ -43,7 +43,10 @@ function SellersComponent() {
   const navigate = useNavigate({ from: Route.fullPath });
   const { sellersView } = Route.useSearch();
   const sellersQuery = useSuspenseQuery(
-    sellersQueryOptions(Route.useLoaderDeps())
+    sellersQueryOptions({
+      ...Route.useLoaderDeps(),
+      ...sellersView,
+    })
   );
   const sellers = sellersQuery.data;
   const sortBy = sellersView?.sortBy ?? "name";
@@ -67,23 +70,6 @@ function SellersComponent() {
       name: "New seller",
     });
   };
-  const sortedSellers = React.useMemo(() => {
-    if (!sellers) return [];
-
-    return !sortBy
-      ? sellers
-      : [...sellers].sort((a, b) => {
-          return a[sortBy] > b[sortBy] ? 1 : -1;
-        });
-  }, [sellers, sortBy]);
-
-  const filteredSellers = React.useMemo(() => {
-    if (!filterBy) return sortedSellers;
-
-    return sortedSellers.filter((seller) =>
-      seller.name.toLowerCase().includes(filterBy.toLowerCase())
-    );
-  }, [sortedSellers, filterBy]);
 
   const setSortBy = (sortBy: SellersViewSortBy) =>
     navigate({
@@ -144,7 +130,7 @@ function SellersComponent() {
         >
           Add new
         </button>
-        {filteredSellers?.map((seller) => {
+        {sellers?.map((seller) => {
           return (
             <div key={seller.id}>
               <Link

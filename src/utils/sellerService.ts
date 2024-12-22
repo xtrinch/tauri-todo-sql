@@ -1,5 +1,6 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
 import { info } from "@tauri-apps/plugin-log";
+import { compact } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase } from "./database";
 type PickAsRequired<TValue, TKey extends keyof TValue> = Omit<TValue, TKey> &
@@ -16,10 +17,16 @@ const ensureSellers = async (opts: {
   filterBy?: string;
   sortBy?: "name" | "id" | "email";
 }) => {
+  info("FETCH");
+  info(JSON.stringify(opts));
   const db = await getDatabase();
-  const result = await db.select(`SELECT * from "sellers" order by $1`, [
-    opts.sortBy || "name",
-  ]);
+  const result = await db.select(
+    `SELECT * from "sellers" ${opts.filterBy ? `WHERE "name" LIKE lower($2)` : ""} order by $1`,
+    compact([
+      opts.sortBy || "name",
+      opts.filterBy ? `%${opts.filterBy}%` : undefined,
+    ])
+  );
   info(JSON.stringify(result));
 
   const sellers = result as Seller[];

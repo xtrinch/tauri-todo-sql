@@ -4,7 +4,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { info } from "@tauri-apps/plugin-log";
 import { useEffect, useMemo } from "react";
 import {
   Seller,
@@ -27,13 +26,13 @@ export function SellerTable(data: { seller: Seller }) {
 
   const columns = useMemo<ColumnDef<Seller>[]>(
     () => [
-      {
-        accessorKey: "id",
-        header: () => "Id",
-        meta: {
-          readonly: true,
-        },
-      },
+      // {
+      //   accessorKey: "id",
+      //   header: () => "Id",
+      //   meta: {
+      //     readonly: true,
+      //   },
+      // },
       {
         accessorKey: "name",
         header: () => "Name",
@@ -67,8 +66,6 @@ export function SellerTable(data: { seller: Seller }) {
   });
 
   const sellerData = useMemo(() => {
-    info("SELLER CHANGES");
-    info(JSON.stringify(data.seller));
     return [data.seller];
   }, [data.seller.id]);
 
