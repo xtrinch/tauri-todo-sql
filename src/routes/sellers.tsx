@@ -23,12 +23,7 @@ function SellersComponent() {
         <h2 className="text-xl p-2">Sellers</h2>
       </div>
       <div className="flex flex-wrap divide-x">
-        {(
-          [
-            ["/sellers/list", "List"],
-            // ["/sellers/new", "Add new"],
-          ] as const
-        ).map(([to, label]) => {
+        {([["/sellers/list", "List"]] as const).map(([to, label]) => {
           return (
             <Link
               key={to}
