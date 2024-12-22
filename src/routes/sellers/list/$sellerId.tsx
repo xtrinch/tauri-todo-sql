@@ -1,10 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import {
-  createFileRoute,
-  Link,
-  Outlet,
-  redirect,
-} from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 import { SellerTable } from "../../../components/SellerTable";
 import { sellerQueryOptions } from "../../../utils/sellerService";
@@ -42,25 +37,11 @@ function SellerComponent() {
   const seller = sellerQuery.data;
 
   return (
-    <>
-      <Link
-        to="/sellers/list/edit/$sellerId"
-        params={{
-          sellerId: seller.id,
-        }}
-        className="block py-2 px-3 text-blue-700"
-        activeProps={{ className: `font-bold` }}
-      >
-        <button className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50">
-          Edit
-        </button>
-      </Link>
-      <h4 className="p-2 font-bold">{seller?.name}</h4>
-      <pre className="text-sm whitespace-pre-wrap">
-        {JSON.stringify(seller, null, 2)}
-      </pre>
+    <div className="flex flex-col space-y-3">
+      <h3>Seller</h3>
       <SellerTable seller={seller} />
+      <h3>Wood pieces</h3>
       <Outlet />
-    </>
+    </div>
   );
 }

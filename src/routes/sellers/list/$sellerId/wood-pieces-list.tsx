@@ -7,8 +7,10 @@ import {
 } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { CustomTable } from "../../../../components/CustomTable";
+import { DropdownCell } from "../../../../components/DropdownCell";
 import { RemoveCell } from "../../../../components/RemoveCell";
 import { TableCell } from "../../../../components/TableCell";
+import { treeSpeciesQueryOptions } from "../../../../utils/treeSpeciesService";
 import {
   useCreateWoodPieceMutation,
   useRemoveWoodPieceMutation,
@@ -20,22 +22,58 @@ import {
 export const Route = createFileRoute(
   "/sellers/list/$sellerId/wood-pieces-list"
 )({
-  component: RouteComponent,
+  component: WoodPiecesList,
 });
 
-function RouteComponent() {
+function WoodPiecesList() {
+  // TODO: make sure this doesn't remount on cell change
+  const treeSpeciesQuery = useSuspenseQuery(treeSpeciesQueryOptions({}));
+  const treeSpeciesData = treeSpeciesQuery.data;
+
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
       {
-        accessorKey: "id",
-        header: () => "Id",
-        meta: {
-          readonly: true,
-        },
+        accessorKey: "tree_species",
+        header: () => "Tree species",
+        size: 200,
+
+        cell: (data) =>
+          DropdownCell({
+            ...data,
+            choices: treeSpeciesData.map((ts) => ({
+              value: ts.id,
+              label: ts.name,
+            })),
+          }),
       },
       {
         accessorKey: "width",
         header: () => "Width",
+        size: 80,
+        meta: {
+          type: "float",
+        },
+      },
+      {
+        accessorKey: "length",
+        header: () => "Length",
+        size: 80,
+        meta: {
+          type: "float",
+        },
+      },
+      {
+        accessorKey: "max_price",
+        header: () => "Max price",
+        size: 80,
+        meta: {
+          type: "float",
+        },
+      },
+      {
+        accessorKey: "plate_no",
+        header: () => "Plate no",
+        size: 80,
         meta: {
           type: "float",
         },
@@ -60,7 +98,6 @@ function RouteComponent() {
   const woodPieces = woodPiecesQuery.data;
 
   const createWoodPieceMutation = useCreateWoodPieceMutation();
-
   const removeWoodPieceMutation = useRemoveWoodPieceMutation();
 
   const defaultColumn: Partial<ColumnDef<WoodPiece>> = {
@@ -76,7 +113,7 @@ function RouteComponent() {
     defaultColumn,
     meta: {
       onAdd: () => {
-        createWoodPieceMutation.mutate({ sellerId: params.sellerId });
+        createWoodPieceMutation.mutate({ seller_id: params.sellerId });
       },
       onRemove: (woodPieceId: number) => {
         removeWoodPieceMutation.mutate({ id: woodPieceId });

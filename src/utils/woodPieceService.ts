@@ -1,5 +1,6 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
 import { info } from "@tauri-apps/plugin-log";
+import { compact } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase } from "./database";
 
@@ -9,7 +10,8 @@ type PickAsRequired<TValue, TKey extends keyof TValue> = Omit<TValue, TKey> &
 export type WoodPiece = {
   id: number;
   name: string;
-  sellerId: number;
+  seller_id: number;
+  tree_species_id: number;
   length: number;
   width: number;
   volume: number;
@@ -23,10 +25,15 @@ const ensureWoodPieces = async (opts: {
   sortBy?: "name" | "id" | "email";
 }) => {
   const db = await getDatabase();
-  const params = [opts.sortBy || "id", opts.sellerId].filter((val) => !!val); // TODO: lodash
-  const sql = `SELECT * from "wood_pieces" ${opts.sellerId ? `WHERE "seller_id"=$2` : ""} ORDER BY $1`;
-  info(sql);
+  const params = compact([opts.sortBy || "id", opts.sellerId]);
+  const sql = `
+    SELECT * from "wood_pieces" 
+    --- LEFT JOIN "tree_species" ON "tree_species".id = "wood_pieces"."tree_species_id"
+    ${opts.sellerId ? `WHERE "seller_id"=$2` : ""}
+    ORDER BY $1`;
   const result = await db.select(sql, params);
+  info("ENSURE????");
+  info(JSON.stringify(result));
 
   const woodPieces = result as WoodPiece[];
   return woodPieces;
@@ -55,11 +62,12 @@ export async function postWoodPiece(
   };
 
   const db = await getDatabase();
-  info(`${partialWoodPiece.sellerId}`);
+  info(`${partialWoodPiece.seller_id}`);
   const result = await db.execute(
     `INSERT INTO "wood_pieces" ("length", "width", "max_price", "plate_no", "seller_id") values ($1, $2, $3, $4, $5)`,
-    [0, 0, 0, 0, partialWoodPiece.sellerId]
+    [0, 0, 0, 0, partialWoodPiece.seller_id]
   );
+  info("UNSERTTTTT");
   info(JSON.stringify(result));
 
   return {
@@ -72,7 +80,6 @@ export async function removeWoodPiece(
   partialWoodPiece: Partial<WoodPiece>
 ): Promise<WoodPiece> {
   const db = await getDatabase();
-  info("ID:::::::");
   await db.execute(`DELETE FROM "wood_pieces" WHERE "id" = $1`, [
     partialWoodPiece.id,
   ]);
@@ -83,12 +90,27 @@ export async function removeWoodPiece(
 export async function patchWoodPiece(
   woodPiece: PickAsRequired<Partial<WoodPiece>, "id">
 ) {
-  info(`UPDATING... wth ${JSON.stringify(woodPiece)}`);
   const db = await getDatabase();
-  await db.execute(`UPDATE "wood_pieces" SET "width" = $2 WHERE id=$1`, [
-    woodPiece.id,
-    woodPiece.width,
-  ]);
+  info("UPD");
+  info(JSON.stringify(woodPiece));
+  await db.execute(
+    `UPDATE "wood_pieces" 
+    SET 
+      "width" = COALESCE($2, "width"), 
+      "length"=COALESCE($3, "length"), 
+      "max_price"=COALESCE($4, "max_price"), 
+      "plate_no"=COALESCE($5, "plate_no")  
+      -- "tree_species_id"=COALESCE($6, "tree_species_id")  
+    WHERE id=$1`,
+    [
+      woodPiece.id,
+      woodPiece.width,
+      woodPiece.length,
+      woodPiece.max_price,
+      woodPiece.plate_no,
+      // woodPiece.tree_species_id,
+    ]
+  );
 }
 
 export const woodPieceQueryOptions = (woodPieceId: number) =>

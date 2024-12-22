@@ -6,12 +6,19 @@ export function CustomTable<TableItem>({ table }: { table: Table<TableItem> }) {
   const meta = table.options.meta as CustomTableMeta;
 
   return (
-    <table>
+    <table style={{ tableLayout: "fixed" }}>
       <thead>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <th key={header.id}>
+              <th
+                key={header.id}
+                style={{
+                  width: `${header.getSize()}px`,
+                  minWidth: `${header.getSize()}px`,
+                  maxWidth: `${header.getSize()}px`,
+                }}
+              >
                 {header.isPlaceholder
                   ? null
                   : flexRender(
@@ -27,7 +34,14 @@ export function CustomTable<TableItem>({ table }: { table: Table<TableItem> }) {
         {table.getRowModel().rows.map((row) => (
           <tr key={row.id}>
             {row.getVisibleCells().map((cell) => (
-              <td key={cell.id}>
+              <td
+                key={cell.id}
+                style={{
+                  width: `${cell.column.getSize()}px`,
+                  minWidth: `${cell.column.getSize()}px`,
+                  maxWidth: `${cell.column.getSize()}px`,
+                }}
+              >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
             ))}

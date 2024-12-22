@@ -3,7 +3,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { info } from "@tauri-apps/plugin-log";
 import { useMemo } from "react";
 import { Seller, useUpdateSellerMutation } from "../utils/sellerService";
 import { CustomTable } from "./CustomTable";
@@ -23,17 +22,17 @@ export function SellerTable(data: { seller: Seller }) {
     () => [
       {
         accessorKey: "name",
-        header: () => "name",
+        header: () => "Name",
         meta: {},
       },
       {
         accessorKey: "address_line1",
-        header: () => "address_line1",
+        header: () => "Address line 1",
         meta: {},
       },
       {
         accessorKey: "address_line2",
-        header: () => "address_line2",
+        header: () => "Address line 2",
         meta: {},
       },
     ],
@@ -48,8 +47,6 @@ export function SellerTable(data: { seller: Seller }) {
     defaultColumn,
     meta: {
       onEdit: (data: Seller) => {
-        info("MUTTING SELLER");
-        info(JSON.stringify(data));
         updateSellerMutation.mutate(data);
       },
     },
