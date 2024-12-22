@@ -64,14 +64,28 @@ export async function postWoodPiece(
   const db = await getDatabase();
   info(`${partialWoodPiece.seller_id}`);
   const result = await db.execute(
-    `INSERT INTO "wood_pieces" ("length", "width", "max_price", "plate_no", "seller_id", "tree_species_id") values ($1, $2, $3, $4, $5, $6)`,
+    `INSERT INTO "wood_pieces" (
+      "length", 
+      "width", 
+      "max_price", 
+      "plate_no", 
+      "seller_id" 
+      ---"tree_species_id"
+    ) values (
+      $1, 
+      $2, 
+      $3, 
+      $4, 
+      $5
+      ---$6
+    )`,
     [
       0,
       0,
       0,
       0,
       partialWoodPiece.seller_id,
-      1, // set it to first val in DB, so id=1
+      // 1, // set it to first val in DB, so id=1
     ]
   );
   info("UNSERTTTTT");
