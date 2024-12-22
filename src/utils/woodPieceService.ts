@@ -16,6 +16,7 @@ export type WoodPiece = {
   volume: number;
   max_price: number;
   plate_no: number;
+  sequence_no: number;
 };
 
 const ensureWoodPieces = async (opts: {
@@ -66,21 +67,16 @@ export async function postWoodPiece(
       "max_price", 
       "plate_no", 
       "seller_id" 
+      "sequence_no",
     ) values (
       $1, 
       $2, 
       $3, 
       $4, 
-      $5
+      $5,
+      $6
     )`,
-    [
-      0,
-      0,
-      0,
-      0,
-      partialWoodPiece.seller_id,
-      // 1, // set it to first val in DB, so id=1
-    ]
+    [0, 0, 0, 0, partialWoodPiece.seller_id, 1]
   );
 
   return {
@@ -111,7 +107,8 @@ export async function patchWoodPiece(
       "length"=COALESCE($3, "length"), 
       "max_price"=COALESCE($4, "max_price"), 
       "plate_no"=COALESCE($5, "plate_no"),
-      "tree_species_id"=COALESCE($6, "tree_species_id")  
+      "tree_species_id"=COALESCE($6, "tree_species_id"),
+      "sequence_no" = COALESCE($7, "sequence_no")
     WHERE id=$1`,
     [
       woodPiece.id,
@@ -120,6 +117,7 @@ export async function patchWoodPiece(
       woodPiece.max_price,
       woodPiece.plate_no,
       woodPiece.tree_species_id,
+      woodPiece.sequence_no,
     ]
   );
 }

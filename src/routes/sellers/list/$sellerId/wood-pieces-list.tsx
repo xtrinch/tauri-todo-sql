@@ -48,6 +48,14 @@ function WoodPiecesList() {
           }),
       },
       {
+        accessorKey: "sequence_no",
+        header: () => "Sequence no.",
+        size: 80,
+        meta: {
+          type: "integer",
+        },
+      },
+      {
         accessorKey: "width",
         header: () => "Width",
         size: 80,

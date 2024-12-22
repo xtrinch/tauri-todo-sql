@@ -45,6 +45,12 @@ export const TableCell = <TableItem,>({
         val = 0;
       }
     }
+    if ((column.columnDef.meta as CustomColumnMeta)?.type === "integer") {
+      val = parseInt(val as string);
+      if (isNaN(val as number)) {
+        val = 0;
+      }
+    }
 
     return val;
   };
