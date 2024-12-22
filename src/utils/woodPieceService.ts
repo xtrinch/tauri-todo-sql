@@ -99,8 +99,8 @@ export async function patchWoodPiece(
       "width" = COALESCE($2, "width"), 
       "length"=COALESCE($3, "length"), 
       "max_price"=COALESCE($4, "max_price"), 
-      "plate_no"=COALESCE($5, "plate_no")  
-      -- "tree_species_id"=COALESCE($6, "tree_species_id")  
+      "plate_no"=COALESCE($5, "plate_no"),
+      "tree_species_id"=COALESCE($6, "tree_species_id")  
     WHERE id=$1`,
     [
       woodPiece.id,
@@ -108,7 +108,7 @@ export async function patchWoodPiece(
       woodPiece.length,
       woodPiece.max_price,
       woodPiece.plate_no,
-      // woodPiece.tree_species_id,
+      woodPiece.tree_species_id,
     ]
   );
 }
