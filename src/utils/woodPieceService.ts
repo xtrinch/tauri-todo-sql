@@ -136,7 +136,7 @@ export const useCreateWoodPieceMutation = (
   return useMutation({
     mutationFn: postWoodPiece,
     onSuccess: (woodPiece: WoodPiece) => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
       if (onSuccess) onSuccess(woodPiece);
     },
   });
@@ -148,7 +148,7 @@ export const useRemoveWoodPieceMutation = (
   return useMutation({
     mutationFn: removeWoodPiece,
     onSuccess: (woodPiece: WoodPiece) => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
       if (onSuccess) onSuccess(woodPiece);
     },
   });
@@ -159,7 +159,7 @@ export const useUpdateWoodPieceMutation = (onSuccess?: () => void) => {
     // mutationKey: ["wood_pieces", "update"],
     mutationFn: patchWoodPiece,
     onSuccess: () => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
       if (onSuccess) onSuccess();
     },
     gcTime: 1000 * 10,

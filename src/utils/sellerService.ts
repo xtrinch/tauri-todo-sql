@@ -83,7 +83,7 @@ export const useCreateSellerMutation = (
   return useMutation({
     mutationFn: postSeller,
     onSuccess: (seller: Seller) => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ["sellers"] });
       if (onSuccess) onSuccess(seller);
     },
   });
@@ -97,7 +97,7 @@ export const useUpdateSellerMutation = (
     mutationKey: ["sellers", "update", sellerId],
     mutationFn: patchSeller,
     onSuccess: () => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ["sellers"] });
       if (onSuccess) onSuccess();
     },
     gcTime: 1000 * 10,

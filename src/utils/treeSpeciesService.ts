@@ -99,7 +99,7 @@ export const useCreateTreeSpeciesMutation = (
   return useMutation({
     mutationFn: postTreeSpecies,
     onSuccess: (treeSpecies: TreeSpecies) => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ["tree_species"] });
       if (onSuccess) onSuccess(treeSpecies);
     },
   });
@@ -111,7 +111,7 @@ export const useRemoveTreeSpeciesMutation = (
   return useMutation({
     mutationFn: removeTreeSpecies,
     onSuccess: (treeSpecies: TreeSpecies) => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ["tree_species"] });
       if (onSuccess) onSuccess(treeSpecies);
     },
   });
@@ -122,7 +122,7 @@ export const useUpdateTreeSpeciesMutation = (onSuccess?: () => void) => {
     // mutationKey: ["tree_species", "update"],
     mutationFn: patchTreeSpecies,
     onSuccess: () => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ["tree_species"] });
       if (onSuccess) onSuccess();
     },
     gcTime: 1000 * 10,

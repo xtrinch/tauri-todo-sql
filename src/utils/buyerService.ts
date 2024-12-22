@@ -68,7 +68,7 @@ export const useCreateBuyerMutation = (onSuccess?: (buyer: Buyer) => void) => {
   return useMutation({
     mutationFn: postBuyer,
     onSuccess: (buyer: Buyer) => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ["buyers"] });
       if (onSuccess) onSuccess(buyer);
     },
   });
@@ -82,7 +82,7 @@ export const useUpdateBuyerMutation = (
     mutationKey: ["buyers", "update", buyerId],
     mutationFn: patchBuyer,
     onSuccess: () => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ["buyers"] });
       if (onSuccess) onSuccess();
     },
     gcTime: 1000 * 10,

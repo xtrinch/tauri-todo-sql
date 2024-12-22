@@ -26,6 +26,7 @@ export const Route = createFileRoute(
 });
 
 function WoodPiecesList() {
+  console.log("RENDER");
   // TODO: make sure this doesn't remount on cell change
   const treeSpeciesQuery = useSuspenseQuery(treeSpeciesQueryOptions({}));
   const treeSpeciesData = treeSpeciesQuery.data;
