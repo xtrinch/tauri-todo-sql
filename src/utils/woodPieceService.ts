@@ -104,10 +104,10 @@ export async function patchWoodPiece(
     `UPDATE "wood_pieces" 
     SET 
       "width" = COALESCE($2, "width"), 
-      "length"=COALESCE($3, "length"), 
-      "max_price"=COALESCE($4, "max_price"), 
-      "plate_no"=COALESCE($5, "plate_no"),
-      "tree_species_id"=COALESCE($6, "tree_species_id"),
+      "length" = COALESCE($3, "length"), 
+      "max_price" = COALESCE($4, "max_price"), 
+      "plate_no" = COALESCE($5, "plate_no"),
+      "tree_species_id" = COALESCE($6, "tree_species_id"),
       "sequence_no" = COALESCE($7, "sequence_no")
     WHERE id=$1`,
     [
@@ -154,7 +154,6 @@ export const useRemoveWoodPieceMutation = (
 
 export const useUpdateWoodPieceMutation = (onSuccess?: () => void) => {
   return useMutation({
-    // mutationKey: ["wood_pieces", "update"],
     mutationFn: patchWoodPiece,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });

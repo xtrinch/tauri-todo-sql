@@ -1,4 +1,5 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
+import { compact } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase } from "./database";
 
@@ -15,12 +16,16 @@ const ensureBuyers = async (opts: {
   sortBy?: "name" | "id" | "email";
 }) => {
   const db = await getDatabase();
-  const result = await db.select(`SELECT * from "buyers" order by $1`, [
-    opts.sortBy || "name",
-  ]);
+  const result = await db.select(
+    `SELECT * from "buyers" ${opts.filterBy ? `WHERE "name" LIKE lower($2)` : ""} order by $1`,
+    compact([
+      opts.sortBy || "name",
+      opts.filterBy ? `%${opts.filterBy}%` : undefined,
+    ])
+  );
 
-  const buyers = result as Buyer[];
-  return buyers;
+  const sellers = result as Buyer[];
+  return sellers;
 };
 
 export async function fetchBuyerById(id: number) {

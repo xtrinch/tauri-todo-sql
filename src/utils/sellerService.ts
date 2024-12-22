@@ -65,7 +65,12 @@ export async function patchSeller({
 }: PickAsRequired<Partial<Seller>, "id">) {
   const db = await getDatabase();
   await db.execute(
-    `UPDATE "sellers" SET "name" = COALESCE($2, "name"), "address_line1" = COALESCE($3, "address_line1"), "address_line2" = COALESCE($4, "address_line2") WHERE id = $1`,
+    `UPDATE "sellers" 
+      SET 
+        "name" = COALESCE($2, "name"), 
+        "address_line1" = COALESCE($3, "address_line1"), 
+        "address_line2" = COALESCE($4, "address_line2") 
+      WHERE id = $1`,
     [
       id,
       updatedSeller.name,
