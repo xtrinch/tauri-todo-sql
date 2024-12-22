@@ -1,5 +1,4 @@
 import { Column, Getter, Row, Table } from "@tanstack/react-table";
-import { info } from "@tauri-apps/plugin-log";
 import "choices.js/public/assets/styles/choices.css";
 import { useEffect, useState } from "react";
 import Select from "react-select";
@@ -23,8 +22,6 @@ export const DropdownCell = <TableItem,>({
   choices: Option[];
 }) => {
   const initialValue: number = getValue() as number;
-  info("INTIIAL VALLLL");
-  info(`${initialValue}`);
 
   const labelForValue = (val: number): string => {
     return choiceData.find((i) => i.value === val)?.label || "";
@@ -51,22 +48,15 @@ export const DropdownCell = <TableItem,>({
   const meta = table.options.meta;
 
   const onFocus = () => {
-    info("ON FOCUS");
     setValueOnFocus(value);
   };
 
   // When the input is blurred, we'll call our table meta's updateData function
   const onBlur = () => {
-    info("ON BLUR");
-    info(`${value}${valueOnFocus}`);
-
-    info("ON BLUR ROW:");
-    info(JSON.stringify(row.original));
     const data = {
       id: (row.original as { id: number }).id,
       [column.id]: value.value,
     };
-    info(JSON.stringify(data));
     // only call on edit if there's changes
     if (value !== valueOnFocus) {
       (meta as CustomTableMeta)?.onEdit(data);
@@ -86,13 +76,12 @@ export const DropdownCell = <TableItem,>({
         label: labelForValue(initialValue),
       });
     } else {
-      info("CLEARING VALUE");
       setValue(null);
     }
   }, [initialValue]);
 
   return (
-    <div className="min-w-[200px] bg-green" style={{ minWidth: "200px" }}>
+    <div className="w-full bg-green">
       <Select
         options={choiceOptions}
         isSearchable={true}

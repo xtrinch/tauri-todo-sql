@@ -1,5 +1,4 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
-import { info } from "@tauri-apps/plugin-log";
 import { queryClient } from "../main";
 import { getDatabase } from "./database";
 
@@ -17,8 +16,6 @@ const ensureSellers = async (opts: {
   filterBy?: string;
   sortBy?: "name" | "id" | "email";
 }) => {
-  info("Info");
-
   const db = await getDatabase();
   const result = await db.select(`SELECT * from "sellers" order by $1`, [
     opts.sortBy || "name",
@@ -32,7 +29,6 @@ export async function fetchSellerById(id: number) {
   const db = await getDatabase();
   const result = await db.select(`SELECT * from "sellers" where id = $1`, [id]);
   const seller = (result as Seller[])[0];
-  info(JSON.stringify(seller));
   return seller;
 }
 
@@ -52,7 +48,6 @@ export async function postSeller(
     `INSERT INTO "sellers" ("name", "address_line1", "address_line2") values ($1, $2, $3)`,
     [seller.name || "", seller.address_line1 || "", seller.address_line2 || ""]
   );
-  info(JSON.stringify(result));
 
   return {
     ...seller,
@@ -65,7 +60,6 @@ export async function patchSeller({
   ...updatedSeller
 }: PickAsRequired<Partial<Seller>, "id">) {
   const db = await getDatabase();
-  info(JSON.stringify(updatedSeller));
   await db.execute(
     `UPDATE "sellers" SET "name" = COALESCE($2, "name"), "address_line1" = COALESCE($3, "address_line1"), "address_line2" = COALESCE($4, "address_line2") WHERE id = $1`,
     [

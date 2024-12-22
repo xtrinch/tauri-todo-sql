@@ -1,5 +1,4 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
-import { info } from "@tauri-apps/plugin-log";
 import { compact } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase } from "./database";
@@ -32,8 +31,6 @@ const ensureWoodPieces = async (opts: {
     ${opts.sellerId ? `WHERE "seller_id"=$2` : ""}
     ORDER BY $1`;
   const result = await db.select(sql, params);
-  info("ENSURE????");
-  info(JSON.stringify(result));
 
   const woodPieces = result as WoodPiece[];
   return woodPieces;
@@ -62,7 +59,6 @@ export async function postWoodPiece(
   };
 
   const db = await getDatabase();
-  info(`${partialWoodPiece.seller_id}`);
   const result = await db.execute(
     `INSERT INTO "wood_pieces" (
       "length", 
@@ -70,14 +66,12 @@ export async function postWoodPiece(
       "max_price", 
       "plate_no", 
       "seller_id" 
-      ---"tree_species_id"
     ) values (
       $1, 
       $2, 
       $3, 
       $4, 
       $5
-      ---$6
     )`,
     [
       0,
@@ -88,8 +82,6 @@ export async function postWoodPiece(
       // 1, // set it to first val in DB, so id=1
     ]
   );
-  info("UNSERTTTTT");
-  info(JSON.stringify(result));
 
   return {
     ...woodPiece,
@@ -100,8 +92,6 @@ export async function postWoodPiece(
 export async function removeWoodPiece(
   partialWoodPiece: Partial<WoodPiece>
 ): Promise<WoodPiece> {
-  info("DEE:ET:EETET");
-  info(JSON.stringify(partialWoodPiece));
   const db = await getDatabase();
   await db.execute(`DELETE FROM "wood_pieces" WHERE "id" = $1`, [
     partialWoodPiece.id,
@@ -114,8 +104,6 @@ export async function patchWoodPiece(
   woodPiece: PickAsRequired<Partial<WoodPiece>, "id">
 ) {
   const db = await getDatabase();
-  info("UPD");
-  info(JSON.stringify(woodPiece));
   await db.execute(
     `UPDATE "wood_pieces" 
     SET 

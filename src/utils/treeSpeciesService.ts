@@ -1,5 +1,4 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
-import { info } from "@tauri-apps/plugin-log";
 import { compact } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase } from "./database";
@@ -27,7 +26,6 @@ const ensureTreeSpeciess = async (opts: {
   const db = await getDatabase();
   const params = compact([opts.sortBy || "id", opts.sellerId]);
   const sql = `SELECT * from "tree_species" ${opts.sellerId ? `WHERE "seller_id"=$2` : ""} ORDER BY $1`;
-  info(sql);
   const result = await db.select(sql, params);
 
   const treeSpecies = result as TreeSpecies[];
@@ -57,12 +55,10 @@ export async function postTreeSpecies(
   };
 
   const db = await getDatabase();
-  info(`${partialTreeSpecies.seller_id}`);
   const result = await db.execute(
     `INSERT INTO "tree_species" ("length", "width", "max_price", "plate_no", "seller_id") values ($1, $2, $3, $4, $5)`,
     [0, 0, 0, 0, partialTreeSpecies.seller_id]
   );
-  info(JSON.stringify(result));
 
   return {
     ...treeSpecies,

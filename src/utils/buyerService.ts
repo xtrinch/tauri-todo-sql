@@ -1,5 +1,4 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
-import { info } from "@tauri-apps/plugin-log";
 import { queryClient } from "../main";
 import { getDatabase } from "./database";
 
@@ -15,8 +14,6 @@ const ensureBuyers = async (opts: {
   filterBy?: string;
   sortBy?: "name" | "id" | "email";
 }) => {
-  info("Info");
-
   const db = await getDatabase();
   const result = await db.select(`SELECT * from "buyers" order by $1`, [
     opts.sortBy || "name",

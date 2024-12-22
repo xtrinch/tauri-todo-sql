@@ -5,7 +5,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { info } from "@tauri-apps/plugin-log";
 import { useMemo } from "react";
 import { CustomTable } from "../../../../components/CustomTable";
 import { DropdownCell } from "../../../../components/DropdownCell";
@@ -37,7 +36,6 @@ function WoodPiecesList() {
         accessorKey: "tree_species_id",
         header: () => "Tree species",
         size: 200,
-
         cell: (data) =>
           DropdownCell({
             ...data,
@@ -117,8 +115,6 @@ function WoodPiecesList() {
         createWoodPieceMutation.mutate({ seller_id: params.sellerId });
       },
       onRemove: (woodPieceId: number) => {
-        info("MUT");
-        info(`${woodPieceId}`);
         removeWoodPieceMutation.mutate({ id: woodPieceId });
       },
       onEdit: (data: WoodPiece) => {

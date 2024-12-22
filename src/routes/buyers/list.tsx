@@ -8,7 +8,6 @@ import {
   retainSearchParams,
   useNavigate,
 } from "@tanstack/react-router";
-import { info } from "@tauri-apps/plugin-log";
 import * as React from "react";
 import { z } from "zod";
 import { Spinner } from "../../components/Spinner";
@@ -31,7 +30,6 @@ export const Route = createFileRoute("/buyers/list")({
     middlewares: [retainSearchParams(["buyersView"])],
   },
   loader: (opts) => {
-    info("loader");
     opts.context.queryClient.ensureQueryData(buyersQueryOptions(opts.deps));
   },
   component: BuyersComponent,
