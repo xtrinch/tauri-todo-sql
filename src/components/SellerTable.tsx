@@ -62,7 +62,7 @@ export function SellerTable(data: { seller: Seller }) {
   );
   const navigate = useNavigate();
   const removeSellerMutation = useRemoveSellerMutation(() => {
-    navigate({ to: "/sellers/list" });
+    navigate({ to: "/sellers" });
   });
 
   const sellerData = useMemo(() => {

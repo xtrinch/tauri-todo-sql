@@ -66,8 +66,8 @@ export async function postWoodPiece(
       "width", 
       "max_price", 
       "plate_no", 
-      "seller_id" 
-      "sequence_no",
+      "seller_id",
+      "sequence_no"
     ) values (
       $1, 
       $2, 

@@ -6,22 +6,20 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
-import { CustomTable } from "../../../../components/CustomTable";
-import { DropdownCell } from "../../../../components/DropdownCell";
-import { RemoveCell } from "../../../../components/RemoveCell";
-import { TableCell } from "../../../../components/TableCell";
-import { treeSpeciesQueryOptions } from "../../../../utils/treeSpeciesService";
+import { CustomTable } from "../../../components/CustomTable";
+import { DropdownCell } from "../../../components/DropdownCell";
+import { RemoveCell } from "../../../components/RemoveCell";
+import { TableCell } from "../../../components/TableCell";
+import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
   useCreateWoodPieceMutation,
   useRemoveWoodPieceMutation,
   useUpdateWoodPieceMutation,
   WoodPiece,
   woodPiecesQueryOptions,
-} from "../../../../utils/woodPieceService";
+} from "../../../utils/woodPieceService";
 
-export const Route = createFileRoute(
-  "/sellers/list/$sellerId/wood-pieces-list"
-)({
+export const Route = createFileRoute("/sellers/$sellerId/wood-pieces-list")({
   component: WoodPiecesList,
 });
 

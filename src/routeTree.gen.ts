@@ -16,13 +16,12 @@ import { Route as LoginImport } from './routes/login'
 import { Route as BuyersImport } from './routes/buyers'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as IndexImport } from './routes/index'
-import { Route as SellersListImport } from './routes/sellers/list'
+import { Route as SellersSellerIdImport } from './routes/sellers/$sellerId'
 import { Route as BuyersNewImport } from './routes/buyers/new'
 import { Route as BuyersListImport } from './routes/buyers/list'
 import { Route as AuthProfileImport } from './routes/_auth.profile'
-import { Route as SellersListSellerIdImport } from './routes/sellers/list/$sellerId'
+import { Route as SellersSellerIdWoodPiecesListImport } from './routes/sellers/$sellerId/wood-pieces-list'
 import { Route as BuyersListBuyerIdImport } from './routes/buyers/list/$buyerId'
-import { Route as SellersListSellerIdWoodPiecesListImport } from './routes/sellers/list/$sellerId/wood-pieces-list'
 import { Route as BuyersListEditBuyerIdImport } from './routes/buyers/list/edit.$buyerId'
 
 // Create/Update Routes
@@ -56,9 +55,9 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const SellersListRoute = SellersListImport.update({
-  id: '/list',
-  path: '/list',
+const SellersSellerIdRoute = SellersSellerIdImport.update({
+  id: '/$sellerId',
+  path: '/$sellerId',
   getParentRoute: () => SellersRoute,
 } as any)
 
@@ -80,24 +79,18 @@ const AuthProfileRoute = AuthProfileImport.update({
   getParentRoute: () => AuthRoute,
 } as any)
 
-const SellersListSellerIdRoute = SellersListSellerIdImport.update({
-  id: '/$sellerId',
-  path: '/$sellerId',
-  getParentRoute: () => SellersListRoute,
-} as any)
+const SellersSellerIdWoodPiecesListRoute =
+  SellersSellerIdWoodPiecesListImport.update({
+    id: '/wood-pieces-list',
+    path: '/wood-pieces-list',
+    getParentRoute: () => SellersSellerIdRoute,
+  } as any)
 
 const BuyersListBuyerIdRoute = BuyersListBuyerIdImport.update({
   id: '/$buyerId',
   path: '/$buyerId',
   getParentRoute: () => BuyersListRoute,
 } as any)
-
-const SellersListSellerIdWoodPiecesListRoute =
-  SellersListSellerIdWoodPiecesListImport.update({
-    id: '/wood-pieces-list',
-    path: '/wood-pieces-list',
-    getParentRoute: () => SellersListSellerIdRoute,
-  } as any)
 
 const BuyersListEditBuyerIdRoute = BuyersListEditBuyerIdImport.update({
   id: '/edit/$buyerId',
@@ -165,11 +158,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyersNewImport
       parentRoute: typeof BuyersImport
     }
-    '/sellers/list': {
-      id: '/sellers/list'
-      path: '/list'
-      fullPath: '/sellers/list'
-      preLoaderRoute: typeof SellersListImport
+    '/sellers/$sellerId': {
+      id: '/sellers/$sellerId'
+      path: '/$sellerId'
+      fullPath: '/sellers/$sellerId'
+      preLoaderRoute: typeof SellersSellerIdImport
       parentRoute: typeof SellersImport
     }
     '/buyers/list/$buyerId': {
@@ -179,12 +172,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyersListBuyerIdImport
       parentRoute: typeof BuyersListImport
     }
-    '/sellers/list/$sellerId': {
-      id: '/sellers/list/$sellerId'
-      path: '/$sellerId'
-      fullPath: '/sellers/list/$sellerId'
-      preLoaderRoute: typeof SellersListSellerIdImport
-      parentRoute: typeof SellersListImport
+    '/sellers/$sellerId/wood-pieces-list': {
+      id: '/sellers/$sellerId/wood-pieces-list'
+      path: '/wood-pieces-list'
+      fullPath: '/sellers/$sellerId/wood-pieces-list'
+      preLoaderRoute: typeof SellersSellerIdWoodPiecesListImport
+      parentRoute: typeof SellersSellerIdImport
     }
     '/buyers/list/edit/$buyerId': {
       id: '/buyers/list/edit/$buyerId'
@@ -192,13 +185,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/buyers/list/edit/$buyerId'
       preLoaderRoute: typeof BuyersListEditBuyerIdImport
       parentRoute: typeof BuyersListImport
-    }
-    '/sellers/list/$sellerId/wood-pieces-list': {
-      id: '/sellers/list/$sellerId/wood-pieces-list'
-      path: '/wood-pieces-list'
-      fullPath: '/sellers/list/$sellerId/wood-pieces-list'
-      preLoaderRoute: typeof SellersListSellerIdWoodPiecesListImport
-      parentRoute: typeof SellersListSellerIdImport
     }
   }
 }
@@ -242,36 +228,24 @@ const BuyersRouteChildren: BuyersRouteChildren = {
 const BuyersRouteWithChildren =
   BuyersRoute._addFileChildren(BuyersRouteChildren)
 
-interface SellersListSellerIdRouteChildren {
-  SellersListSellerIdWoodPiecesListRoute: typeof SellersListSellerIdWoodPiecesListRoute
+interface SellersSellerIdRouteChildren {
+  SellersSellerIdWoodPiecesListRoute: typeof SellersSellerIdWoodPiecesListRoute
 }
 
-const SellersListSellerIdRouteChildren: SellersListSellerIdRouteChildren = {
-  SellersListSellerIdWoodPiecesListRoute:
-    SellersListSellerIdWoodPiecesListRoute,
+const SellersSellerIdRouteChildren: SellersSellerIdRouteChildren = {
+  SellersSellerIdWoodPiecesListRoute: SellersSellerIdWoodPiecesListRoute,
 }
 
-const SellersListSellerIdRouteWithChildren =
-  SellersListSellerIdRoute._addFileChildren(SellersListSellerIdRouteChildren)
-
-interface SellersListRouteChildren {
-  SellersListSellerIdRoute: typeof SellersListSellerIdRouteWithChildren
-}
-
-const SellersListRouteChildren: SellersListRouteChildren = {
-  SellersListSellerIdRoute: SellersListSellerIdRouteWithChildren,
-}
-
-const SellersListRouteWithChildren = SellersListRoute._addFileChildren(
-  SellersListRouteChildren,
+const SellersSellerIdRouteWithChildren = SellersSellerIdRoute._addFileChildren(
+  SellersSellerIdRouteChildren,
 )
 
 interface SellersRouteChildren {
-  SellersListRoute: typeof SellersListRouteWithChildren
+  SellersSellerIdRoute: typeof SellersSellerIdRouteWithChildren
 }
 
 const SellersRouteChildren: SellersRouteChildren = {
-  SellersListRoute: SellersListRouteWithChildren,
+  SellersSellerIdRoute: SellersSellerIdRouteWithChildren,
 }
 
 const SellersRouteWithChildren =
@@ -286,11 +260,10 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthProfileRoute
   '/buyers/list': typeof BuyersListRouteWithChildren
   '/buyers/new': typeof BuyersNewRoute
-  '/sellers/list': typeof SellersListRouteWithChildren
+  '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/buyers/list/$buyerId': typeof BuyersListBuyerIdRoute
-  '/sellers/list/$sellerId': typeof SellersListSellerIdRouteWithChildren
+  '/sellers/$sellerId/wood-pieces-list': typeof SellersSellerIdWoodPiecesListRoute
   '/buyers/list/edit/$buyerId': typeof BuyersListEditBuyerIdRoute
-  '/sellers/list/$sellerId/wood-pieces-list': typeof SellersListSellerIdWoodPiecesListRoute
 }
 
 export interface FileRoutesByTo {
@@ -302,11 +275,10 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthProfileRoute
   '/buyers/list': typeof BuyersListRouteWithChildren
   '/buyers/new': typeof BuyersNewRoute
-  '/sellers/list': typeof SellersListRouteWithChildren
+  '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/buyers/list/$buyerId': typeof BuyersListBuyerIdRoute
-  '/sellers/list/$sellerId': typeof SellersListSellerIdRouteWithChildren
+  '/sellers/$sellerId/wood-pieces-list': typeof SellersSellerIdWoodPiecesListRoute
   '/buyers/list/edit/$buyerId': typeof BuyersListEditBuyerIdRoute
-  '/sellers/list/$sellerId/wood-pieces-list': typeof SellersListSellerIdWoodPiecesListRoute
 }
 
 export interface FileRoutesById {
@@ -319,11 +291,10 @@ export interface FileRoutesById {
   '/_auth/profile': typeof AuthProfileRoute
   '/buyers/list': typeof BuyersListRouteWithChildren
   '/buyers/new': typeof BuyersNewRoute
-  '/sellers/list': typeof SellersListRouteWithChildren
+  '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/buyers/list/$buyerId': typeof BuyersListBuyerIdRoute
-  '/sellers/list/$sellerId': typeof SellersListSellerIdRouteWithChildren
+  '/sellers/$sellerId/wood-pieces-list': typeof SellersSellerIdWoodPiecesListRoute
   '/buyers/list/edit/$buyerId': typeof BuyersListEditBuyerIdRoute
-  '/sellers/list/$sellerId/wood-pieces-list': typeof SellersListSellerIdWoodPiecesListRoute
 }
 
 export interface FileRouteTypes {
@@ -337,11 +308,10 @@ export interface FileRouteTypes {
     | '/profile'
     | '/buyers/list'
     | '/buyers/new'
-    | '/sellers/list'
+    | '/sellers/$sellerId'
     | '/buyers/list/$buyerId'
-    | '/sellers/list/$sellerId'
+    | '/sellers/$sellerId/wood-pieces-list'
     | '/buyers/list/edit/$buyerId'
-    | '/sellers/list/$sellerId/wood-pieces-list'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -352,11 +322,10 @@ export interface FileRouteTypes {
     | '/profile'
     | '/buyers/list'
     | '/buyers/new'
-    | '/sellers/list'
+    | '/sellers/$sellerId'
     | '/buyers/list/$buyerId'
-    | '/sellers/list/$sellerId'
+    | '/sellers/$sellerId/wood-pieces-list'
     | '/buyers/list/edit/$buyerId'
-    | '/sellers/list/$sellerId/wood-pieces-list'
   id:
     | '__root__'
     | '/'
@@ -367,11 +336,10 @@ export interface FileRouteTypes {
     | '/_auth/profile'
     | '/buyers/list'
     | '/buyers/new'
-    | '/sellers/list'
+    | '/sellers/$sellerId'
     | '/buyers/list/$buyerId'
-    | '/sellers/list/$sellerId'
+    | '/sellers/$sellerId/wood-pieces-list'
     | '/buyers/list/edit/$buyerId'
-    | '/sellers/list/$sellerId/wood-pieces-list'
   fileRoutesById: FileRoutesById
 }
 
@@ -430,7 +398,7 @@ export const routeTree = rootRoute
     "/sellers": {
       "filePath": "sellers.tsx",
       "children": [
-        "/sellers/list"
+        "/sellers/$sellerId"
       ]
     },
     "/_auth/profile": {
@@ -449,31 +417,24 @@ export const routeTree = rootRoute
       "filePath": "buyers/new.tsx",
       "parent": "/buyers"
     },
-    "/sellers/list": {
-      "filePath": "sellers/list.tsx",
+    "/sellers/$sellerId": {
+      "filePath": "sellers/$sellerId.tsx",
       "parent": "/sellers",
       "children": [
-        "/sellers/list/$sellerId"
+        "/sellers/$sellerId/wood-pieces-list"
       ]
     },
     "/buyers/list/$buyerId": {
       "filePath": "buyers/list/$buyerId.tsx",
       "parent": "/buyers/list"
     },
-    "/sellers/list/$sellerId": {
-      "filePath": "sellers/list/$sellerId.tsx",
-      "parent": "/sellers/list",
-      "children": [
-        "/sellers/list/$sellerId/wood-pieces-list"
-      ]
+    "/sellers/$sellerId/wood-pieces-list": {
+      "filePath": "sellers/$sellerId/wood-pieces-list.tsx",
+      "parent": "/sellers/$sellerId"
     },
     "/buyers/list/edit/$buyerId": {
       "filePath": "buyers/list/edit.$buyerId.tsx",
       "parent": "/buyers/list"
-    },
-    "/sellers/list/$sellerId/wood-pieces-list": {
-      "filePath": "sellers/list/$sellerId/wood-pieces-list.tsx",
-      "parent": "/sellers/list/$sellerId"
     }
   }
 }
