@@ -11,10 +11,6 @@ export const Route = createFileRoute("/sellers/list/$sellerId")({
     }),
     stringify: ({ sellerId }) => ({ sellerId: `${sellerId}` }),
   },
-  loader: (opts) =>
-    opts.context.queryClient.ensureQueryData(
-      sellerQueryOptions(opts.params.sellerId)
-    ),
   component: SellerComponent,
   beforeLoad: ({ location, params }) => {
     const shouldRedirect = [`/sellers/list/${params.sellerId}`].includes(

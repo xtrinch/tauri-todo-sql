@@ -28,21 +28,21 @@ export const DropdownCell = <TableItem,>({
   };
 
   // We need to keep and update the state of the cell normally
-  const [value, setValue] = useState<Option>(
+  const [value, setValue] = useState<Option | null>(
     initialValue
       ? {
           value: initialValue,
           label: labelForValue(initialValue),
         }
-      : undefined
+      : null
   );
-  const [valueOnFocus, setValueOnFocus] = useState<Option>(
+  const [valueOnFocus, setValueOnFocus] = useState<Option | null>(
     initialValue
       ? {
           value: initialValue,
           label: labelForValue(initialValue),
         }
-      : undefined
+      : null
   );
 
   const meta = table.options.meta;
@@ -55,7 +55,7 @@ export const DropdownCell = <TableItem,>({
   const onBlur = () => {
     const data = {
       id: (row.original as { id: number }).id,
-      [column.id]: value.value,
+      [column.id]: value?.value,
     };
     // only call on edit if there's changes
     if (value !== valueOnFocus) {

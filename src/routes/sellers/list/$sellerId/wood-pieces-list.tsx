@@ -26,8 +26,9 @@ export const Route = createFileRoute(
 });
 
 function WoodPiecesList() {
-  console.log("RENDER");
-  // TODO: make sure this doesn't remount on cell change
+  const params = Route.useParams();
+
+  // TODO: make sure this doesn't remount on window unfocs/focus
   const treeSpeciesQuery = useSuspenseQuery(treeSpeciesQueryOptions({}));
   const treeSpeciesData = treeSpeciesQuery.data;
 
@@ -94,7 +95,6 @@ function WoodPiecesList() {
   const woodPiecesQuery = useSuspenseQuery(
     woodPiecesQueryOptions({ ...Route.useLoaderDeps(), ...Route.useParams() })
   );
-  const params = Route.useParams();
   const woodPieces = woodPiecesQuery.data;
 
   const createWoodPieceMutation = useCreateWoodPieceMutation();
