@@ -16,7 +16,6 @@ import { Route as LoginImport } from './routes/login'
 import { Route as BuyersImport } from './routes/buyers'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as IndexImport } from './routes/index'
-import { Route as SellersNewImport } from './routes/sellers/new'
 import { Route as SellersListImport } from './routes/sellers/list'
 import { Route as BuyersNewImport } from './routes/buyers/new'
 import { Route as BuyersListImport } from './routes/buyers/list'
@@ -55,12 +54,6 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any)
-
-const SellersNewRoute = SellersNewImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => SellersRoute,
 } as any)
 
 const SellersListRoute = SellersListImport.update({
@@ -179,13 +172,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SellersListImport
       parentRoute: typeof SellersImport
     }
-    '/sellers/new': {
-      id: '/sellers/new'
-      path: '/new'
-      fullPath: '/sellers/new'
-      preLoaderRoute: typeof SellersNewImport
-      parentRoute: typeof SellersImport
-    }
     '/buyers/list/$buyerId': {
       id: '/buyers/list/$buyerId'
       path: '/$buyerId'
@@ -282,12 +268,10 @@ const SellersListRouteWithChildren = SellersListRoute._addFileChildren(
 
 interface SellersRouteChildren {
   SellersListRoute: typeof SellersListRouteWithChildren
-  SellersNewRoute: typeof SellersNewRoute
 }
 
 const SellersRouteChildren: SellersRouteChildren = {
   SellersListRoute: SellersListRouteWithChildren,
-  SellersNewRoute: SellersNewRoute,
 }
 
 const SellersRouteWithChildren =
@@ -303,7 +287,6 @@ export interface FileRoutesByFullPath {
   '/buyers/list': typeof BuyersListRouteWithChildren
   '/buyers/new': typeof BuyersNewRoute
   '/sellers/list': typeof SellersListRouteWithChildren
-  '/sellers/new': typeof SellersNewRoute
   '/buyers/list/$buyerId': typeof BuyersListBuyerIdRoute
   '/sellers/list/$sellerId': typeof SellersListSellerIdRouteWithChildren
   '/buyers/list/edit/$buyerId': typeof BuyersListEditBuyerIdRoute
@@ -320,7 +303,6 @@ export interface FileRoutesByTo {
   '/buyers/list': typeof BuyersListRouteWithChildren
   '/buyers/new': typeof BuyersNewRoute
   '/sellers/list': typeof SellersListRouteWithChildren
-  '/sellers/new': typeof SellersNewRoute
   '/buyers/list/$buyerId': typeof BuyersListBuyerIdRoute
   '/sellers/list/$sellerId': typeof SellersListSellerIdRouteWithChildren
   '/buyers/list/edit/$buyerId': typeof BuyersListEditBuyerIdRoute
@@ -338,7 +320,6 @@ export interface FileRoutesById {
   '/buyers/list': typeof BuyersListRouteWithChildren
   '/buyers/new': typeof BuyersNewRoute
   '/sellers/list': typeof SellersListRouteWithChildren
-  '/sellers/new': typeof SellersNewRoute
   '/buyers/list/$buyerId': typeof BuyersListBuyerIdRoute
   '/sellers/list/$sellerId': typeof SellersListSellerIdRouteWithChildren
   '/buyers/list/edit/$buyerId': typeof BuyersListEditBuyerIdRoute
@@ -357,7 +338,6 @@ export interface FileRouteTypes {
     | '/buyers/list'
     | '/buyers/new'
     | '/sellers/list'
-    | '/sellers/new'
     | '/buyers/list/$buyerId'
     | '/sellers/list/$sellerId'
     | '/buyers/list/edit/$buyerId'
@@ -373,7 +353,6 @@ export interface FileRouteTypes {
     | '/buyers/list'
     | '/buyers/new'
     | '/sellers/list'
-    | '/sellers/new'
     | '/buyers/list/$buyerId'
     | '/sellers/list/$sellerId'
     | '/buyers/list/edit/$buyerId'
@@ -389,7 +368,6 @@ export interface FileRouteTypes {
     | '/buyers/list'
     | '/buyers/new'
     | '/sellers/list'
-    | '/sellers/new'
     | '/buyers/list/$buyerId'
     | '/sellers/list/$sellerId'
     | '/buyers/list/edit/$buyerId'
@@ -452,8 +430,7 @@ export const routeTree = rootRoute
     "/sellers": {
       "filePath": "sellers.tsx",
       "children": [
-        "/sellers/list",
-        "/sellers/new"
+        "/sellers/list"
       ]
     },
     "/_auth/profile": {
@@ -478,10 +455,6 @@ export const routeTree = rootRoute
       "children": [
         "/sellers/list/$sellerId"
       ]
-    },
-    "/sellers/new": {
-      "filePath": "sellers/new.tsx",
-      "parent": "/sellers"
     },
     "/buyers/list/$buyerId": {
       "filePath": "buyers/list/$buyerId.tsx",

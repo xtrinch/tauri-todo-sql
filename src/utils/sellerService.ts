@@ -1,5 +1,4 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
-import { info } from "@tauri-apps/plugin-log";
 import { compact } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase } from "./database";
@@ -17,8 +16,6 @@ const ensureSellers = async (opts: {
   filterBy?: string;
   sortBy?: "name" | "id" | "email";
 }) => {
-  info("FETCH");
-  info(JSON.stringify(opts));
   const db = await getDatabase();
   const result = await db.select(
     `SELECT * from "sellers" ${opts.filterBy ? `WHERE "name" LIKE lower($2)` : ""} order by $1`,
@@ -27,7 +24,6 @@ const ensureSellers = async (opts: {
       opts.filterBy ? `%${opts.filterBy}%` : undefined,
     ])
   );
-  info(JSON.stringify(result));
 
   const sellers = result as Seller[];
   return sellers;
@@ -125,25 +121,9 @@ export async function removeSeller(
   partialWoodPiece: Partial<Seller>
 ): Promise<Seller> {
   const db = await getDatabase();
-  info("REMOVE");
-  info(JSON.stringify(partialWoodPiece));
-  const resp = await db.select(`SELECT COUNT(*) FROM "sellers" WHERE ID = $1`, [
+  await db.execute(`DELETE FROM "sellers" WHERE "id" = $1`, [
     partialWoodPiece.id,
   ]);
-  info(JSON.stringify(resp));
-  try {
-    await db.execute(`DELETE FROM "sellers" WHERE "id" = $1`, [
-      partialWoodPiece.id,
-    ]);
-  } catch (e) {
-    info(JSON.stringify(e));
-  }
-  info("AFTER");
-  const resp1 = await db.select(
-    `SELECT COUNT(*) FROM "sellers" WHERE ID = $1`,
-    [partialWoodPiece.id]
-  );
-  info(JSON.stringify(resp1));
 
   return partialWoodPiece as Seller;
 }
