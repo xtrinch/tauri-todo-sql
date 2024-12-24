@@ -126,7 +126,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             CREATE TRIGGER IF NOT EXISTS {0}_insert AFTER INSERT ON {0}
             BEGIN
                 INSERT INTO undolog (sql) VALUES (
-                    'DELETE FROM {0} WHERE id=' || NEW.id
+                    'DELETE FROM {0} WHERE id=' || quote(NEW.id)
                 );
             END;
 
@@ -142,7 +142,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             CREATE TRIGGER IF NOT EXISTS {0}_update AFTER UPDATE ON {0}
             BEGIN
                 INSERT INTO undolog (sql) VALUES (
-                    'UPDATE {0} SET {3} WHERE id=' || OLD.id
+                    'UPDATE {0} SET {3} WHERE id=' || quote(OLD.id)
                 );
             END;
             ",
@@ -196,21 +196,21 @@ fn get_column_names(table: &str) -> &str {
     }
 }
 
-// Helper function to generate placeholders for old values
+// Helper function to generate placeholders for old values with proper escaping
 fn get_column_placeholders(table: &str, prefix: &str) -> String {
     get_column_names(table)
         .split(", ")
-        .map(|col| format!("{}.{}", prefix, col)) // Generate strings for each column
+        .map(|col| format!("quote({}.{})", prefix, col)) // Apply quote() to each column reference
         .collect::<Vec<String>>() // Collect into a Vec<String>
         .join(", ") // Join with commas
 }
 
-// Helper function to generate update set statements
+// Helper function to generate update set statements with proper escaping
 fn get_update_set_statements(table: &str) -> String {
     get_column_names(table)
         .split(", ")
-        .filter(|col| *col != "id") // Exclude the primary key
-        .map(|col| format!("{}=' || OLD.{} || '", col, col)) // Generate strings for each column
+        .filter(|col| *col != "id") // Exclude the primary key column
+        .map(|col| format!("{}=' || quote(OLD.{}) || '", col, col)) // Apply quote() to OLD values
         .collect::<Vec<String>>() // Collect into a Vec<String>
         .join(", ") // Join with commas
 }

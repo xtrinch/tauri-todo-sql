@@ -80,6 +80,7 @@ export const TableCell = <TableItem,>({
   const onChange = (e: any) => {
     setValue(e.target.value);
   };
+
   // If the initialValue is changed external, sync it up with our state
   useEffect(() => {
     setValue(getFormattedVal(initialValue || ""));

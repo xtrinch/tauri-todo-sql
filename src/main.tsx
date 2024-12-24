@@ -1,19 +1,16 @@
-import * as React from 'react'
-import ReactDOM from 'react-dom/client'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   ErrorComponent,
   RouterProvider,
   createRouter,
-} from '@tanstack/react-router'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { auth } from './utils/auth'
-import { Spinner } from './components/Spinner'
-import { routeTree } from './routeTree.gen'
-import { useSessionStorage } from './hooks/useSessionStorage'
+} from "@tanstack/react-router";
+import ReactDOM from "react-dom/client";
+import { Spinner } from "./components/Spinner";
+import "./index.css";
+import { routeTree } from "./routeTree.gen";
+import { auth } from "./utils/auth";
 
-//
-
-export const queryClient = new QueryClient()
+export const queryClient = new QueryClient();
 
 const router = createRouter({
   routeTree,
@@ -27,47 +24,40 @@ const router = createRouter({
     auth: undefined!, // We'll inject this when we render
     queryClient,
   },
-  defaultPreload: 'intent',
+  defaultPreload: "intent",
   // Since we're using React Query, we don't want loader calls to ever be stale
   // This will ensure that the loader is always called when the route is preloaded or visited
   defaultPreloadStaleTime: 0,
-})
+});
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface Register {
-    router: typeof router
+    router: typeof router;
   }
 }
 
 function App() {
-  // This stuff is just to tweak our sandbox setup in real-time
-  const [loaderDelay, setLoaderDelay] = useSessionStorage('loaderDelay', 500)
-  const [pendingMs, setPendingMs] = useSessionStorage('pendingMs', 1000)
-  const [pendingMinMs, setPendingMinMs] = useSessionStorage('pendingMinMs', 500)
-
   return (
     <>
       <RouterProvider
         router={router}
         defaultPreload="intent"
-        defaultPendingMs={pendingMs}
-        defaultPendingMinMs={pendingMinMs}
+        defaultPendingMs={0}
+        defaultPendingMinMs={0}
         context={{
           auth,
         }}
       />
     </>
-  )
+  );
 }
 
-const rootElement = document.getElementById('app')!
+const rootElement = document.getElementById("app")!;
 if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement)
+  const root = ReactDOM.createRoot(rootElement);
   root.render(
-    // <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <App />
-    </QueryClientProvider>,
-    // </React.StrictMode>
-  )
+    </QueryClientProvider>
+  );
 }

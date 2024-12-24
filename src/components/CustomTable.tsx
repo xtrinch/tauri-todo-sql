@@ -52,7 +52,10 @@ export function CustomTable<TableItem>({ table }: { table: Table<TableItem> }) {
       {meta?.onAdd && (
         <tfoot>
           <tr>
-            <th colSpan={table.getCenterLeafColumns().length} align="right">
+            <th
+              colSpan={table.getCenterLeafColumns().length}
+              className="text-right"
+            >
               <FooterAddCell table={table} />
             </th>
           </tr>

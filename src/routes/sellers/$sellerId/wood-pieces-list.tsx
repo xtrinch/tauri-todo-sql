@@ -47,7 +47,7 @@ function WoodPiecesList() {
       },
       {
         accessorKey: "sequence_no",
-        header: () => "Sequence no.",
+        header: () => "Seq. no.",
         size: 80,
         meta: {
           type: "integer",
@@ -88,6 +88,7 @@ function WoodPiecesList() {
       {
         id: "1",
         header: () => "",
+        size: 45,
         accessorFn: () => 1,
         meta: {
           readonly: true,
