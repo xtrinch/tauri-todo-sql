@@ -19,7 +19,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
     // Prepare the output SQL statement
     let mut sql_statement = String::from(
-        "INSERT INTO tree_species (name, latin_name) VALUES\n"
+        "INSERT INTO tree_species (tree_species_name, latin_name) VALUES\n"
     );
 
     // Iterate through the CSV records
@@ -49,7 +49,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         "sellers",
         "tree_species",
         "wood_pieces",
-        "wood_piece_offer",
+        "wood_piece_offers",
     ];
 
     // Migrations with triggers for all tables
@@ -71,19 +71,19 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         let table_creation_sql = match *table {
             "buyers" => "CREATE TABLE IF NOT EXISTS buyers (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                name VARCHAR, 
+                buyer_name VARCHAR, 
                 address_line1 VARCHAR, 
                 address_line2 VARCHAR
             );",
             "sellers" => "CREATE TABLE IF NOT EXISTS sellers (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                name VARCHAR, 
+                seller_name VARCHAR, 
                 address_line1 VARCHAR, 
                 address_line2 VARCHAR
             );",
             "tree_species" => "CREATE TABLE IF NOT EXISTS tree_species (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                name VARCHAR, 
+                tree_species_name VARCHAR, 
                 latin_name VARCHAR
             );",
             "wood_pieces" => "CREATE TABLE IF NOT EXISTS wood_pieces (
@@ -92,14 +92,13 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 sequence_no INTEGER,
                 width REAL, 
                 volume REAL, 
-                max_price REAL, 
                 plate_no VARCHAR,
                 seller_id INTEGER,
                 tree_species_id INTEGER,
                 FOREIGN KEY(seller_id) REFERENCES sellers(id) ON DELETE CASCADE,
                 FOREIGN KEY(tree_species_id) REFERENCES tree_species(id)
             );",
-            "wood_piece_offer" => "CREATE TABLE IF NOT EXISTS wood_piece_offer (
+            "wood_piece_offers" => "CREATE TABLE IF NOT EXISTS wood_piece_offers (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 offered_price REAL, 
                 wood_piece_id INTEGER,
@@ -119,7 +118,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             kind: MigrationKind::Up,
         });
 
-        let descriptionTrigger = Box::leak(format!("add_triggers_for_{}", table).into_boxed_str());
+        let description_trigger = Box::leak(format!("add_triggers_for_{}", table).into_boxed_str());
         let sql = Box::leak(format!(
             "
             -- INSERT Trigger
@@ -155,7 +154,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         // Add triggers for this table
         migrations.push(Migration {
             version: (i + 10) as i64,
-            description: descriptionTrigger,
+            description: description_trigger,
             sql: sql,
             kind: MigrationKind::Up,
         });
@@ -187,11 +186,11 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 // Helper function to generate column names for tables
 fn get_column_names(table: &str) -> &str {
     match table {
-        "buyers" => "name, address_line1, address_line2",
-        "sellers" => "name, address_line1, address_line2",
-        "tree_species" => "name, latin_name",
-        "wood_pieces" => "length, sequence_no, width, volume, max_price, plate_no, seller_id, tree_species_id",
-        "wood_piece_offer" => "offered_price, wood_piece_id, buyer_id",
+        "buyers" => "buyer_name, address_line1, address_line2",
+        "sellers" => "seller_name, address_line1, address_line2",
+        "tree_species" => "tree_species_name, latin_name",
+        "wood_pieces" => "length, sequence_no, width, volume, plate_no, seller_id, tree_species_id",
+        "wood_piece_offers" => "offered_price, wood_piece_id, buyer_id",
         _ => "",
     }
 }

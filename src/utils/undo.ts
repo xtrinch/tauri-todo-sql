@@ -1,13 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import { info } from "@tauri-apps/plugin-log";
 import { getDatabase } from "./database";
 
 export const useUndo = (onSuccess: () => void) => {
   return useMutation({
     onSuccess: onSuccess,
-    onError: (e) => {
-      info(JSON.stringify(e));
-    },
     mutationFn: async () => {
       const db = await getDatabase();
 
@@ -21,7 +17,6 @@ export const useUndo = (onSuccess: () => void) => {
       }
 
       const { seq, sql } = lastUndo[0];
-      info(sql);
 
       // Execute the undo SQL
       await db.execute(sql);

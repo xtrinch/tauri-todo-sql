@@ -16,50 +16,50 @@ import { CustomTable } from "../../components/CustomTable";
 import { RemoveCell } from "../../components/RemoveCell";
 import { TableCell } from "../../components/TableCell";
 import {
-  Seller,
-  sellerQueryOptions,
-  useRemoveSellerMutation,
-  useUpdateSellerMutation,
-} from "../../utils/sellerService";
+  Buyer,
+  buyerQueryOptions,
+  useRemoveBuyerMutation,
+  useUpdateBuyerMutation,
+} from "../../utils/buyerService";
 
-export const Route = createFileRoute("/sellers/$sellerId")({
+export const Route = createFileRoute("/buyers/$buyerId")({
   params: {
     parse: (params) => ({
-      sellerId: z.number().int().parse(Number(params.sellerId)),
+      buyerId: z.number().int().parse(Number(params.buyerId)),
     }),
-    stringify: ({ sellerId }) => ({ sellerId: `${sellerId}` }),
+    stringify: ({ buyerId }) => ({ buyerId: `${buyerId}` }),
   },
-  component: SellerComponent,
+  component: BuyerComponent,
   beforeLoad: ({ location, params }) => {
-    const shouldRedirect = [`/sellers/${params.sellerId}`].includes(
+    const shouldRedirect = [`/buyers/${params.buyerId}`].includes(
       location.pathname
     );
 
     if (shouldRedirect) {
       redirect({
-        to: "/sellers/$sellerId/wood-pieces-list",
+        to: "/buyers/$buyerId/wood-piece-offers-list",
         throw: true,
-        params: { sellerId: params.sellerId },
+        params: { buyerId: params.buyerId },
       });
     }
   },
 });
 
-function SellerComponent() {
+function BuyerComponent() {
   const params = Route.useParams();
-  const sellerQuery = useSuspenseQuery(sellerQueryOptions(params.sellerId));
-  const seller = sellerQuery.data;
+  const buyerQuery = useSuspenseQuery(buyerQueryOptions(params.buyerId));
+  const buyer = buyerQuery.data;
 
-  const defaultColumn: Partial<ColumnDef<Seller>> = {
+  const defaultColumn: Partial<ColumnDef<Buyer>> = {
     cell: TableCell,
   };
 
-  const updateSellerMutation = useUpdateSellerMutation(seller.id, () => {});
+  const updateBuyerMutation = useUpdateBuyerMutation(buyer.id, () => {});
 
-  const columns = useMemo<ColumnDef<Seller>[]>(
+  const columns = useMemo<ColumnDef<Buyer>[]>(
     () => [
       {
-        accessorKey: "seller_name",
+        accessorKey: "buyer_name",
         header: () => "Name",
         meta: {},
         size: 200,
@@ -89,34 +89,34 @@ function SellerComponent() {
     []
   );
   const navigate = useNavigate();
-  const removeSellerMutation = useRemoveSellerMutation(() => {
-    navigate({ to: "/sellers" });
+  const removeBuyerMutation = useRemoveBuyerMutation(() => {
+    navigate({ to: "/buyers" });
   });
 
-  const sellerData = useMemo(() => {
-    return [seller];
-  }, [JSON.stringify(seller)]);
+  const buyerData = useMemo(() => {
+    return [buyer];
+  }, [JSON.stringify(buyer)]);
 
   const table = useReactTable({
-    data: sellerData,
+    data: buyerData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     defaultColumn,
     meta: {
-      onEdit: (data: Seller) => {
-        updateSellerMutation.mutate(data);
+      onEdit: (data: Buyer) => {
+        updateBuyerMutation.mutate(data);
       },
       onRemove: (woodPieceId: number) => {
-        removeSellerMutation.mutate({ id: woodPieceId });
+        removeBuyerMutation.mutate({ id: woodPieceId });
       },
     },
   });
 
   return (
     <div className="flex flex-col space-y-3 p-3">
-      <h3>Seller</h3>
+      <h3>Buyer</h3>
       <CustomTable table={table} />
-      <h3>Wood pieces</h3>
+      <h3>Wood piece offers</h3>
       <Outlet />
     </div>
   );

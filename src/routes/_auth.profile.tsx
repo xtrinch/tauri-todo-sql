@@ -1,12 +1,11 @@
-import * as React from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/_auth/profile')({
+export const Route = createFileRoute("/_auth/profile")({
   component: ProfileComponent,
-})
+});
 
 function ProfileComponent() {
-  const { username } = Route.useRouteContext()
+  const { username } = Route.useRouteContext();
 
   return (
     <div className="p-2 space-y-2">
@@ -14,5 +13,5 @@ function ProfileComponent() {
         Username:<strong>{username}</strong>
       </div>
     </div>
-  )
+  );
 }

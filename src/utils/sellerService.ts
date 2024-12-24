@@ -1,6 +1,4 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
-import { info } from "@tauri-apps/plugin-log";
-import { compact } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase } from "./database";
 type PickAsRequired<TValue, TKey extends keyof TValue> = Omit<TValue, TKey> &
@@ -8,28 +6,20 @@ type PickAsRequired<TValue, TKey extends keyof TValue> = Omit<TValue, TKey> &
 
 export type Seller = {
   id: number;
-  name: string;
+  seller_name: string;
   address_line1: string;
   address_line2: string;
 };
 
 const ensureSellers = async (opts: {
   filterBy?: string;
-  sortBy?: "name" | "id" | "email";
+  sortBy?: "seller_name" | "id" | "email";
   sortDirection?: "DESC" | "ASC";
 }) => {
   const db = await getDatabase();
-  info(
-    JSON.stringify(
-      compact([
-        opts.sortBy || "name",
-        opts.filterBy ? `%${opts.filterBy}%` : undefined,
-      ])
-    )
-  );
   const result = await db.select(
-    `SELECT * from "sellers" ${opts.filterBy ? `WHERE "name" LIKE lower($1)` : ""} 
-    ORDER BY ${opts.sortBy || "name"} ${opts.sortDirection || "DESC"}`,
+    `SELECT * from "sellers" ${opts.filterBy ? `WHERE "seller_name" LIKE lower($1)` : ""} 
+    ORDER BY ${opts.sortBy || "seller_name"} ${opts.sortDirection || "DESC"}`,
     [opts.filterBy ? `%${opts.filterBy}%` : undefined]
   );
 
@@ -47,18 +37,24 @@ export async function fetchSellerById(id: number) {
 export async function postSeller(
   partialSeller: Partial<Seller>
 ): Promise<Seller> {
-  if (partialSeller.name?.includes("error")) {
+  if (partialSeller.seller_name?.includes("error")) {
     throw new Error("Ouch!");
   }
 
   const seller: Partial<Seller> = {
-    name: partialSeller.name ?? `New Seller ${String(Date.now()).slice(0, 5)}`,
+    seller_name:
+      partialSeller.seller_name ??
+      `New Seller ${String(Date.now()).slice(0, 5)}`,
   };
 
   const db = await getDatabase();
   const result = await db.execute(
-    `INSERT INTO "sellers" ("name", "address_line1", "address_line2") values ($1, $2, $3)`,
-    [seller.name || "", seller.address_line1 || "", seller.address_line2 || ""]
+    `INSERT INTO "sellers" ("seller_name", "address_line1", "address_line2") values ($1, $2, $3)`,
+    [
+      seller.seller_name || "",
+      seller.address_line1 || "",
+      seller.address_line2 || "",
+    ]
   );
 
   return {
@@ -75,13 +71,13 @@ export async function patchSeller({
   await db.execute(
     `UPDATE "sellers" 
       SET 
-        "name" = COALESCE($2, "name"), 
+        "seller_name" = COALESCE($2, "seller_name"), 
         "address_line1" = COALESCE($3, "address_line1"), 
         "address_line2" = COALESCE($4, "address_line2") 
       WHERE id = $1`,
     [
       id,
-      updatedSeller.name,
+      updatedSeller.seller_name,
       updatedSeller.address_line1,
       updatedSeller.address_line2,
     ]
@@ -123,7 +119,7 @@ export const useUpdateSellerMutation = (
 
 export const sellersQueryOptions = (opts: {
   filterBy?: string;
-  sortBy?: "name" | "id" | "email";
+  sortBy?: "seller_name" | "id" | "email";
   sortDirection?: "DESC" | "ASC";
 }) =>
   queryOptions({

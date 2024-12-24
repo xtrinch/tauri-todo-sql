@@ -9,7 +9,7 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import * as React from "react";
-import Select from "react-select";
+import Select, { Options } from "react-select";
 import { z } from "zod";
 import { Spinner } from "../components/Spinner";
 import {
@@ -18,14 +18,14 @@ import {
   useCreateSellerMutation,
 } from "../utils/sellerService";
 
-type SellersViewSortBy = "name" | "id";
-const sortDirections = { name: "ASC", id: "DESC" };
+type SellersViewSortBy = "seller_name" | "id";
+const sortDirections = { seller_name: "ASC", id: "DESC" };
 
 export const Route = createFileRoute("/sellers")({
   validateSearch: z.object({
     sellersView: z
       .object({
-        sortBy: z.enum(["name", "id"]).optional(),
+        sortBy: z.enum(["seller_name", "id"]).optional(),
         filterBy: z.string().optional(),
       })
       .optional(),
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/sellers")({
 function SellersComponent() {
   const navigate = useNavigate({ from: Route.fullPath });
   const { sellersView } = Route.useSearch();
-  const sortBy = sellersView?.sortBy ?? "name";
+  const sortBy = sellersView?.sortBy ?? "seller_name";
   const filterBy = sellersView?.filterBy;
   const sortDirection = sortDirections[sortBy];
 
@@ -73,7 +73,7 @@ function SellersComponent() {
 
   const onAdd = () => {
     createSellerMutation.mutate({
-      name: "New seller",
+      seller_name: "New seller",
     });
   };
 
@@ -113,21 +113,25 @@ function SellersComponent() {
     };
   }, [filterDraft]);
 
+  const options = [
+    { value: "seller_name", label: "name" },
+    { value: "id", label: "id" },
+  ] as Options<{ value: any; label: any }>;
+
   return (
     <div className="flex-1 flex">
       <div className="divide-y">
         <div className="py-2 px-3 flex gap-2 items-center bg-gray-100">
           <div>Sort:</div>
           <Select
-            options={[
-              { value: "name", label: "name" },
-              { value: "id", label: "id" },
-            ]}
             isSearchable={true}
             onChange={(newValue) =>
               setSortBy(newValue?.value as SellersViewSortBy)
             }
-            value={{ value: sortBy, label: sortBy }}
+            value={{
+              value: sortBy,
+              label: options.find((v) => v.value === sortBy)?.label,
+            }}
           />
         </div>
         <div className="py-2 px-3 flex gap-2 items-center bg-gray-100">
@@ -158,7 +162,7 @@ function SellersComponent() {
                 activeProps={{ className: `font-bold bg-gray-100` }}
               >
                 <pre className="text-sm">
-                  {seller.name}{" "}
+                  {seller.seller_name}{" "}
                   <MatchRoute
                     to="/sellers/$sellerId"
                     search={{

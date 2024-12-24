@@ -8,24 +8,17 @@ type PickAsRequired<TValue, TKey extends keyof TValue> = Omit<TValue, TKey> &
 
 export type TreeSpecies = {
   id: number;
-  name: string;
-  seller_id: number;
-  tree_species_id: number;
-  length: number;
-  width: number;
-  volume: number;
-  max_price: number;
-  plate_no: number;
+  tree_species_name: string;
+  latin_name: string;
 };
 
-const ensureTreeSpeciess = async (opts: {
-  sellerId?: number;
+const ensureTreeSpecies = async (opts: {
   filterBy?: string;
   sortBy?: "name" | "id" | "email";
 }) => {
   const db = await getDatabase();
-  const params = compact([opts.sortBy || "id", opts.sellerId]);
-  const sql = `SELECT * from "tree_species" ${opts.sellerId ? `WHERE "seller_id"=$2` : ""} ORDER BY $1`;
+  const params = compact([opts.sortBy || "id"]);
+  const sql = `SELECT * from "tree_species" ORDER BY $1`;
   const result = await db.select(sql, params);
 
   const treeSpecies = result as TreeSpecies[];
@@ -44,20 +37,20 @@ export async function fetchTreeSpeciesById(id: number) {
 export async function postTreeSpecies(
   partialTreeSpecies: Partial<TreeSpecies>
 ): Promise<TreeSpecies> {
-  if (partialTreeSpecies.name?.includes("error")) {
+  if (partialTreeSpecies.tree_species_name?.includes("error")) {
     throw new Error("Ouch!");
   }
 
   const treeSpecies: Partial<TreeSpecies> = {
-    name:
-      partialTreeSpecies.name ??
+    tree_species_name:
+      partialTreeSpecies.tree_species_name ??
       `New TreeSpecies ${String(Date.now()).slice(0, 5)}`,
   };
 
   const db = await getDatabase();
   const result = await db.execute(
-    `INSERT INTO "tree_species" ("length", "width", "max_price", "plate_no", "seller_id") values ($1, $2, $3, $4, $5)`,
-    [0, 0, 0, 0, partialTreeSpecies.seller_id]
+    `INSERT INTO "tree_species" ("length", "width", "plate_no", "seller_id") values ($1, $2, $3, $4, $5)`,
+    [0, 0, 0, 0, partialTreeSpecies.tree_species_name]
   );
 
   return {
@@ -82,14 +75,8 @@ export async function patchTreeSpecies(
 ) {
   const db = await getDatabase();
   await db.execute(
-    `UPDATE "tree_species" SET "width" = COALESCE($2, "width"), "length"=COALESCE($3, "length"), "max_price"=COALESCE($4, "max_price"), "plate_no"=COALESCE($5, "plate_no")  WHERE id=$1`,
-    [
-      treeSpecies.id,
-      treeSpecies.width,
-      treeSpecies.length,
-      treeSpecies.max_price,
-      treeSpecies.plate_no,
-    ]
+    `UPDATE "tree_species" SET "width" = COALESCE($2, "width"), "length"=COALESCE($3, "length"), "plate_no"=COALESCE($5, "plate_no")  WHERE id=$1`,
+    [treeSpecies.id, treeSpecies.tree_species_name, treeSpecies.latin_name]
   );
 }
 
@@ -135,5 +122,5 @@ export const treeSpeciesQueryOptions = (opts: {
 }) =>
   queryOptions({
     queryKey: ["tree_species", opts],
-    queryFn: () => ensureTreeSpeciess(opts),
+    queryFn: () => ensureTreeSpecies(opts),
   });

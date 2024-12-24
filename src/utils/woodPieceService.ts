@@ -9,7 +9,7 @@ type PickAsRequired<TValue, TKey extends keyof TValue> = Omit<TValue, TKey> &
 
 export type WoodPiece = {
   id: number;
-  name: string;
+  wood_piece_name: string;
   seller_id: number;
   tree_species_id: number;
   length: number;
@@ -18,22 +18,41 @@ export type WoodPiece = {
   max_price: number;
   plate_no: number;
   sequence_no: number;
+
+  // from other tables
+  seller_name: string;
+  tree_species_name: string;
 };
 
 const ensureWoodPieces = async (opts: {
   sellerId?: number;
   filterBy?: string;
   sortBy?: "name" | "id" | "email";
+  relations?: string[];
 }) => {
   const db = await getDatabase();
   const params = compact([opts.sortBy || "id", opts.sellerId]);
   const sql = `
-    SELECT *, "wood_pieces".id as id from "wood_pieces" 
-    LEFT JOIN "tree_species" ON "wood_pieces"."tree_species_id"="tree_species"."id"
-    ${opts.sellerId ? `WHERE "seller_id"=$2` : ""}
+    SELECT 
+      *, 
+      ---COALESCE(MAX("wood_piece_offers"."offered_price"), 0) as max_price, 
+      "wood_pieces".id as id
+      ---"wood_piece_offers".id as "wood_piece_offers_id" from "wood_piece_offers" 
+    FROM "wood_pieces"
+    LEFT JOIN "tree_species" ON "wood_pieces"."tree_species_id" = "tree_species"."id"
+    LEFT JOIN "sellers" ON "wood_pieces"."seller_id" = "sellers"."id"
+    LEFT JOIN "wood_piece_offers" ON "wood_pieces"."id" = "wood_piece_offers"."wood_piece_id"
+    ${opts.sellerId ? `WHERE "seller_id" = $2` : ""}
     ORDER BY $1`;
-  const result = await db.select(sql, params);
-
+  const result = (await db.select(sql, params)) as WoodPiece[];
+  info(
+    JSON.stringify(
+      result.map((r) => ({
+        id: r.id,
+        wood_piece_offers_id: r.wood_piece_offers_id,
+      }))
+    )
+  );
   const woodPieces = result as WoodPiece[];
   return woodPieces;
 };
@@ -50,13 +69,13 @@ export async function fetchWoodPieceById(id: number) {
 export async function postWoodPiece(
   partialWoodPiece: Partial<WoodPiece>
 ): Promise<WoodPiece> {
-  if (partialWoodPiece.name?.includes("error")) {
+  if (partialWoodPiece.wood_piece_name?.includes("error")) {
     throw new Error("Ouch!");
   }
 
   const woodPiece: Partial<WoodPiece> = {
-    name:
-      partialWoodPiece.name ??
+    wood_piece_name:
+      partialWoodPiece.wood_piece_name ??
       `New WoodPiece ${String(Date.now()).slice(0, 5)}`,
   };
 
@@ -65,7 +84,6 @@ export async function postWoodPiece(
     `INSERT INTO "wood_pieces" (
       "length", 
       "width", 
-      "max_price", 
       "plate_no", 
       "seller_id",
       "sequence_no"
@@ -74,10 +92,9 @@ export async function postWoodPiece(
       $2, 
       $3, 
       $4, 
-      $5,
-      $6
+      (SELECT COALESCE(MAX("sequence_no"),0)+1 FROM "wood_pieces")
     )`,
-    [0, 0, 0, 0, partialWoodPiece.seller_id, 1]
+    [0, 0, 0, partialWoodPiece.seller_id]
   );
 
   return {
@@ -90,19 +107,9 @@ export async function removeWoodPiece(
   partialWoodPiece: Partial<WoodPiece>
 ): Promise<WoodPiece> {
   const db = await getDatabase();
-  info(`ID: ${partialWoodPiece.id}`);
-  try {
-    const result = await db.execute(
-      `SELECT * FROM "wood_pieces" WHERE "id" = $1`,
-      [partialWoodPiece.id]
-    );
-    info(JSON.stringify(result));
-    await db.execute(`DELETE FROM "wood_pieces" WHERE "id" = $1`, [
-      partialWoodPiece.id,
-    ]);
-  } catch (e) {
-    info(JSON.stringify(e));
-  }
+  await db.execute(`DELETE FROM "wood_pieces" WHERE "id" = $1`, [
+    partialWoodPiece.id,
+  ]);
 
   return partialWoodPiece as WoodPiece;
 }
@@ -111,26 +118,28 @@ export async function patchWoodPiece(
   woodPiece: PickAsRequired<Partial<WoodPiece>, "id">
 ) {
   const db = await getDatabase();
-  await db.execute(
-    `UPDATE "wood_pieces" 
+  try {
+    await db.execute(
+      `UPDATE "wood_pieces" 
     SET 
       "width" = COALESCE($2, "width"), 
       "length" = COALESCE($3, "length"), 
-      "max_price" = COALESCE($4, "max_price"), 
-      "plate_no" = COALESCE($5, "plate_no"),
-      "tree_species_id" = COALESCE($6, "tree_species_id"),
-      "sequence_no" = COALESCE($7, "sequence_no")
+      "plate_no" = COALESCE($4, "plate_no"),
+      "tree_species_id" = COALESCE($5, "tree_species_id"),
+      "sequence_no" = COALESCE($6, "sequence_no")
     WHERE id=$1`,
-    [
-      woodPiece.id,
-      woodPiece.width,
-      woodPiece.length,
-      woodPiece.max_price,
-      woodPiece.plate_no,
-      woodPiece.tree_species_id,
-      woodPiece.sequence_no,
-    ]
-  );
+      [
+        woodPiece.id,
+        woodPiece.width,
+        woodPiece.length,
+        woodPiece.plate_no,
+        woodPiece.tree_species_id,
+        woodPiece.sequence_no,
+      ]
+    );
+  } catch (e) {
+    info(JSON.stringify(e));
+  }
 }
 
 export const woodPieceQueryOptions = (woodPieceId: number) =>
@@ -178,6 +187,7 @@ export const woodPiecesQueryOptions = (opts: {
   sellerId?: number;
   filterBy?: string;
   sortBy?: "name" | "id" | "email";
+  relations?: string[];
 }) =>
   queryOptions({
     queryKey: ["wood_pieces", opts],

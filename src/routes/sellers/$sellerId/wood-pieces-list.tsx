@@ -41,7 +41,7 @@ function WoodPiecesList() {
             ...data,
             choices: treeSpeciesData.map((ts) => ({
               value: ts.id,
-              label: ts.name,
+              label: ts.tree_species_name,
             })),
           }),
       },
@@ -70,19 +70,20 @@ function WoodPiecesList() {
         },
       },
       {
-        accessorKey: "max_price",
-        header: () => "Max price",
+        accessorKey: "plate_no",
+        header: () => "Plate no",
         size: 80,
         meta: {
           type: "float",
         },
       },
       {
-        accessorKey: "plate_no",
-        header: () => "Plate no",
+        accessorKey: "max_price",
+        header: () => "Max price",
         size: 80,
         meta: {
           type: "float",
+          readonly: true,
         },
       },
       {
@@ -100,7 +101,11 @@ function WoodPiecesList() {
   );
 
   const woodPiecesQuery = useSuspenseQuery(
-    woodPiecesQueryOptions({ ...Route.useLoaderDeps(), ...Route.useParams() })
+    woodPiecesQueryOptions({
+      ...Route.useLoaderDeps(),
+      ...Route.useParams(),
+      relations: [],
+    })
   );
   const woodPieces = woodPiecesQuery.data;
 
