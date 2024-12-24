@@ -134,7 +134,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             CREATE TRIGGER IF NOT EXISTS {0}_delete AFTER DELETE ON {0}
             BEGIN
                 INSERT INTO undolog (sql) VALUES (
-                    'INSERT INTO {0} ({1}) VALUES ({2})'
+                    'INSERT INTO {0} ({1}) VALUES ({3});'
                 );
             END;
 
@@ -142,14 +142,14 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             CREATE TRIGGER IF NOT EXISTS {0}_update AFTER UPDATE ON {0}
             BEGIN
                 INSERT INTO undolog (sql) VALUES (
-                    'UPDATE {0} SET {3} WHERE id=' || quote(OLD.id)
+                    'UPDATE {0} SET {2} WHERE id=' || quote(OLD.id)
                 );
             END;
             ",
             table,
             get_column_names(*table), // Comma-separated column names
-            get_column_placeholders(*table, "OLD"), // Placeholder for old values
             get_update_set_statements(*table), // Comma-separated update set statements
+            get_delete_insert_statements(*table),
         ).into_boxed_str());
 
         // Add triggers for this table
@@ -187,22 +187,13 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 // Helper function to generate column names for tables
 fn get_column_names(table: &str) -> &str {
     match table {
-        "buyers" => "id, name, address_line1, address_line2",
-        "sellers" => "id, name, address_line1, address_line2",
-        "tree_species" => "id, name, latin_name",
-        "wood_pieces" => "id, length, sequence_no, width, volume, max_price, plate_no, seller_id, tree_species_id",
-        "wood_piece_offer" => "id, offered_price, wood_piece_id, buyer_id",
+        "buyers" => "name, address_line1, address_line2",
+        "sellers" => "name, address_line1, address_line2",
+        "tree_species" => "name, latin_name",
+        "wood_pieces" => "length, sequence_no, width, volume, max_price, plate_no, seller_id, tree_species_id",
+        "wood_piece_offer" => "offered_price, wood_piece_id, buyer_id",
         _ => "",
     }
-}
-
-// Helper function to generate placeholders for old values with proper escaping
-fn get_column_placeholders(table: &str, prefix: &str) -> String {
-    get_column_names(table)
-        .split(", ")
-        .map(|col| format!("quote({}.{})", prefix, col)) // Apply quote() to each column reference
-        .collect::<Vec<String>>() // Collect into a Vec<String>
-        .join(", ") // Join with commas
 }
 
 // Helper function to generate update set statements with proper escaping
@@ -211,6 +202,16 @@ fn get_update_set_statements(table: &str) -> String {
         .split(", ")
         .filter(|col| *col != "id") // Exclude the primary key column
         .map(|col| format!("{}=' || quote(OLD.{}) || '", col, col)) // Apply quote() to OLD values
+        .collect::<Vec<String>>() // Collect into a Vec<String>
+        .join(", ") // Join with commas
+}
+
+// Helper function to generate update set statements with proper escaping
+fn get_delete_insert_statements(table: &str) -> String {
+    get_column_names(table)
+        .split(", ")
+        .filter(|col| *col != "id") // Exclude the primary key column
+        .map(|col| format!("' || quote(OLD.{}) || '", col)) // Apply quote() to OLD values
         .collect::<Vec<String>>() // Collect into a Vec<String>
         .join(", ") // Join with commas
 }

@@ -1,4 +1,5 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
+import { info } from "@tauri-apps/plugin-log";
 import { compact } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase } from "./database";
@@ -89,9 +90,19 @@ export async function removeWoodPiece(
   partialWoodPiece: Partial<WoodPiece>
 ): Promise<WoodPiece> {
   const db = await getDatabase();
-  await db.execute(`DELETE FROM "wood_pieces" WHERE "id" = $1`, [
-    partialWoodPiece.id,
-  ]);
+  info(`ID: ${partialWoodPiece.id}`);
+  try {
+    const result = await db.execute(
+      `SELECT * FROM "wood_pieces" WHERE "id" = $1`,
+      [partialWoodPiece.id]
+    );
+    info(JSON.stringify(result));
+    await db.execute(`DELETE FROM "wood_pieces" WHERE "id" = $1`, [
+      partialWoodPiece.id,
+    ]);
+  } catch (e) {
+    info(JSON.stringify(e));
+  }
 
   return partialWoodPiece as WoodPiece;
 }
