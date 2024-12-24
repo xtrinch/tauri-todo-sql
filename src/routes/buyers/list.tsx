@@ -101,8 +101,8 @@ function BuyersComponent() {
   return (
     <div className="flex-1 flex">
       <div className="divide-y">
-        <div className="py-2 px-3 flex gap-2 items-center bg-gray-100 dark:bg-gray-800">
-          <div>Sort By:</div>
+        <div className="py-2 px-3 flex gap-2 items-center bg-gray-100">
+          <div>Sort:</div>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as BuyersViewSortBy)}
@@ -113,8 +113,8 @@ function BuyersComponent() {
             })}
           </select>
         </div>
-        <div className="py-2 px-3 flex gap-2 items-center bg-gray-100 dark:bg-gray-800">
-          <div>Filter By:</div>
+        <div className="py-2 px-3 flex gap-2 items-center bg-gray-100">
+          <div>Filter:</div>
           <input
             value={filterDraft}
             onChange={(e) => setFilterDraft(e.target.value)}

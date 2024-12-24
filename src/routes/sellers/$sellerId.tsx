@@ -110,7 +110,7 @@ function SellerComponent() {
   });
 
   return (
-    <div className="flex flex-col space-y-3">
+    <div className="flex flex-col space-y-3 p-3">
       <h3>Seller</h3>
       <CustomTable table={table} />
       <h3>Wood pieces</h3>
