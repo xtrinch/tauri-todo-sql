@@ -8,8 +8,8 @@ import {
   retainSearchParams,
   useNavigate,
 } from "@tanstack/react-router";
-import { info } from "@tauri-apps/plugin-log";
 import * as React from "react";
+import Select from "react-select";
 import { z } from "zod";
 import { Spinner } from "../components/Spinner";
 import {
@@ -19,6 +19,7 @@ import {
 } from "../utils/sellerService";
 
 type SellersViewSortBy = "name" | "id";
+const sortDirections = { name: "ASC", id: "DESC" };
 
 export const Route = createFileRoute("/sellers")({
   validateSearch: z.object({
@@ -37,23 +38,25 @@ export const Route = createFileRoute("/sellers")({
   loader: (opts) => {
     opts.context.queryClient.ensureQueryData(sellersQueryOptions(opts.deps));
   },
-  // component: SellersComponent,
-  component: React.memo(SellersComponent),
+  component: SellersComponent,
 });
 
 function SellersComponent() {
-  info("REDERERENDE");
   const navigate = useNavigate({ from: Route.fullPath });
   const { sellersView } = Route.useSearch();
+  const sortBy = sellersView?.sortBy ?? "name";
+  const filterBy = sellersView?.filterBy;
+  const sortDirection = sortDirections[sortBy];
+
   const sellersQuery = useSuspenseQuery(
     sellersQueryOptions({
       ...Route.useLoaderDeps(),
-      ...sellersView,
+      sortBy,
+      filterBy,
+      sortDirection: sortDirection as "ASC" | "DESC",
     })
   );
   const sellers = sellersQuery.data;
-  const sortBy = sellersView?.sortBy ?? "name";
-  const filterBy = sellersView?.filterBy;
 
   const [filterDraft, setFilterDraft] = React.useState(filterBy ?? "");
 
@@ -115,15 +118,17 @@ function SellersComponent() {
       <div className="divide-y">
         <div className="py-2 px-3 flex gap-2 items-center bg-gray-100">
           <div>Sort:</div>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as SellersViewSortBy)}
-            className="flex-1 border p-1 px-2 rounded"
-          >
-            {["name", "id"].map((d) => {
-              return <option key={d} value={d} children={d} />;
-            })}
-          </select>
+          <Select
+            options={[
+              { value: "name", label: "name" },
+              { value: "id", label: "id" },
+            ]}
+            isSearchable={true}
+            onChange={(newValue) =>
+              setSortBy(newValue?.value as SellersViewSortBy)
+            }
+            value={{ value: sortBy, label: sortBy }}
+          />
         </div>
         <div className="py-2 px-3 flex gap-2 items-center bg-gray-100">
           <div>Filter:</div>
@@ -150,7 +155,7 @@ function SellersComponent() {
                   sellerId: seller.id,
                 }}
                 className="block py-2 px-3 text-blue-700"
-                activeProps={{ className: `font-bold` }}
+                activeProps={{ className: `font-bold bg-gray-100` }}
               >
                 <pre className="text-sm">
                   {seller.name}{" "}

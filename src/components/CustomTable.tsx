@@ -18,6 +18,7 @@ export function CustomTable<TableItem>({ table }: { table: Table<TableItem> }) {
                   minWidth: `${header.getSize()}px`,
                   maxWidth: `${header.getSize()}px`,
                 }}
+                className="px-1 pb-1"
               >
                 {header.isPlaceholder
                   ? null
@@ -41,7 +42,7 @@ export function CustomTable<TableItem>({ table }: { table: Table<TableItem> }) {
                   minWidth: `${cell.column.getSize()}px`,
                   maxWidth: `${cell.column.getSize()}px`,
                 }}
-                className="px-1"
+                className="px-1 pb-1"
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>

@@ -90,7 +90,7 @@ export const TableCell = <TableItem,>({
     <>
       <input
         value={value as string}
-        className="bg-green h-10 min-w-[100%] max-w-[100%]"
+        className="bg-green h-10 min-w-[100%] max-w-[100%] border p-1 px-2 rounded"
         onChange={onChange}
         onBlur={onBlur} // TODO: save after some time of inactivity
         readOnly={(column.columnDef.meta as CustomColumnMeta)?.readonly}

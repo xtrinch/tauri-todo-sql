@@ -1,4 +1,5 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
+import { info } from "@tauri-apps/plugin-log";
 import { compact } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase } from "./database";
@@ -15,14 +16,21 @@ export type Seller = {
 const ensureSellers = async (opts: {
   filterBy?: string;
   sortBy?: "name" | "id" | "email";
+  sortDirection?: "DESC" | "ASC";
 }) => {
   const db = await getDatabase();
+  info(
+    JSON.stringify(
+      compact([
+        opts.sortBy || "name",
+        opts.filterBy ? `%${opts.filterBy}%` : undefined,
+      ])
+    )
+  );
   const result = await db.select(
-    `SELECT * from "sellers" ${opts.filterBy ? `WHERE "name" LIKE lower($2)` : ""} order by $1`,
-    compact([
-      opts.sortBy || "name",
-      opts.filterBy ? `%${opts.filterBy}%` : undefined,
-    ])
+    `SELECT * from "sellers" ${opts.filterBy ? `WHERE "name" LIKE lower($1)` : ""} 
+    ORDER BY ${opts.sortBy || "name"} ${opts.sortDirection || "DESC"}`,
+    [opts.filterBy ? `%${opts.filterBy}%` : undefined]
   );
 
   const sellers = result as Seller[];
@@ -116,6 +124,7 @@ export const useUpdateSellerMutation = (
 export const sellersQueryOptions = (opts: {
   filterBy?: string;
   sortBy?: "name" | "id" | "email";
+  sortDirection?: "DESC" | "ASC";
 }) =>
   queryOptions({
     queryKey: ["sellers", opts],

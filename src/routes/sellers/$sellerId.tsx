@@ -62,16 +62,19 @@ function SellerComponent() {
         accessorKey: "name",
         header: () => "Name",
         meta: {},
+        size: 200,
       },
       {
         accessorKey: "address_line1",
         header: () => "Address line 1",
         meta: {},
+        size: 200,
       },
       {
         accessorKey: "address_line2",
         header: () => "Address line 2",
         meta: {},
+        size: 200,
       },
       {
         id: "1",
