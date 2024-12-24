@@ -88,19 +88,26 @@ function SellersComponent() {
       replace: true,
     });
 
+  // Debounced effect for updating the search filter
   React.useEffect(() => {
-    navigate({
-      search: (old) => {
-        return {
-          ...old,
-          sellersView: {
-            ...old?.sellersView,
-            filterBy: filterDraft || undefined,
-          },
-        };
-      },
-      replace: true,
-    });
+    const handler = setTimeout(() => {
+      navigate({
+        search: (old) => {
+          return {
+            ...old,
+            sellersView: {
+              ...old?.sellersView,
+              filterBy: filterDraft || undefined,
+            },
+          };
+        },
+        replace: true,
+      });
+    }, 1000); // 2-second debounce
+
+    return () => {
+      clearTimeout(handler); // Cleanup timeout on dependency change
+    };
   }, [filterDraft]);
 
   return (
@@ -125,6 +132,7 @@ function SellersComponent() {
             onChange={(e) => setFilterDraft(e.target.value)}
             placeholder="Search Names..."
             className="min-w-0 flex-1 border p-1 px-2 rounded"
+            spellCheck="false"
           />
         </div>
         <button
