@@ -20,7 +20,7 @@ export type WoodPiece = {
   // from other tables
   seller_name: string;
   tree_species_name: string;
-  offered_price: string;
+  offered_price: number;
   buyer_name: string;
 };
 
@@ -44,13 +44,13 @@ const ensureWoodPieces = async (opts: {
     LEFT JOIN "buyers" ON "wood_piece_offers"."buyer_id" = "buyers"."id"
     ${
       opts.sellerId
-        ? `WHERE "seller_id" = $1 AND "wood_piece_offers"."offered_price" = (
+        ? `WHERE "seller_id" = $1 AND ("wood_piece_offers"."offered_price" IS NULL OR "wood_piece_offers"."offered_price" = (
         SELECT
           MAX("wood_piece_offers"."offered_price")
         FROM
           "wood_piece_offers"
         WHERE
-          "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id")`
+          "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id"))`
         : ``
     }
     GROUP BY "wood_pieces"."id"

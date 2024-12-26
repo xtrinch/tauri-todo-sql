@@ -92,9 +92,7 @@ export async function patchWoodPieceOffer(
     `UPDATE "wood_piece_offers" 
     SET 
       "wood_piece_id" = COALESCE($2, "wood_piece_id"),
-      "offered_price" = COALESCE($3, "offered_price") 
-      ---"length" = COALESCE($3, "length"), 
-      ---"plate_no" = COALESCE($5, "plate_no")
+      "offered_price" = COALESCE($3, "offered_price")
     WHERE id=$1`,
     [woodPiece.id, woodPiece.wood_piece_id, woodPiece.offered_price]
   );

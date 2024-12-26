@@ -49,7 +49,7 @@ function RootComponent() {
           </div>
         </div>
         <div className={`flex-1 flex`}>
-          <div className={`divide-y w-36`}>
+          <div className={`divide-y w-36 min-w-36`}>
             {(
               [
                 ["/", "Home"],
