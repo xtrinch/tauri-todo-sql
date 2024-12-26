@@ -37,13 +37,17 @@ const ensureWoodPieces = async (opts: {
 
   const where = compact([
     opts.sellerId ? `"seller_id" = $1` : "",
-    `("wood_piece_offers"."offered_price" IS NULL OR "wood_piece_offers"."offered_price" = (
+    `("wood_piece_offers"."offered_price" = (
         SELECT
-          MAX("wood_piece_offers"."offered_price")
-        FROM
-          "wood_piece_offers"
-        WHERE
-          "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id"))`,
+            MAX("wood_piece_offers"."offered_price")
+          FROM
+            "wood_piece_offers"
+          WHERE
+            "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id"
+        ) 
+        OR
+        "wood_piece_offers"."offered_price" IS NULL
+      )`,
   ]);
 
   const sql = `
@@ -59,7 +63,13 @@ const ensureWoodPieces = async (opts: {
     WHERE ${where.join(" AND ")}
     GROUP BY "wood_pieces"."id"
     ORDER BY ${opts.sortBy || "sequence_no"} ${opts.sortDirection || "ASC"}`;
-  const result = (await db.select(sql, params)) as WoodPiece[];
+  let result: WoodPiece[] = [];
+  try {
+    result = (await db.select(sql, params)) as WoodPiece[];
+  } catch (e) {
+    info(JSON.stringify(e));
+    throw e;
+  }
   const woodPieces = result as WoodPiece[];
   return woodPieces;
 };
@@ -87,8 +97,10 @@ export async function postWoodPiece(
   };
 
   const db = await getDatabaseForModify();
-  const result = await db.execute(
-    `INSERT INTO "wood_pieces" (
+  let result;
+  try {
+    result = await db.execute(
+      `INSERT INTO "wood_pieces" (
       "length", 
       "width", 
       "plate_no", 
@@ -100,10 +112,15 @@ export async function postWoodPiece(
       $2, 
       $3, 
       $4, 
-      (SELECT COALESCE(MAX("sequence_no"),0)+1 FROM "wood_pieces")
+      (SELECT COALESCE(MAX("sequence_no"),0)+1 FROM "wood_pieces"),
+      $5
     )`,
-    [0, 0, "0", partialWoodPiece.seller_id, 0]
-  );
+      [0, 0, "0", partialWoodPiece.seller_id, 0]
+    );
+  } catch (e) {
+    info(JSON.stringify(e));
+    throw e;
+  }
 
   return {
     ...woodPiece,

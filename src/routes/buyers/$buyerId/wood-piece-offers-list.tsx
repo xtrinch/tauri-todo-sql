@@ -54,6 +54,16 @@ function WoodPiecesList() {
           }),
       },
       {
+        accessorKey: "offered_max_price",
+        header: () => "Max offered price / m3 (EUR)",
+        size: 80,
+        meta: {
+          type: "float",
+          readonly: true,
+        },
+        cell: TableCellReadonly,
+      },
+      {
         accessorKey: "offered_price",
         header: () => "Offered price / m3 (EUR)",
         size: 160,

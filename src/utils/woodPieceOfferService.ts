@@ -1,4 +1,5 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
+import { info } from "@tauri-apps/plugin-log";
 import { compact } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase, getDatabaseForModify } from "./database";
@@ -14,30 +15,58 @@ export type WoodPieceOffer = {
 
   // from other tables
   seller_name: string;
+  offered_max_price: number;
+  tree_species_name: string;
 };
 
 const ensureWoodPieceOffers = async (opts: {
   buyerId?: number;
   filterBy?: string;
-  sortBy?: "name" | "id" | "email";
+  sortBy?: "name" | "id";
+  sortDirection?: "DESC" | "ASC";
 }) => {
   const db = await getDatabase();
-  const params = compact([opts.sortBy || "id", opts.buyerId]);
+  const params = [opts.buyerId];
 
+  const where = compact([
+    opts.buyerId ? `"wood_piece_offers"."buyer_id" = $1` : "",
+    // `("wood_piece_offers_max"."offered_price" = (
+    //     SELECT
+    //       MAX("wood_piece_offers"."offered_price")
+    //     FROM
+    //       "wood_piece_offers"
+    //     WHERE
+    //       "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id"
+    //     )
+    //     OR
+    //     "wood_piece_offers"."offered_price" IS NULL
+    //   )`,
+  ]);
   const sql = `
     SELECT 
       *, 
-      "wood_piece_offers".id as id,
-      SUM("wood_piece_offers"."offered_price" * "wood_pieces"."volume") as "offered_total_price"
+      "wood_piece_offers"."id" as id,
+      "wood_piece_offers"."offered_price" as "offered_price",
+      "wood_piece_offers"."buyer_id" as "buyer_id"
+      ---"wood_piece_offers_max"."offered_price" as "offered_max_price"
+      ---SUM("wood_piece_offers"."offered_price" * "wood_pieces"."volume") as "offered_total_price"
     FROM "wood_piece_offers"
     LEFT JOIN "wood_pieces" ON "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id"
     LEFT JOIN "sellers" ON "wood_pieces"."seller_id" = "sellers"."id"
     LEFT JOIN "tree_species" ON "wood_pieces"."tree_species_id" = "tree_species"."id"
-    ${opts.buyerId ? `WHERE "buyer_id" = $2` : ""}
-    ORDER BY $1`;
-  const result = await db.select(sql, params);
-
+    ---LEFT JOIN "wood_piece_offers" "wood_piece_offers_max" ON "wood_piece_offers_max"."wood_piece_id" = "wood_piece_offers"."wood_piece_id"
+    WHERE ${where.join(" AND ")}
+    ORDER BY ${opts.sortBy || "id"} ${opts.sortDirection || "ASC"}`;
+  let result: WoodPieceOffer[] = [];
+  try {
+    result = await db.select(sql, params);
+  } catch (e) {
+    info(JSON.stringify(e));
+    throw e;
+  }
   const woodPieces = result as WoodPieceOffer[];
+  info("RESULT:::::");
+  info(JSON.stringify(woodPieces));
   return woodPieces;
 };
 
@@ -60,8 +89,10 @@ export async function postWoodPieceOffer(
   };
 
   const db = await getDatabaseForModify();
-  const result = await db.execute(
-    `INSERT INTO "wood_piece_offers" (
+  let result;
+  try {
+    result = await db.execute(
+      `INSERT INTO "wood_piece_offers" (
         "offered_price", 
         "wood_piece_id", 
         "buyer_id"
@@ -70,8 +101,12 @@ export async function postWoodPieceOffer(
         $2, 
         $3
       )`,
-    [woodPiece.offered_price, woodPiece.wood_piece_id, woodPiece.buyer_id]
-  );
+      [woodPiece.offered_price, woodPiece.wood_piece_id, woodPiece.buyer_id]
+    );
+  } catch (e) {
+    info(JSON.stringify(e));
+    throw e;
+  }
 
   return {
     ...woodPiece,
@@ -93,14 +128,24 @@ export async function patchWoodPieceOffer(
   woodPiece: PickAsRequired<Partial<WoodPieceOffer>, "id">
 ) {
   const db = await getDatabaseForModify();
-  await db.execute(
-    `UPDATE "wood_piece_offers" 
+  const params = [
+    woodPiece.id,
+    woodPiece.wood_piece_id,
+    woodPiece.offered_price,
+  ];
+  try {
+    await db.execute(
+      `UPDATE "wood_piece_offers" 
     SET 
       "wood_piece_id" = COALESCE($2, "wood_piece_id"),
       "offered_price" = COALESCE($3, "offered_price")
-    WHERE id=$1`,
-    [woodPiece.id, woodPiece.wood_piece_id, woodPiece.offered_price]
-  );
+    WHERE id = $1`,
+      params
+    );
+  } catch (e) {
+    info(JSON.stringify(e));
+  }
+  info(JSON.stringify(params));
 }
 
 export const woodPieceQueryOptions = (woodPieceId: number) =>
@@ -147,7 +192,7 @@ export const useUpdateWoodPieceOfferMutation = (onSuccess?: () => void) => {
 export const woodPieceOffersQueryOptions = (opts: {
   sellerId?: number;
   filterBy?: string;
-  sortBy?: "name" | "id" | "email";
+  sortBy?: "name" | "id";
 }) =>
   queryOptions({
     queryKey: ["wood_pieces", opts],
