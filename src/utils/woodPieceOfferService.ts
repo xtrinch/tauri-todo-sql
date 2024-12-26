@@ -78,7 +78,7 @@ export async function removeWoodPieceOffer(
   partialWoodPieceOffer: Partial<WoodPieceOffer>
 ): Promise<WoodPieceOffer> {
   const db = await getDatabase();
-  await db.execute(`DELETE FROM "wood_pieces" WHERE "id" = $1`, [
+  await db.execute(`DELETE FROM "wood_piece_offers" WHERE "id" = $1`, [
     partialWoodPieceOffer.id,
   ]);
   return partialWoodPieceOffer as WoodPieceOffer;

@@ -31,6 +31,8 @@ export const TableCell = <TableItem,>({
 }) => {
   const initialValue = getValue();
   const rowId = (row.original as { id: number }).id;
+  const columnMeta = column.columnDef.meta as CustomColumnMeta;
+  const isReadonly = columnMeta?.readonly;
 
   // We need to keep and update the state of the cell normally
   const [value, setValue] = useState(initialValue);
@@ -39,13 +41,13 @@ export const TableCell = <TableItem,>({
   const meta = table.options.meta;
 
   const getFormattedVal = (val: any) => {
-    if ((column.columnDef.meta as CustomColumnMeta)?.type === "float") {
+    if (columnMeta?.type === "float") {
       val = parseFloat(val as string);
       if (isNaN(val as number)) {
         val = 0;
       }
     }
-    if ((column.columnDef.meta as CustomColumnMeta)?.type === "integer") {
+    if (columnMeta?.type === "integer") {
       val = parseInt(val as string);
       if (isNaN(val as number)) {
         val = 0;
@@ -61,7 +63,7 @@ export const TableCell = <TableItem,>({
 
   // When the input is blurred, we'll call our table meta's updateData function
   const onBlur = () => {
-    if ((column.columnDef.meta as CustomColumnMeta)?.readonly) {
+    if (isReadonly) {
       return;
     }
 

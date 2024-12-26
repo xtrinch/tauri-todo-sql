@@ -10,6 +10,7 @@ import { CustomTable } from "../../../components/CustomTable";
 import { DropdownCell } from "../../../components/DropdownCell";
 import { RemoveCell } from "../../../components/RemoveCell";
 import { TableCell } from "../../../components/TableCell";
+import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
   useCreateWoodPieceMutation,
@@ -78,13 +79,23 @@ function WoodPiecesList() {
         },
       },
       {
-        accessorKey: "max_price",
+        accessorKey: "offered_price",
         header: () => "Max price",
         size: 80,
         meta: {
           type: "float",
           readonly: true,
         },
+        cell: TableCellReadonly,
+      },
+      {
+        accessorKey: "buyer_name",
+        header: () => "Buyer",
+        size: 80,
+        meta: {
+          readonly: true,
+        },
+        cell: TableCellReadonly,
       },
       {
         id: "1",

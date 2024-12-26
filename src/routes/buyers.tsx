@@ -161,7 +161,7 @@ function BuyersComponent() {
                 className="block py-2 px-3 text-blue-700"
                 activeProps={{ className: `font-bold bg-gray-100` }}
               >
-                <pre className="text-sm">
+                <div className="text-m">
                   {buyer.buyer_name}{" "}
                   <MatchRoute
                     to="/buyers/$buyerId"
@@ -175,7 +175,7 @@ function BuyersComponent() {
                   >
                     {(match) => <Spinner show={!!match} wait="delay-50" />}
                   </MatchRoute>
-                </pre>
+                </div>
               </Link>
             </div>
           );

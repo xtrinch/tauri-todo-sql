@@ -1,6 +1,5 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
 import { info } from "@tauri-apps/plugin-log";
-import { compact } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase } from "./database";
 
@@ -15,44 +14,48 @@ export type WoodPiece = {
   length: number;
   width: number;
   volume: number;
-  max_price: number;
   plate_no: number;
   sequence_no: number;
 
   // from other tables
   seller_name: string;
   tree_species_name: string;
+  offered_price: string;
+  buyer_name: string;
 };
 
 const ensureWoodPieces = async (opts: {
   sellerId?: number;
   filterBy?: string;
-  sortBy?: "name" | "id" | "email";
+  sortBy?: "id" | "sequence_no";
   relations?: string[];
+  sortDirection?: "DESC" | "ASC";
 }) => {
   const db = await getDatabase();
-  const params = compact([opts.sortBy || "id", opts.sellerId]);
+  const params = [opts.sellerId];
   const sql = `
     SELECT 
       *, 
-      ---COALESCE(MAX("wood_piece_offers"."offered_price"), 0) as max_price, 
       "wood_pieces".id as id
-      ---"wood_piece_offers".id as "wood_piece_offers_id" from "wood_piece_offers" 
     FROM "wood_pieces"
     LEFT JOIN "tree_species" ON "wood_pieces"."tree_species_id" = "tree_species"."id"
     LEFT JOIN "sellers" ON "wood_pieces"."seller_id" = "sellers"."id"
     LEFT JOIN "wood_piece_offers" ON "wood_pieces"."id" = "wood_piece_offers"."wood_piece_id"
-    ${opts.sellerId ? `WHERE "seller_id" = $2` : ""}
-    ORDER BY $1`;
+    LEFT JOIN "buyers" ON "wood_piece_offers"."buyer_id" = "buyers"."id"
+    ${
+      opts.sellerId
+        ? `WHERE "seller_id" = $1 AND "wood_piece_offers"."offered_price" = (
+        SELECT
+          MAX("wood_piece_offers"."offered_price")
+        FROM
+          "wood_piece_offers"
+        WHERE
+          "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id")`
+        : ``
+    }
+    GROUP BY "wood_pieces"."id"
+    ORDER BY ${opts.sortBy || "sequence_no"} ${opts.sortDirection || "ASC"}`;
   const result = (await db.select(sql, params)) as WoodPiece[];
-  info(
-    JSON.stringify(
-      result.map((r) => ({
-        id: r.id,
-        wood_piece_offers_id: r.wood_piece_offers_id,
-      }))
-    )
-  );
   const woodPieces = result as WoodPiece[];
   return woodPieces;
 };
@@ -186,7 +189,7 @@ export const useUpdateWoodPieceMutation = (onSuccess?: () => void) => {
 export const woodPiecesQueryOptions = (opts: {
   sellerId?: number;
   filterBy?: string;
-  sortBy?: "name" | "id" | "email";
+  sortBy?: "id" | "sequence_no";
   relations?: string[];
 }) =>
   queryOptions({

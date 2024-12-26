@@ -75,7 +75,12 @@ export async function patchTreeSpecies(
 ) {
   const db = await getDatabase();
   await db.execute(
-    `UPDATE "tree_species" SET "width" = COALESCE($2, "width"), "length"=COALESCE($3, "length"), "plate_no"=COALESCE($5, "plate_no")  WHERE id=$1`,
+    `UPDATE "tree_species" 
+      SET 
+        "width" = COALESCE($2, "width"), 
+        "length"=COALESCE($3, "length"), 
+        "plate_no"=COALESCE($5, "plate_no")  
+        WHERE id=$1`,
     [treeSpecies.id, treeSpecies.tree_species_name, treeSpecies.latin_name]
   );
 }
