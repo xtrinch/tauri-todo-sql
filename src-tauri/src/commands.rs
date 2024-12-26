@@ -3,18 +3,8 @@ use tauri::Manager;
 use std::path::PathBuf;
 use tauri_plugin_fs::FsExt;
 use std::time::Duration;
-
-// #[tauri::command]
-// fn get_db_path(app_handle: tauri::AppHandle) -> Result<String, String> {
-//     let db_path: PathBuf = app_handle
-//         .fs_scope()
-//         .resolve_app_data_dir() // Resolves the app's data directory
-//         .ok_or("Failed to resolve app data directory")?
-//         .join("my_database.sqlite"); // Append your SQLite file name
-
-//     Ok(db_path.to_string_lossy().to_string())
-// }
-
+use std::fs;
+use std::error::Error;
 
 fn backup_progress(progress: rusqlite::backup::Progress) {
     // Calculate the percentage of the backup progress
@@ -66,6 +56,25 @@ pub fn load_sqlite_db(app_handle: tauri::AppHandle, file_path: String) -> Result
         .map_err(|e| e.to_string())?;
 
     backup.run_to_completion(5, Duration::from_millis(250), Some(backup_progress)).map_err(|e| e.to_string())?;
+
+    Ok(())
+}
+
+#[tauri::command]
+pub fn clear_db(app_handle: tauri::AppHandle) -> Result<(), String> {
+    // Get the app data directory path
+    let app_data_dir = app_handle.path().app_data_dir().map_err(|e| format!("Failed to remove file: {}", e))?;
+    
+    // Construct the path to the SQLite database file
+    let sqlite_file = app_data_dir.join("main.db");
+
+    // Attempt to remove the file
+    if sqlite_file.exists() {
+        fs::remove_file(&sqlite_file).map_err(|e| format!("Failed to remove file: {}", e))?;
+        println!("File successfully removed: {:?}", sqlite_file);
+    } else {
+        println!("File does not exist: {:?}", sqlite_file);
+    }
 
     Ok(())
 }

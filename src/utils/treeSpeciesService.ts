@@ -1,7 +1,7 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
 import { compact } from "lodash";
 import { queryClient } from "../main";
-import { getDatabase } from "./database";
+import { getDatabase, getDatabaseForModify } from "./database";
 
 type PickAsRequired<TValue, TKey extends keyof TValue> = Omit<TValue, TKey> &
   Required<Pick<TValue, TKey>>;
@@ -47,7 +47,7 @@ export async function postTreeSpecies(
       `New TreeSpecies ${String(Date.now()).slice(0, 5)}`,
   };
 
-  const db = await getDatabase();
+  const db = await getDatabaseForModify();
   const result = await db.execute(
     `INSERT INTO "tree_species" ("length", "width", "plate_no", "seller_id") values ($1, $2, $3, $4, $5)`,
     [0, 0, 0, 0, partialTreeSpecies.tree_species_name]
@@ -62,7 +62,7 @@ export async function postTreeSpecies(
 export async function removeTreeSpecies(
   partialTreeSpecies: Partial<TreeSpecies>
 ): Promise<TreeSpecies> {
-  const db = await getDatabase();
+  const db = await getDatabaseForModify();
   await db.execute(`DELETE FROM "tree_species" WHERE "id" = $1`, [
     partialTreeSpecies.id,
   ]);
@@ -73,7 +73,7 @@ export async function removeTreeSpecies(
 export async function patchTreeSpecies(
   treeSpecies: PickAsRequired<Partial<TreeSpecies>, "id">
 ) {
-  const db = await getDatabase();
+  const db = await getDatabaseForModify();
   await db.execute(
     `UPDATE "tree_species" 
       SET 

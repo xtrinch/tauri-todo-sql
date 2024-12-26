@@ -18,6 +18,7 @@ import { Route as BuyersImport } from './routes/buyers'
 import { Route as IndexImport } from './routes/index'
 import { Route as SellersSellerIdImport } from './routes/sellers/$sellerId'
 import { Route as BuyersBuyerIdImport } from './routes/buyers/$buyerId'
+import { Route as AuthProfileImport } from './routes/_auth.profile'
 import { Route as SellersSellerIdWoodPiecesListImport } from './routes/sellers/$sellerId/wood-pieces-list'
 import { Route as BuyersBuyerIdWoodPieceOffersListImport } from './routes/buyers/$buyerId/wood-piece-offers-list'
 
@@ -63,6 +64,12 @@ const BuyersBuyerIdRoute = BuyersBuyerIdImport.update({
   id: '/$buyerId',
   path: '/$buyerId',
   getParentRoute: () => BuyersRoute,
+} as any)
+
+const AuthProfileRoute = AuthProfileImport.update({
+  id: '/_auth/profile',
+  path: '/profile',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const SellersSellerIdWoodPiecesListRoute =
@@ -116,6 +123,13 @@ declare module '@tanstack/react-router' {
       path: '/sellers'
       fullPath: '/sellers'
       preLoaderRoute: typeof SellersImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/profile': {
+      id: '/_auth/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthProfileImport
       parentRoute: typeof rootRoute
     }
     '/buyers/$buyerId': {
@@ -203,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
   '/sellers': typeof SellersRouteWithChildren
+  '/profile': typeof AuthProfileRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
@@ -215,6 +230,7 @@ export interface FileRoutesByTo {
   '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
   '/sellers': typeof SellersRouteWithChildren
+  '/profile': typeof AuthProfileRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
@@ -228,6 +244,7 @@ export interface FileRoutesById {
   '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
   '/sellers': typeof SellersRouteWithChildren
+  '/_auth/profile': typeof AuthProfileRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
@@ -242,6 +259,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/login'
     | '/sellers'
+    | '/profile'
     | '/buyers/$buyerId'
     | '/sellers/$sellerId'
     | '/buyers/$buyerId/wood-piece-offers-list'
@@ -253,6 +271,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/login'
     | '/sellers'
+    | '/profile'
     | '/buyers/$buyerId'
     | '/sellers/$sellerId'
     | '/buyers/$buyerId/wood-piece-offers-list'
@@ -264,6 +283,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/login'
     | '/sellers'
+    | '/_auth/profile'
     | '/buyers/$buyerId'
     | '/sellers/$sellerId'
     | '/buyers/$buyerId/wood-piece-offers-list'
@@ -277,6 +297,7 @@ export interface RootRouteChildren {
   InventoryRoute: typeof InventoryRoute
   LoginRoute: typeof LoginRoute
   SellersRoute: typeof SellersRouteWithChildren
+  AuthProfileRoute: typeof AuthProfileRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -285,6 +306,7 @@ const rootRouteChildren: RootRouteChildren = {
   InventoryRoute: InventoryRoute,
   LoginRoute: LoginRoute,
   SellersRoute: SellersRouteWithChildren,
+  AuthProfileRoute: AuthProfileRoute,
 }
 
 export const routeTree = rootRoute
@@ -301,7 +323,8 @@ export const routeTree = rootRoute
         "/buyers",
         "/inventory",
         "/login",
-        "/sellers"
+        "/sellers",
+        "/_auth/profile"
       ]
     },
     "/": {
@@ -324,6 +347,9 @@ export const routeTree = rootRoute
       "children": [
         "/sellers/$sellerId"
       ]
+    },
+    "/_auth/profile": {
+      "filePath": "_auth.profile.tsx"
     },
     "/buyers/$buyerId": {
       "filePath": "buyers/$buyerId.tsx",

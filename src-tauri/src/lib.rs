@@ -2,11 +2,9 @@ use csv::ReaderBuilder;
 use std::error::Error;
 use tauri_plugin_sql::{Migration, MigrationKind};
 mod commands;
-
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+use std::fs;
+use tauri::Manager;
+use tauri::{Window, WindowEvent};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() -> Result<(), Box<dyn Error>> {
@@ -178,6 +176,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
     // Tauri builder
     tauri::Builder::default()
+        // .setup(on_setup)
+        // .on_window_event(event_handler)
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(
@@ -187,11 +187,70 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         )
         .invoke_handler(tauri::generate_handler![
             commands::dump_sqlite_db,
-            commands::load_sqlite_db
+            commands::load_sqlite_db,
+            commands::clear_db
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
+    Ok(())
+}
+
+fn event_handler(window: &Window, event: &WindowEvent) {
+    match event {
+        WindowEvent::Destroyed { .. } => {
+            println!("Window destroyed!!");
+        }
+        WindowEvent::CloseRequested { .. } => {
+            // Handle window close event
+            println!("Window close requested!");
+
+            // Get the app data directory path
+            match window.path().app_data_dir() {
+                Ok(app_data_dir) => {
+                    // Construct the path to the SQLite database file
+                    let sqlite_file = app_data_dir.join("main.db");
+
+                    // Attempt to remove the file
+                    if sqlite_file.exists() {
+                        if let Err(e) = fs::remove_file(&sqlite_file) {
+                            println!("Failed to remove file: {}", e);
+                        } else {
+                            println!("File successfully removed: {:?}", sqlite_file);
+                        }
+                    } else {
+                        println!("File does not exist: {:?}", sqlite_file);
+                    }
+                }
+                Err(e) => {
+                    // Handle error if app data directory cannot be resolved
+                    println!("Failed to resolve app data directory: {}", e);
+                }
+            }
+        }
+        _ => {
+            // Handle other events if necessary
+            println!("Other event: {:?}", event);
+        }
+    }
+}
+
+fn on_setup(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
+    // Get the app data directory path
+    let app_data_dir = app.path().app_data_dir()
+        .map_err(|e| format!("Failed to resolve app data directory: {}", e))?;
+    
+    // Construct the path to the SQLite database file
+    let sqlite_file = app_data_dir.join("main.db");
+
+    // Attempt to remove the file
+    if sqlite_file.exists() {
+        fs::remove_file(&sqlite_file).map_err(|e| format!("Failed to remove file: {}", e))?;
+        println!("File successfully removed: {:?}", sqlite_file);
+    } else {
+        println!("File does not exist: {:?}", sqlite_file);
+    }
+    
     Ok(())
 }
 

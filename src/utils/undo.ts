@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
-import { getDatabase } from "./database";
+import { getDatabaseForModify } from "./database";
 
 export const useUndo = (onSuccess: () => void) => {
   return useMutation({
     onSuccess: onSuccess,
     mutationFn: async () => {
-      const db = await getDatabase();
+      const db = await getDatabaseForModify();
 
       // Fetch the most recent undo log entry
       const lastUndo: { seq: number; sql: string }[] = await db.select(
@@ -34,7 +34,7 @@ export const useUndo = (onSuccess: () => void) => {
 export const useRedo = () => {
   return useMutation({
     mutationFn: async () => {
-      const db = await getDatabase();
+      const db = await getDatabaseForModify();
 
       // Fetch the most recent undo log entry
       const lastRedo: { seq: number; sql: string }[] = await db.select(

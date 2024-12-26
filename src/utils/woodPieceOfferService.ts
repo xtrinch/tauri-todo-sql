@@ -1,7 +1,7 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
 import { compact } from "lodash";
 import { queryClient } from "../main";
-import { getDatabase } from "./database";
+import { getDatabase, getDatabaseForModify } from "./database";
 
 type PickAsRequired<TValue, TKey extends keyof TValue> = Omit<TValue, TKey> &
   Required<Pick<TValue, TKey>>;
@@ -54,7 +54,7 @@ export async function postWoodPieceOffer(
     wood_piece_id: partialWoodPieceOffer.wood_piece_id,
   };
 
-  const db = await getDatabase();
+  const db = await getDatabaseForModify();
   const result = await db.execute(
     `INSERT INTO "wood_piece_offers" (
         "offered_price", 
@@ -77,7 +77,7 @@ export async function postWoodPieceOffer(
 export async function removeWoodPieceOffer(
   partialWoodPieceOffer: Partial<WoodPieceOffer>
 ): Promise<WoodPieceOffer> {
-  const db = await getDatabase();
+  const db = await getDatabaseForModify();
   await db.execute(`DELETE FROM "wood_piece_offers" WHERE "id" = $1`, [
     partialWoodPieceOffer.id,
   ]);
@@ -87,7 +87,7 @@ export async function removeWoodPieceOffer(
 export async function patchWoodPieceOffer(
   woodPiece: PickAsRequired<Partial<WoodPieceOffer>, "id">
 ) {
-  const db = await getDatabase();
+  const db = await getDatabaseForModify();
   await db.execute(
     `UPDATE "wood_piece_offers" 
     SET 

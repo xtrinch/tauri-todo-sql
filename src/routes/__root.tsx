@@ -9,6 +9,7 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
+import { info } from "@tauri-apps/plugin-log";
 import { useEffect, useState } from "react";
 import { Spinner } from "../components/Spinner";
 import { queryClient } from "../main";
@@ -28,9 +29,38 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootComponent() {
+  const [changes, setChanges] = useState<boolean | null>(
+    localStorage.getItem("changes") === "true"
+  );
+  const [filePath, setFilePath] = useState<string | null>(
+    localStorage.getItem("file_path")
+  );
+
   const { mutate: undo } = useUndo(() => {
     queryClient.invalidateQueries();
   });
+
+  const saveOnly = async (path?: string) => {
+    await savePath(path || filePath!);
+    localStorage.setItem("changes", "false");
+    window.dispatchEvent(new Event("storage"));
+  };
+
+  const loadOnly = async (path?: string) => {
+    await invoke("load_sqlite_db", { filePath: path || filePath });
+    localStorage.setItem("changes", "false");
+    window.dispatchEvent(new Event("storage"));
+    await queryClient.invalidateQueries();
+  };
+
+  const resetToSaved = () => {
+    loadOnly();
+  };
+
+  const savePath = async (path: string) => {
+    await invoke("dump_sqlite_db", { filePath: path });
+    localStorage.setItem("changes", "false");
+  };
 
   const saveAs = async () => {
     const path = await save({
@@ -44,14 +74,8 @@ function RootComponent() {
     });
 
     if (path) {
-      await invoke("dump_sqlite_db", { filePath: path });
+      saveOnly(path);
       setFilePath(path);
-    }
-  };
-
-  const saveOnly = async () => {
-    if (filePath) {
-      await invoke("dump_sqlite_db", { filePath: filePath });
     }
   };
 
@@ -63,18 +87,28 @@ function RootComponent() {
     });
 
     if (path) {
-      await invoke("load_sqlite_db", { filePath: path });
-      await queryClient.invalidateQueries();
       setFilePath(path);
+      await loadOnly(path);
     }
   };
 
-  const [filePath, setFilePath] = useState<string | null>(
-    localStorage.getItem("file_path2")
-  );
   useEffect(() => {
-    localStorage.setItem("file_path2", filePath || undefined!);
+    localStorage.setItem("file_path", filePath || undefined!);
   }, [filePath]);
+
+  useEffect(() => {
+    function checkUserData() {
+      info("CHANGED");
+      const localStorageChanges = localStorage.getItem("changes") === "true";
+      setChanges(localStorageChanges);
+    }
+
+    window.addEventListener("storage", checkUserData);
+
+    return () => {
+      window.removeEventListener("storage", checkUserData);
+    };
+  }, []);
 
   return (
     <>
@@ -87,14 +121,25 @@ function RootComponent() {
             <div className={`text-3xl`}>
               <RouterSpinner />
             </div>
-            <div className="text-sm">{filePath || ""}</div>
+            <div className="text-sm flex flex-col items-end">
+              <div>{filePath || ""}</div>
+              {changes && <div>You have unsaved changes</div>}
+            </div>
             {filePath && (
-              <button
-                className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
-                onClick={() => saveOnly()}
-              >
-                Save
-              </button>
+              <>
+                <button
+                  className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+                  onClick={() => saveOnly()}
+                >
+                  Save
+                </button>
+                <button
+                  className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+                  onClick={() => resetToSaved()}
+                >
+                  Reset to saved
+                </button>
+              </>
             )}
             <button
               className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
