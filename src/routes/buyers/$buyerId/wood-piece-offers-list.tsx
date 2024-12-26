@@ -41,6 +41,16 @@ function WoodPiecesList() {
   const columns = useMemo<ColumnDef<WoodPieceOffer>[]>(
     () => [
       {
+        accessorKey: "id",
+        header: () => "ID",
+        size: 80,
+        meta: {
+          type: "float",
+          readonly: true,
+        },
+        cell: TableCellReadonly,
+      },
+      {
         accessorKey: "wood_piece_id",
         header: () => "Wood piece",
         size: 400,
@@ -49,7 +59,7 @@ function WoodPiecesList() {
             ...data,
             choices: woodPiecesData.map((ts) => ({
               value: ts.id,
-              label: `${ts.sequence_no} - ${ts.seller_name} - ${ts.tree_species_name || "Not set"}`,
+              label: `${ts.sequence_no} - ${ts.seller_name} - ${ts.tree_species_name || "Not set"} - ${ts.volume} m3`,
             })),
           }),
       },
@@ -77,6 +87,15 @@ function WoodPiecesList() {
         size: 80,
         meta: {
           type: "float",
+          readonly: true,
+        },
+        cell: TableCellReadonly,
+      },
+      {
+        accessorKey: "is_max_offer",
+        header: () => "Is max",
+        size: 80,
+        meta: {
           readonly: true,
         },
         cell: TableCellReadonly,

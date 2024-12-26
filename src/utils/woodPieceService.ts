@@ -35,32 +35,20 @@ const ensureWoodPieces = async (opts: {
   const db = await getDatabase();
   const params = [opts.sellerId];
 
-  const where = compact([
-    opts.sellerId ? `"seller_id" = $1` : "",
-    `("wood_piece_offers"."offered_price" = (
-        SELECT
-            MAX("wood_piece_offers"."offered_price")
-          FROM
-            "wood_piece_offers"
-          WHERE
-            "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id"
-        ) 
-        OR
-        "wood_piece_offers"."offered_price" IS NULL
-      )`,
-  ]);
+  const where = compact([opts.sellerId ? `"seller_id" = $1 ` : ""]);
 
   const sql = `
     SELECT 
       *, 
       "wood_pieces".id as id,
-      SUM("offered_price" * "volume") as "offered_total_price"
+      "offered_price" * "volume" as "offered_total_price",
+      MAX("wood_piece_offers"."offered_price") as "offered_price"
     FROM "wood_pieces"
     LEFT JOIN "tree_species" ON "wood_pieces"."tree_species_id" = "tree_species"."id"
     LEFT JOIN "sellers" ON "wood_pieces"."seller_id" = "sellers"."id"
     LEFT JOIN "wood_piece_offers" ON "wood_pieces"."id" = "wood_piece_offers"."wood_piece_id"
     LEFT JOIN "buyers" ON "wood_piece_offers"."buyer_id" = "buyers"."id"
-    WHERE ${where.join(" AND ")}
+    ${where.length > 0 ? `WHERE ${where.join(" AND ")}` : ``}
     GROUP BY "wood_pieces"."id"
     ORDER BY ${opts.sortBy || "sequence_no"} ${opts.sortDirection || "ASC"}`;
   let result: WoodPiece[] = [];
