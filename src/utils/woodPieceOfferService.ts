@@ -23,8 +23,13 @@ const ensureWoodPieceOffers = async (opts: {
 }) => {
   const db = await getDatabase();
   const params = compact([opts.sortBy || "id", opts.buyerId]);
+
   const sql = `
-    SELECT *, "wood_piece_offers".id as id from "wood_piece_offers" 
+    SELECT 
+      *, 
+      "wood_piece_offers".id as id,
+      SUM("wood_piece_offers"."offered_price" * "wood_pieces"."volume") as "offered_total_price"
+    FROM "wood_piece_offers"
     LEFT JOIN "wood_pieces" ON "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id"
     LEFT JOIN "sellers" ON "wood_pieces"."seller_id" = "sellers"."id"
     LEFT JOIN "tree_species" ON "wood_pieces"."tree_species_id" = "tree_species"."id"

@@ -49,7 +49,8 @@ const ensureWoodPieces = async (opts: {
   const sql = `
     SELECT 
       *, 
-      "wood_pieces".id as id
+      "wood_pieces".id as id,
+      SUM("offered_price" * "volume") as "offered_total_price"
     FROM "wood_pieces"
     LEFT JOIN "tree_species" ON "wood_pieces"."tree_species_id" = "tree_species"."id"
     LEFT JOIN "sellers" ON "wood_pieces"."seller_id" = "sellers"."id"
@@ -92,7 +93,8 @@ export async function postWoodPiece(
       "width", 
       "plate_no", 
       "seller_id",
-      "sequence_no"
+      "sequence_no",
+      "volume"
     ) values (
       $1, 
       $2, 
@@ -100,7 +102,7 @@ export async function postWoodPiece(
       $4, 
       (SELECT COALESCE(MAX("sequence_no"),0)+1 FROM "wood_pieces")
     )`,
-    [0, 0, 0, partialWoodPiece.seller_id]
+    [0, 0, "0", partialWoodPiece.seller_id, 0]
   );
 
   return {
@@ -134,7 +136,8 @@ export async function patchWoodPiece(
       "plate_no" = COALESCE($4, "plate_no"),
       "tree_species_id" = COALESCE($5, "tree_species_id"),
       "sequence_no" = COALESCE($6, "sequence_no"),
-      "seller_id" = COALESCE($7, "seller_id")
+      "seller_id" = COALESCE($7, "seller_id"),
+      "volume" = COALESCE($8, "volume")
     WHERE id=$1`,
       [
         woodPiece.id,
@@ -144,6 +147,7 @@ export async function patchWoodPiece(
         woodPiece.tree_species_id,
         woodPiece.sequence_no,
         woodPiece.seller_id,
+        woodPiece.volume,
       ]
     );
   } catch (e) {

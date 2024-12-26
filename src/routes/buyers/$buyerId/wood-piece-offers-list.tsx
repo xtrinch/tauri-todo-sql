@@ -11,6 +11,7 @@ import { CustomTable } from "../../../components/CustomTable";
 import { DropdownCell } from "../../../components/DropdownCell";
 import { RemoveCell } from "../../../components/RemoveCell";
 import { TableCell } from "../../../components/TableCell";
+import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import {
   useCreateWoodPieceOfferMutation,
   useRemoveWoodPieceOfferMutation,
@@ -54,11 +55,21 @@ function WoodPiecesList() {
       },
       {
         accessorKey: "offered_price",
-        header: () => "Offered price",
+        header: () => "Offered price / m3 (EUR)",
         size: 160,
         meta: {
           type: "float",
         },
+      },
+      {
+        accessorKey: "offered_total_price",
+        header: () => "Total price (EUR)",
+        size: 80,
+        meta: {
+          type: "float",
+          readonly: true,
+        },
+        cell: TableCellReadonly,
       },
       {
         id: "1",

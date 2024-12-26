@@ -69,7 +69,7 @@ function WoodPiecesList() {
       },
       {
         accessorKey: "width",
-        header: () => "Width",
+        header: () => "Width (cm)",
         size: 80,
         meta: {
           type: "float",
@@ -77,7 +77,15 @@ function WoodPiecesList() {
       },
       {
         accessorKey: "length",
-        header: () => "Length",
+        header: () => "Length (m)",
+        size: 80,
+        meta: {
+          type: "float",
+        },
+      },
+      {
+        accessorKey: "volume",
+        header: () => "Volume (m3)",
         size: 80,
         meta: {
           type: "float",
@@ -86,14 +94,21 @@ function WoodPiecesList() {
       {
         accessorKey: "plate_no",
         header: () => "Plate no",
-        size: 80,
-        meta: {
-          type: "float",
-        },
+        size: 100,
       },
       {
         accessorKey: "offered_price",
-        header: () => "Max price",
+        header: () => "Max price / m3 (EUR)",
+        size: 80,
+        meta: {
+          type: "float",
+          readonly: true,
+        },
+        cell: TableCellReadonly,
+      },
+      {
+        accessorKey: "offered_total_price",
+        header: () => "Total price (EUR)",
         size: 80,
         meta: {
           type: "float",

@@ -18,7 +18,7 @@ export function CustomTable<TableItem>({ table }: { table: Table<TableItem> }) {
                   minWidth: `${header.getSize()}px`,
                   maxWidth: `${header.getSize()}px`,
                 }}
-                className="px-1 pb-1"
+                className="px-1 pb-1 align-bottom"
               >
                 {header.isPlaceholder
                   ? null

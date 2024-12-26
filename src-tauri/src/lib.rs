@@ -11,22 +11,23 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     // Open the input CSV file
     println!("Current working directory: {:?}", std::env::current_dir()?);
 
-    let file_path = std::env::current_dir()?.join("transformed_tree_species.csv");
+    let file_path = std::env::current_dir()?.join("tree_species.csv");
     let mut reader = ReaderBuilder::new()
         .has_headers(true) // Assume the first row contains headers
         .from_path(file_path)?;
 
     // Prepare the output SQL statement
     let mut sql_statement =
-        String::from("INSERT INTO tree_species (tree_species_name, latin_name) VALUES\n");
+        String::from("INSERT INTO tree_species (tree_species_name, latin_name, tree_species_name_slo) VALUES\n");
 
     // Iterate through the CSV records
     for result in reader.records() {
         let record = result?;
         let name = record.get(0).unwrap_or("").replace("'", "''");
         let latin_name = record.get(1).unwrap_or("").replace("'", "''");
+        let name_slo = record.get(2).unwrap_or("").replace("'", "''");
 
-        sql_statement.push_str(&format!("('{}', '{}'),\n", name, latin_name));
+        sql_statement.push_str(&format!("('{}', '{}', '{}'),\n", name, latin_name, name_slo));
     }
 
     // Remove the trailing comma and newline, and add a semicolon
@@ -82,7 +83,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 "CREATE TABLE IF NOT EXISTS tree_species (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 tree_species_name VARCHAR, 
-                latin_name VARCHAR
+                latin_name VARCHAR,
+                tree_species_name_slo VARCHAR
             );"
             }
             "wood_pieces" => {
@@ -259,7 +261,7 @@ fn get_column_names(table: &str) -> &str {
     match table {
         "buyers" => "buyer_name, address_line1, address_line2",
         "sellers" => "seller_name, address_line1, address_line2",
-        "tree_species" => "tree_species_name, latin_name",
+        "tree_species" => "tree_species_name, latin_name, tree_species_name_slo",
         "wood_pieces" => "length, sequence_no, width, volume, plate_no, seller_id, tree_species_id",
         "wood_piece_offers" => "offered_price, wood_piece_id, buyer_id",
         _ => "",
