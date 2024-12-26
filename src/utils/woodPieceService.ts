@@ -1,5 +1,6 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
 import { info } from "@tauri-apps/plugin-log";
+import { compact } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase } from "./database";
 
@@ -33,6 +34,18 @@ const ensureWoodPieces = async (opts: {
 }) => {
   const db = await getDatabase();
   const params = [opts.sellerId];
+
+  const where = compact([
+    opts.sellerId ? `"seller_id" = $1` : "",
+    `("wood_piece_offers"."offered_price" IS NULL OR "wood_piece_offers"."offered_price" = (
+        SELECT
+          MAX("wood_piece_offers"."offered_price")
+        FROM
+          "wood_piece_offers"
+        WHERE
+          "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id"))`,
+  ]);
+
   const sql = `
     SELECT 
       *, 
@@ -42,17 +55,7 @@ const ensureWoodPieces = async (opts: {
     LEFT JOIN "sellers" ON "wood_pieces"."seller_id" = "sellers"."id"
     LEFT JOIN "wood_piece_offers" ON "wood_pieces"."id" = "wood_piece_offers"."wood_piece_id"
     LEFT JOIN "buyers" ON "wood_piece_offers"."buyer_id" = "buyers"."id"
-    ${
-      opts.sellerId
-        ? `WHERE "seller_id" = $1 AND ("wood_piece_offers"."offered_price" IS NULL OR "wood_piece_offers"."offered_price" = (
-        SELECT
-          MAX("wood_piece_offers"."offered_price")
-        FROM
-          "wood_piece_offers"
-        WHERE
-          "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id"))`
-        : ``
-    }
+    WHERE ${where.join(" AND ")}
     GROUP BY "wood_pieces"."id"
     ORDER BY ${opts.sortBy || "sequence_no"} ${opts.sortDirection || "ASC"}`;
   const result = (await db.select(sql, params)) as WoodPiece[];
@@ -129,7 +132,8 @@ export async function patchWoodPiece(
       "length" = COALESCE($3, "length"), 
       "plate_no" = COALESCE($4, "plate_no"),
       "tree_species_id" = COALESCE($5, "tree_species_id"),
-      "sequence_no" = COALESCE($6, "sequence_no")
+      "sequence_no" = COALESCE($6, "sequence_no"),
+      "seller_id" = COALESCE($7, "seller_id")
     WHERE id=$1`,
       [
         woodPiece.id,
@@ -138,6 +142,7 @@ export async function patchWoodPiece(
         woodPiece.plate_no,
         woodPiece.tree_species_id,
         woodPiece.sequence_no,
+        woodPiece.seller_id,
       ]
     );
   } catch (e) {

@@ -7,6 +7,9 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import { invoke } from "@tauri-apps/api/core";
+import { open, save } from "@tauri-apps/plugin-dialog";
+import { useEffect, useState } from "react";
 import { Spinner } from "../components/Spinner";
 import { queryClient } from "../main";
 import type { Auth } from "../utils/auth";
@@ -29,6 +32,50 @@ function RootComponent() {
     queryClient.invalidateQueries();
   });
 
+  const saveAs = async () => {
+    const path = await save({
+      filters: [
+        {
+          name: "My Filter",
+          extensions: ["dump"],
+        },
+      ],
+      defaultPath: "db",
+    });
+
+    if (path) {
+      await invoke("dump_sqlite_db", { filePath: path });
+      setFilePath(path);
+    }
+  };
+
+  const saveOnly = async () => {
+    if (filePath) {
+      await invoke("dump_sqlite_db", { filePath: filePath });
+    }
+  };
+
+  const loadFile = async () => {
+    const path = await open({
+      multiple: false,
+      directory: false,
+      filters: [{ name: "My Filter", extensions: ["dump"] }],
+    });
+
+    if (path) {
+      await invoke("load_sqlite_db", { filePath: path });
+      await queryClient.invalidateQueries();
+      setFilePath(path);
+    }
+  };
+
+  const [filePath, setFilePath] = useState<string | null>(
+    localStorage.getItem("file_path2")
+  );
+  useEffect(() => {
+    localStorage.setItem("file_path2", filePath || undefined!);
+  }, [filePath]);
+
   return (
     <>
       <div className={`min-h-screen flex flex-col`}>
@@ -36,10 +83,31 @@ function RootComponent() {
           <h1 className={`text-3xl p-2`}>App</h1>
 
           {/* Show a global spinner when the router is transitioning */}
-          <div className="flex flex-row pr-2">
+          <div className="flex flex-row pr-2 space-x-2 items-center">
             <div className={`text-3xl`}>
               <RouterSpinner />
             </div>
+            <div className="text-sm">{filePath || ""}</div>
+            {filePath && (
+              <button
+                className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+                onClick={() => saveOnly()}
+              >
+                Save
+              </button>
+            )}
+            <button
+              className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+              onClick={() => saveAs()}
+            >
+              Save as
+            </button>
+            <button
+              className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+              onClick={() => loadFile()}
+            >
+              Open
+            </button>
             <button
               className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
               onClick={() => undo()}
@@ -52,11 +120,9 @@ function RootComponent() {
           <div className={`divide-y w-36 min-w-36`}>
             {(
               [
-                ["/", "Home"],
-                ["/buyers", "Buyers"],
                 ["/sellers", "Sellers"],
-                // ["/profile", "Profile"],
-                // ["/login", "Login"],
+                ["/buyers", "Buyers"],
+                ["/inventory", "Inventory"],
               ] as const
             ).map(([to, label]) => {
               return (

@@ -1,7 +1,17 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   component: IndexComponent,
+  beforeLoad: ({ location, params }) => {
+    const shouldRedirect = [`/`].includes(location.pathname);
+
+    if (shouldRedirect) {
+      redirect({
+        to: "/sellers",
+        throw: true,
+      });
+    }
+  },
 });
 
 function IndexComponent() {

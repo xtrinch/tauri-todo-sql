@@ -6,21 +6,22 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
-import { CustomTable } from "../../../components/CustomTable";
-import { DropdownCell } from "../../../components/DropdownCell";
-import { RemoveCell } from "../../../components/RemoveCell";
-import { TableCell } from "../../../components/TableCell";
-import { TableCellReadonly } from "../../../components/TableCellReadonly";
-import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
+import { CustomTable } from "../components/CustomTable";
+import { DropdownCell } from "../components/DropdownCell";
+import { RemoveCell } from "../components/RemoveCell";
+import { TableCell } from "../components/TableCell";
+import { TableCellReadonly } from "../components/TableCellReadonly";
+import { sellersQueryOptions } from "../utils/sellerService";
+import { treeSpeciesQueryOptions } from "../utils/treeSpeciesService";
 import {
   useCreateWoodPieceMutation,
   useRemoveWoodPieceMutation,
   useUpdateWoodPieceMutation,
   WoodPiece,
   woodPiecesQueryOptions,
-} from "../../../utils/woodPieceService";
+} from "../utils/woodPieceService";
 
-export const Route = createFileRoute("/sellers/$sellerId/wood-pieces-list")({
+export const Route = createFileRoute("/inventory")({
   component: WoodPiecesList,
 });
 
@@ -44,8 +45,24 @@ function WoodPiecesList() {
   const treeSpeciesQuery = useSuspenseQuery(treeSpeciesQueryOptions({}));
   const treeSpeciesData = treeSpeciesQuery.data;
 
+  const sellersQuery = useSuspenseQuery(sellersQueryOptions({}));
+  const sellers = sellersQuery.data;
+
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
+      {
+        accessorKey: "seller_id",
+        header: () => "Seller",
+        size: 200,
+        cell: (data) =>
+          DropdownCell({
+            ...data,
+            choices: sellers.map((ts) => ({
+              value: ts.id,
+              label: ts.seller_name,
+            })),
+          }),
+      },
       {
         accessorKey: "tree_species_id",
         header: () => "Tree species",
@@ -133,7 +150,7 @@ function WoodPiecesList() {
     },
     meta: {
       onAdd: () => {
-        createWoodPieceMutation.mutate({ seller_id: params.sellerId });
+        createWoodPieceMutation.mutate({});
       },
       onEdit: (data: WoodPiece) => {
         updateWoodPieceMutation.mutate(data);
@@ -145,7 +162,7 @@ function WoodPiecesList() {
   });
 
   return (
-    <div>
+    <div className="p-3">
       <CustomTable table={table} />
     </div>
   );

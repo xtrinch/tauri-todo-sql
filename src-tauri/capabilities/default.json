@@ -10,6 +10,7 @@
     "opener:default",
     "sql:default",
     "log:default",
-    "sql:allow-execute"
+    "sql:allow-execute",
+    "dialog:default"
   ]
 }

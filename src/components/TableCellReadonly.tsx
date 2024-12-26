@@ -27,5 +27,5 @@ export const TableCellReadonly = <TableItem,>({
 }) => {
   const initialValue = getValue() as string;
 
-  return <div className="text-sm">{initialValue || "No offers"}</div>;
+  return <div className="text-sm">{initialValue || "/"}</div>;
 };

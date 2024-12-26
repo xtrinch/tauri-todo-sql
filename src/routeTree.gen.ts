@@ -13,12 +13,11 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as SellersImport } from './routes/sellers'
 import { Route as LoginImport } from './routes/login'
+import { Route as InventoryImport } from './routes/inventory'
 import { Route as BuyersImport } from './routes/buyers'
-import { Route as AuthImport } from './routes/_auth'
 import { Route as IndexImport } from './routes/index'
 import { Route as SellersSellerIdImport } from './routes/sellers/$sellerId'
 import { Route as BuyersBuyerIdImport } from './routes/buyers/$buyerId'
-import { Route as AuthProfileImport } from './routes/_auth.profile'
 import { Route as SellersSellerIdWoodPiecesListImport } from './routes/sellers/$sellerId/wood-pieces-list'
 import { Route as BuyersBuyerIdWoodPieceOffersListImport } from './routes/buyers/$buyerId/wood-piece-offers-list'
 
@@ -36,14 +35,15 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const BuyersRoute = BuyersImport.update({
-  id: '/buyers',
-  path: '/buyers',
+const InventoryRoute = InventoryImport.update({
+  id: '/inventory',
+  path: '/inventory',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthRoute = AuthImport.update({
-  id: '/_auth',
+const BuyersRoute = BuyersImport.update({
+  id: '/buyers',
+  path: '/buyers',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -63,12 +63,6 @@ const BuyersBuyerIdRoute = BuyersBuyerIdImport.update({
   id: '/$buyerId',
   path: '/$buyerId',
   getParentRoute: () => BuyersRoute,
-} as any)
-
-const AuthProfileRoute = AuthProfileImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AuthRoute,
 } as any)
 
 const SellersSellerIdWoodPiecesListRoute =
@@ -96,18 +90,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/_auth': {
-      id: '/_auth'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthImport
-      parentRoute: typeof rootRoute
-    }
     '/buyers': {
       id: '/buyers'
       path: '/buyers'
       fullPath: '/buyers'
       preLoaderRoute: typeof BuyersImport
+      parentRoute: typeof rootRoute
+    }
+    '/inventory': {
+      id: '/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof InventoryImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -123,13 +117,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/sellers'
       preLoaderRoute: typeof SellersImport
       parentRoute: typeof rootRoute
-    }
-    '/_auth/profile': {
-      id: '/_auth/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AuthProfileImport
-      parentRoute: typeof AuthImport
     }
     '/buyers/$buyerId': {
       id: '/buyers/$buyerId'
@@ -163,16 +150,6 @@ declare module '@tanstack/react-router' {
 }
 
 // Create and export the route tree
-
-interface AuthRouteChildren {
-  AuthProfileRoute: typeof AuthProfileRoute
-}
-
-const AuthRouteChildren: AuthRouteChildren = {
-  AuthProfileRoute: AuthProfileRoute,
-}
-
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface BuyersBuyerIdRouteChildren {
   BuyersBuyerIdWoodPieceOffersListRoute: typeof BuyersBuyerIdWoodPieceOffersListRoute
@@ -222,11 +199,10 @@ const SellersRouteWithChildren =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '': typeof AuthRouteWithChildren
   '/buyers': typeof BuyersRouteWithChildren
+  '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
   '/sellers': typeof SellersRouteWithChildren
-  '/profile': typeof AuthProfileRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
@@ -235,11 +211,10 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '': typeof AuthRouteWithChildren
   '/buyers': typeof BuyersRouteWithChildren
+  '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
   '/sellers': typeof SellersRouteWithChildren
-  '/profile': typeof AuthProfileRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
@@ -249,11 +224,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/_auth': typeof AuthRouteWithChildren
   '/buyers': typeof BuyersRouteWithChildren
+  '/inventory': typeof InventoryRoute
   '/login': typeof LoginRoute
   '/sellers': typeof SellersRouteWithChildren
-  '/_auth/profile': typeof AuthProfileRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
@@ -264,11 +238,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | ''
     | '/buyers'
+    | '/inventory'
     | '/login'
     | '/sellers'
-    | '/profile'
     | '/buyers/$buyerId'
     | '/sellers/$sellerId'
     | '/buyers/$buyerId/wood-piece-offers-list'
@@ -276,11 +249,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | ''
     | '/buyers'
+    | '/inventory'
     | '/login'
     | '/sellers'
-    | '/profile'
     | '/buyers/$buyerId'
     | '/sellers/$sellerId'
     | '/buyers/$buyerId/wood-piece-offers-list'
@@ -288,11 +260,10 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/_auth'
     | '/buyers'
+    | '/inventory'
     | '/login'
     | '/sellers'
-    | '/_auth/profile'
     | '/buyers/$buyerId'
     | '/sellers/$sellerId'
     | '/buyers/$buyerId/wood-piece-offers-list'
@@ -302,16 +273,16 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthRoute: typeof AuthRouteWithChildren
   BuyersRoute: typeof BuyersRouteWithChildren
+  InventoryRoute: typeof InventoryRoute
   LoginRoute: typeof LoginRoute
   SellersRoute: typeof SellersRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthRoute: AuthRouteWithChildren,
   BuyersRoute: BuyersRouteWithChildren,
+  InventoryRoute: InventoryRoute,
   LoginRoute: LoginRoute,
   SellersRoute: SellersRouteWithChildren,
 }
@@ -327,8 +298,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/_auth",
         "/buyers",
+        "/inventory",
         "/login",
         "/sellers"
       ]
@@ -336,17 +307,14 @@ export const routeTree = rootRoute
     "/": {
       "filePath": "index.tsx"
     },
-    "/_auth": {
-      "filePath": "_auth.tsx",
-      "children": [
-        "/_auth/profile"
-      ]
-    },
     "/buyers": {
       "filePath": "buyers.tsx",
       "children": [
         "/buyers/$buyerId"
       ]
+    },
+    "/inventory": {
+      "filePath": "inventory.tsx"
     },
     "/login": {
       "filePath": "login.tsx"
@@ -356,10 +324,6 @@ export const routeTree = rootRoute
       "children": [
         "/sellers/$sellerId"
       ]
-    },
-    "/_auth/profile": {
-      "filePath": "_auth.profile.tsx",
-      "parent": "/_auth"
     },
     "/buyers/$buyerId": {
       "filePath": "buyers/$buyerId.tsx",

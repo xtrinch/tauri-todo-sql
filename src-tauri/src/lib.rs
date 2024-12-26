@@ -1,6 +1,7 @@
-use tauri_plugin_sql::{Migration, MigrationKind};
-use std::error::Error;
 use csv::ReaderBuilder;
+use std::error::Error;
+use tauri_plugin_sql::{Migration, MigrationKind};
+mod commands;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -18,9 +19,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         .from_path(file_path)?;
 
     // Prepare the output SQL statement
-    let mut sql_statement = String::from(
-        "INSERT INTO tree_species (tree_species_name, latin_name) VALUES\n"
-    );
+    let mut sql_statement =
+        String::from("INSERT INTO tree_species (tree_species_name, latin_name) VALUES\n");
 
     // Iterate through the CSV records
     for result in reader.records() {
@@ -28,10 +28,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         let name = record.get(0).unwrap_or("").replace("'", "''");
         let latin_name = record.get(1).unwrap_or("").replace("'", "''");
 
-        sql_statement.push_str(&format!(
-            "('{}', '{}'),\n",
-            name, latin_name
-        ));
+        sql_statement.push_str(&format!("('{}', '{}'),\n", name, latin_name));
     }
 
     // Remove the trailing comma and newline, and add a semicolon
@@ -53,40 +50,45 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     ];
 
     // Migrations with triggers for all tables
-    let mut migrations = vec![
-        Migration {
-            version: 0,
-            description: "create_undolog_table",
-            sql: "CREATE TABLE IF NOT EXISTS undolog (
+    let mut migrations = vec![Migration {
+        version: 0,
+        description: "create_undolog_table",
+        sql: "CREATE TABLE IF NOT EXISTS undolog (
                     seq INTEGER PRIMARY KEY AUTOINCREMENT,
                     sql TEXT NOT NULL
                   );",
-            kind: MigrationKind::Up,
-        },
-    ];
+        kind: MigrationKind::Up,
+    }];
 
     // Create main tables and add triggers dynamically
     for (i, table) in tables.iter().enumerate() {
         // Base table creation SQL
         let table_creation_sql = match *table {
-            "buyers" => "CREATE TABLE IF NOT EXISTS buyers (
+            "buyers" => {
+                "CREATE TABLE IF NOT EXISTS buyers (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 buyer_name VARCHAR, 
                 address_line1 VARCHAR, 
                 address_line2 VARCHAR
-            );",
-            "sellers" => "CREATE TABLE IF NOT EXISTS sellers (
+            );"
+            }
+            "sellers" => {
+                "CREATE TABLE IF NOT EXISTS sellers (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 seller_name VARCHAR, 
                 address_line1 VARCHAR, 
                 address_line2 VARCHAR
-            );",
-            "tree_species" => "CREATE TABLE IF NOT EXISTS tree_species (
+            );"
+            }
+            "tree_species" => {
+                "CREATE TABLE IF NOT EXISTS tree_species (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 tree_species_name VARCHAR, 
                 latin_name VARCHAR
-            );",
-            "wood_pieces" => "CREATE TABLE IF NOT EXISTS wood_pieces (
+            );"
+            }
+            "wood_pieces" => {
+                "CREATE TABLE IF NOT EXISTS wood_pieces (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 length REAL,
                 sequence_no INTEGER,
@@ -97,15 +99,18 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 tree_species_id INTEGER,
                 FOREIGN KEY(seller_id) REFERENCES sellers(id) ON DELETE CASCADE,
                 FOREIGN KEY(tree_species_id) REFERENCES tree_species(id)
-            );",
-            "wood_piece_offers" => "CREATE TABLE IF NOT EXISTS wood_piece_offers (
+            );"
+            }
+            "wood_piece_offers" => {
+                "CREATE TABLE IF NOT EXISTS wood_piece_offers (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 offered_price REAL, 
                 wood_piece_id INTEGER,
                 buyer_id INTEGER,
                 FOREIGN KEY(buyer_id) REFERENCES buyers(id) ON DELETE CASCADE,
                 FOREIGN KEY(wood_piece_id) REFERENCES wood_pieces(id) ON DELETE CASCADE
-            );",
+            );"
+            }
             _ => "",
         };
 
@@ -119,8 +124,9 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         });
 
         let description_trigger = Box::leak(format!("add_triggers_for_{}", table).into_boxed_str());
-        let sql = Box::leak(format!(
-            "
+        let sql = Box::leak(
+            format!(
+                "
             -- INSERT Trigger
             CREATE TRIGGER IF NOT EXISTS {0}_insert AFTER INSERT ON {0}
             BEGIN
@@ -145,11 +151,13 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 );
             END;
             ",
-            table,
-            get_column_names(*table), // Comma-separated column names
-            get_update_set_statements(*table), // Comma-separated update set statements
-            get_delete_insert_statements(*table),
-        ).into_boxed_str());
+                table,
+                get_column_names(*table), // Comma-separated column names
+                get_update_set_statements(*table), // Comma-separated update set statements
+                get_delete_insert_statements(*table),
+            )
+            .into_boxed_str(),
+        );
 
         // Add triggers for this table
         migrations.push(Migration {
@@ -170,13 +178,17 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
     // Tauri builder
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(
             tauri_plugin_sql::Builder::default()
                 .add_migrations("sqlite:main.db", migrations)
                 .build(),
         )
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![
+            commands::dump_sqlite_db,
+            commands::load_sqlite_db
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
