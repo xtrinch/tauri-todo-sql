@@ -47,8 +47,8 @@ const ensureWoodPieceOffers = async (opts: {
       *, 
       "wood_piece_offers"."id" as id,
       "wood_piece_offers"."offered_price" as "offered_price",
-      "wood_piece_offers"."buyer_id" as "buyer_id"
-      ---"wood_piece_offers_max"."offered_price" as "offered_max_price"
+      "wood_piece_offers"."buyer_id" as "buyer_id",
+      "wood_piece_offers_max"."offered_price" as "offered_max_price"
       ---SUM("wood_piece_offers"."offered_price" * "wood_pieces"."volume") as "offered_total_price"
     FROM "wood_piece_offers"
     LEFT JOIN "wood_pieces" ON "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id"
