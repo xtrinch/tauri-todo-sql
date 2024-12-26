@@ -30,17 +30,17 @@ const ensureWoodPieceOffers = async (opts: {
 
   const where = compact([
     opts.buyerId ? `"wood_piece_offers"."buyer_id" = $1` : "",
-    // `("wood_piece_offers_max"."offered_price" = (
-    //     SELECT
-    //       MAX("wood_piece_offers"."offered_price")
-    //     FROM
-    //       "wood_piece_offers"
-    //     WHERE
-    //       "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id"
-    //     )
-    //     OR
-    //     "wood_piece_offers"."offered_price" IS NULL
-    //   )`,
+    `("wood_piece_offers_max"."offered_price" = (
+        SELECT
+          MAX("wood_piece_offers"."offered_price")
+        FROM
+          "wood_piece_offers"
+        WHERE
+          "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id"
+        )
+        OR
+        "wood_piece_offers_max"."offered_price" IS NULL
+      )`,
   ]);
   const sql = `
     SELECT 
@@ -54,7 +54,7 @@ const ensureWoodPieceOffers = async (opts: {
     LEFT JOIN "wood_pieces" ON "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id"
     LEFT JOIN "sellers" ON "wood_pieces"."seller_id" = "sellers"."id"
     LEFT JOIN "tree_species" ON "wood_pieces"."tree_species_id" = "tree_species"."id"
-    ---LEFT JOIN "wood_piece_offers" "wood_piece_offers_max" ON "wood_piece_offers_max"."wood_piece_id" = "wood_piece_offers"."wood_piece_id"
+    LEFT JOIN "wood_piece_offers" "wood_piece_offers_max" ON "wood_piece_offers_max"."wood_piece_id" = "wood_piece_offers"."wood_piece_id"
     WHERE ${where.join(" AND ")}
     ORDER BY ${opts.sortBy || "id"} ${opts.sortDirection || "ASC"}`;
   let result: WoodPieceOffer[] = [];
