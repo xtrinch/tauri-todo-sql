@@ -34,13 +34,12 @@ function WoodPiecesList() {
   const woodPiecesQuery = useSuspenseQuery(
     woodPiecesQueryOptions({
       ...Route.useLoaderDeps(),
-      ...Route.useParams(),
+      seller_id: params.sellerId,
       relations: [],
     })
   );
   const woodPieces = woodPiecesQuery.data;
 
-  // TODO: make sure this doesn't remount on window unfocs/focus
   const treeSpeciesQuery = useSuspenseQuery(treeSpeciesQueryOptions({}));
   const treeSpeciesData = treeSpeciesQuery.data;
 

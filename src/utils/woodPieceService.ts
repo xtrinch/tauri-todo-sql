@@ -26,8 +26,9 @@ export type WoodPiece = {
 };
 
 interface ListOptions {
-  sellerId?: number;
   tree_species_id?: number;
+  seller_id?: number;
+  buyer_id?: number;
   offered_price__isnull?: boolean;
   offered_price__isnotnull?: boolean;
   filterBy?: string;
@@ -38,13 +39,14 @@ interface ListOptions {
 
 const ensureWoodPieces = async (opts: ListOptions) => {
   const db = await getDatabase();
-  const params = [opts.sellerId, opts.tree_species_id];
+  const params = [opts.seller_id, opts.tree_species_id, opts.buyer_id];
 
   const where = compact([
-    opts.sellerId ? `"seller_id" = $1 ` : "",
+    opts.seller_id ? `"seller_id" = $1 ` : "",
     opts.tree_species_id ? `"tree_species_id"=$2` : "",
     opts.offered_price__isnull ? `"offered_price" IS NULL` : "",
     opts.offered_price__isnotnull ? `"offered_price" IS NOT NULL` : "",
+    opts.buyer_id ? `"buyer_id"=$3` : "",
   ]);
 
   const sql = `

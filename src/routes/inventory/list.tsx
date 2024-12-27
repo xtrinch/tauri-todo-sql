@@ -27,6 +27,8 @@ function ListInventoryComponent() {
     tree_species_id_label?: string;
     offered_price__isnull?: boolean;
     offered_price__isnotnull?: boolean;
+    seller_id?: number;
+    seller_id_label?: string;
   }>();
 
   const woodPiecesQuery = useSuspenseQuery(
@@ -39,7 +41,6 @@ function ListInventoryComponent() {
   );
   const woodPieces = woodPiecesQuery.data;
 
-  // TODO: make sure this doesn't remount on window unfocs/focus
   const treeSpeciesQuery = useSuspenseQuery(treeSpeciesQueryOptions({}));
   const treeSpeciesData = treeSpeciesQuery.data;
   const treeSpeciesOptions = useMemo(
@@ -53,6 +54,14 @@ function ListInventoryComponent() {
 
   const sellersQuery = useSuspenseQuery(sellersQueryOptions({}));
   const sellers = sellersQuery.data;
+  const sellerOptions = useMemo(
+    () =>
+      sellers.map((ts) => ({
+        value: ts.id,
+        label: ts.seller_name,
+      })),
+    [treeSpeciesData]
+  );
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
@@ -212,6 +221,26 @@ function ListInventoryComponent() {
                 : filters?.offered_price__isnotnull
                   ? "Is defined"
                   : "",
+            }}
+            isClearable={true}
+          />
+        </div>
+        <div>
+          <div className="text-sm"> Seller</div>
+          <Select
+            className="w-[200px]"
+            options={sellerOptions}
+            isSearchable={true}
+            onChange={(newValue) =>
+              setFilters((prev) => ({
+                ...prev,
+                seller_id: newValue?.value!,
+                seller_id_label: newValue?.label!,
+              }))
+            }
+            value={{
+              value: filters?.seller_id,
+              label: filters?.seller_id_label,
             }}
             isClearable={true}
           />

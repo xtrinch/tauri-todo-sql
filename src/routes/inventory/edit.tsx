@@ -38,7 +38,6 @@ function RouteComponent() {
   );
   const woodPieces = woodPiecesQuery.data;
 
-  // TODO: make sure this doesn't remount on window unfocs/focus
   const treeSpeciesQuery = useSuspenseQuery(treeSpeciesQueryOptions({}));
   const treeSpeciesData = treeSpeciesQuery.data;
 
