@@ -12,7 +12,6 @@ import { CustomTable } from "../../../components/CustomTable";
 import { DropdownCell } from "../../../components/DropdownCell";
 import { RemoveCell } from "../../../components/RemoveCell";
 import { TableCell } from "../../../components/TableCell";
-import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import {
   useCreateWoodPieceOfferMutation,
   useRemoveWoodPieceOfferMutation,
@@ -43,16 +42,16 @@ function WoodPiecesList() {
   info(JSON.stringify(woodPiecesData));
   const columns = useMemo<ColumnDef<WoodPieceOffer>[]>(
     () => [
-      {
-        accessorKey: "id",
-        header: () => "ID",
-        size: 80,
-        meta: {
-          type: "float",
-          readonly: true,
-        },
-        cell: TableCellReadonly,
-      },
+      // {
+      //   accessorKey: "id",
+      //   header: () => "ID",
+      //   size: 80,
+      //   meta: {
+      //     type: "float",
+      //     readonly: true,
+      //   },
+      //   cell: TableCellReadonly,
+      // },
       {
         accessorKey: "wood_piece_id",
         header: () => t("woodPiece"),
@@ -67,16 +66,6 @@ function WoodPiecesList() {
           }),
       },
       {
-        accessorKey: "offered_max_price",
-        header: () => "Max offered price / m3 (EUR)",
-        size: 80,
-        meta: {
-          type: "float",
-          readonly: true,
-        },
-        cell: TableCellReadonly,
-      },
-      {
         accessorKey: "offered_price",
         header: () => "Offered price / m3 (EUR)",
         size: 160,
@@ -84,25 +73,35 @@ function WoodPiecesList() {
           type: "float",
         },
       },
-      {
-        accessorKey: "offered_total_price",
-        header: () => t("totalPriceM3"),
-        size: 80,
-        meta: {
-          type: "float",
-          readonly: true,
-        },
-        cell: TableCellReadonly,
-      },
-      {
-        accessorKey: "is_max_offer",
-        header: () => "Is max",
-        size: 80,
-        meta: {
-          readonly: true,
-        },
-        cell: TableCellReadonly,
-      },
+      // {
+      //   accessorKey: "offered_max_price",
+      //   header: () => "Max offered price / m3 (EUR)",
+      //   size: 80,
+      //   meta: {
+      //     type: "float",
+      //     readonly: true,
+      //   },
+      //   cell: TableCellReadonly,
+      // },
+      // {
+      //   accessorKey: "offered_total_price",
+      //   header: () => t("totalPriceM3"),
+      //   size: 80,
+      //   meta: {
+      //     type: "float",
+      //     readonly: true,
+      //   },
+      //   cell: TableCellReadonly,
+      // },
+      // {
+      //   accessorKey: "is_max_offer",
+      //   header: () => "Is max",
+      //   size: 80,
+      //   meta: {
+      //     readonly: true,
+      //   },
+      //   cell: TableCellReadonly,
+      // },
       {
         id: "1",
         header: () => "",
@@ -153,7 +152,7 @@ function WoodPiecesList() {
   });
 
   return (
-    <div>
+    <div className="p-3">
       <CustomTable table={table} />
     </div>
   );

@@ -46,10 +46,9 @@ const ensureWoodPieces = async (opts: ListOptions) => {
     opts.tree_species_id ? `"tree_species_id"=$2` : "",
     opts.offered_price__isnull ? `"offered_price" IS NULL` : "",
     opts.offered_price__isnotnull ? `"offered_price" IS NOT NULL` : "",
-    opts.buyer_id ? `"buyer_id"=$3` : "",
   ]);
 
-  const sql = `
+  let sql = `
     SELECT 
       *, 
       "wood_pieces".id as id,
@@ -63,6 +62,10 @@ const ensureWoodPieces = async (opts: ListOptions) => {
     ${where.length > 0 ? `WHERE ${where.join(" AND ")}` : ``}
     GROUP BY "wood_pieces"."id"
     ORDER BY ${opts.sortBy || "sequence_no"} ${opts.sortDirection || "ASC"}`;
+
+  if (opts.buyer_id) {
+    sql = `SELECT * FROM (${sql}) WHERE "buyer_id" = $3`;
+  }
   let result: WoodPiece[] = [];
   try {
     result = (await db.select(sql, params)) as WoodPiece[];

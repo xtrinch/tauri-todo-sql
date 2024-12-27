@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
+  Link,
   Outlet,
   redirect,
   useNavigate,
@@ -116,10 +117,33 @@ function BuyerComponent() {
   });
 
   return (
-    <div className="flex flex-col space-y-3 p-3">
-      <h3>Buyer</h3>
-      <CustomTable table={table} />
-      <h3>Wood piece offers</h3>
+    <div className="flex flex-col space-y-3">
+      <div className="flex flex-col space-y-3 p-3">
+        <h3>Buyer</h3>
+        <CustomTable table={table} />
+      </div>
+      <div className="flex flex-wrap divide-x border-b">
+        {(
+          [
+            ["/buyers/$buyerId/wood-piece-offers-list", t("woodPieceOffers")],
+            ["/buyers/$buyerId/bought-pieces-list", t("boughtWoodPieces")],
+          ] as const
+        ).map(([to, label]) => {
+          return (
+            <Link
+              key={to}
+              to={to}
+              params={{
+                buyerId: buyer.id,
+              }}
+              className="p-2  text-blue-700"
+              activeProps={{ className: `font-bold bg-gray-100` }}
+            >
+              {label}
+            </Link>
+          );
+        })}
+      </div>
       <Outlet />
     </div>
   );

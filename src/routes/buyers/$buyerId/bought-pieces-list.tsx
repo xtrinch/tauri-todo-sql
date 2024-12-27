@@ -8,35 +8,28 @@ import {
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
-import { DropdownCell } from "../../../components/DropdownCell";
-import { RemoveCell } from "../../../components/RemoveCell";
-import { TableCell } from "../../../components/TableCell";
+import { DropdownCellReadonly } from "../../../components/DropdownCellReadonly";
+import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
-  useCreateWoodPieceMutation,
-  useRemoveWoodPieceMutation,
-  useUpdateWoodPieceMutation,
   WoodPiece,
   woodPiecesQueryOptions,
 } from "../../../utils/woodPieceService";
 
-export const Route = createFileRoute("/sellers/$sellerId/wood-pieces-list")({
-  component: WoodPiecesList,
+export const Route = createFileRoute("/buyers/$buyerId/bought-pieces-list")({
+  component: SoldPiecesList,
 });
 
-function WoodPiecesList() {
+function SoldPiecesList() {
   const { t, i18n } = useTranslation();
 
   const params = Route.useParams();
 
-  const createWoodPieceMutation = useCreateWoodPieceMutation();
-  const removeWoodPieceMutation = useRemoveWoodPieceMutation();
-  const updateWoodPieceMutation = useUpdateWoodPieceMutation();
-
   const woodPiecesQuery = useSuspenseQuery(
     woodPiecesQueryOptions({
       ...Route.useLoaderDeps(),
-      seller_id: params.sellerId,
+      buyer_id: params.buyerId,
+      offered_price__isnotnull: true,
       relations: [],
     })
   );
@@ -60,7 +53,7 @@ function WoodPiecesList() {
         header: () => t("treeSpecies"),
         size: 200,
         cell: (data) =>
-          DropdownCell({
+          DropdownCellReadonly({
             ...data,
             choices: treeSpeciesData.map((ts) => ({
               value: ts.id,
@@ -98,17 +91,27 @@ function WoodPiecesList() {
         size: 100,
       },
       {
-        id: "1",
-        header: () => "",
-        size: 45,
-        accessorFn: () => 1,
+        accessorKey: "offered_price",
+        header: () => t("offeredPrice"),
+        size: 80,
         meta: {
+          type: "float",
           readonly: true,
         },
-        cell: RemoveCell,
+        cell: TableCellReadonly,
+      },
+      {
+        accessorKey: "offered_total_price",
+        header: () => t("totalPriceM3"),
+        size: 80,
+        meta: {
+          type: "float",
+          readonly: true,
+        },
+        cell: TableCellReadonly,
       },
     ],
-    []
+    [treeSpeciesData]
   );
 
   const table = useReactTable({
@@ -116,19 +119,9 @@ function WoodPiecesList() {
     columns,
     getCoreRowModel: getCoreRowModel(),
     defaultColumn: {
-      cell: TableCell,
+      cell: TableCellReadonly,
     },
-    meta: {
-      onAdd: () => {
-        createWoodPieceMutation.mutate({ seller_id: params.sellerId });
-      },
-      onEdit: (data: WoodPiece) => {
-        updateWoodPieceMutation.mutate(data);
-      },
-      onRemove: (woodPieceId: number) => {
-        removeWoodPieceMutation.mutate({ id: woodPieceId });
-      },
-    },
+    meta: {},
   });
 
   return (

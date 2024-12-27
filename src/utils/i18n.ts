@@ -16,6 +16,7 @@ const resources = {
       seller: "Seller",
       name: "Name",
       woodPiece: "Wood piece",
+      woodPieces: "Wood pieces",
       addNew: "Add new",
       searchNames: "Search names",
       unsavedChanges: "Unsaved changes",
@@ -27,6 +28,10 @@ const resources = {
       plateNo: "Plate no.",
       maxPriceM3: "Max price / m3 (EUR)",
       totalPriceM3: "Total price (EUR)",
+      soldWoodPieces: "Sold wood pieces",
+      boughtWoodPieces: "Bought wood pieces",
+      woodPieceOffers: "Wood piece offers",
+      offeredPrice: "Offered price",
     },
   },
   fr: {

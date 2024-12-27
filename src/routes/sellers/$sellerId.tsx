@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
+  Link,
   Outlet,
   redirect,
   useNavigate,
@@ -11,6 +12,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { CustomTable } from "../../components/CustomTable";
 import { RemoveCell } from "../../components/RemoveCell";
@@ -46,6 +48,8 @@ export const Route = createFileRoute("/sellers/$sellerId")({
 });
 
 function SellerComponent() {
+  const { t, i18n } = useTranslation();
+
   const params = Route.useParams();
   const sellerQuery = useSuspenseQuery(sellerQueryOptions(params.sellerId));
   const seller = sellerQuery.data;
@@ -113,10 +117,33 @@ function SellerComponent() {
   });
 
   return (
-    <div className="flex flex-col space-y-3 p-3">
-      <h3>Seller</h3>
-      <CustomTable table={table} />
-      <h3>Wood pieces</h3>
+    <div className="flex flex-col space-y-3">
+      <div className="flex flex-col space-y-3 p-3">
+        <h3>Seller</h3>
+        <CustomTable table={table} />
+      </div>
+      <div className="flex flex-wrap divide-x border-b">
+        {(
+          [
+            ["/sellers/$sellerId/wood-pieces-list", t("woodPieces")],
+            ["/sellers/$sellerId/sold-pieces-list", t("soldWoodPieces")],
+          ] as const
+        ).map(([to, label]) => {
+          return (
+            <Link
+              key={to}
+              to={to}
+              params={{
+                sellerId: seller.id,
+              }}
+              className="p-2  text-blue-700"
+              activeProps={{ className: `font-bold bg-gray-100` }}
+            >
+              {label}
+            </Link>
+          );
+        })}
+      </div>
       <Outlet />
     </div>
   );

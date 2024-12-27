@@ -20,7 +20,9 @@ import { Route as InventoryListImport } from './routes/inventory/list'
 import { Route as InventoryEditImport } from './routes/inventory/edit'
 import { Route as BuyersBuyerIdImport } from './routes/buyers/$buyerId'
 import { Route as SellersSellerIdWoodPiecesListImport } from './routes/sellers/$sellerId/wood-pieces-list'
+import { Route as SellersSellerIdSoldPiecesListImport } from './routes/sellers/$sellerId/sold-pieces-list'
 import { Route as BuyersBuyerIdWoodPieceOffersListImport } from './routes/buyers/$buyerId/wood-piece-offers-list'
+import { Route as BuyersBuyerIdBoughtPiecesListImport } from './routes/buyers/$buyerId/bought-pieces-list'
 
 // Create/Update Routes
 
@@ -79,10 +81,24 @@ const SellersSellerIdWoodPiecesListRoute =
     getParentRoute: () => SellersSellerIdRoute,
   } as any)
 
+const SellersSellerIdSoldPiecesListRoute =
+  SellersSellerIdSoldPiecesListImport.update({
+    id: '/sold-pieces-list',
+    path: '/sold-pieces-list',
+    getParentRoute: () => SellersSellerIdRoute,
+  } as any)
+
 const BuyersBuyerIdWoodPieceOffersListRoute =
   BuyersBuyerIdWoodPieceOffersListImport.update({
     id: '/wood-piece-offers-list',
     path: '/wood-piece-offers-list',
+    getParentRoute: () => BuyersBuyerIdRoute,
+  } as any)
+
+const BuyersBuyerIdBoughtPiecesListRoute =
+  BuyersBuyerIdBoughtPiecesListImport.update({
+    id: '/bought-pieces-list',
+    path: '/bought-pieces-list',
     getParentRoute: () => BuyersBuyerIdRoute,
   } as any)
 
@@ -146,12 +162,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SellersSellerIdImport
       parentRoute: typeof SellersImport
     }
+    '/buyers/$buyerId/bought-pieces-list': {
+      id: '/buyers/$buyerId/bought-pieces-list'
+      path: '/bought-pieces-list'
+      fullPath: '/buyers/$buyerId/bought-pieces-list'
+      preLoaderRoute: typeof BuyersBuyerIdBoughtPiecesListImport
+      parentRoute: typeof BuyersBuyerIdImport
+    }
     '/buyers/$buyerId/wood-piece-offers-list': {
       id: '/buyers/$buyerId/wood-piece-offers-list'
       path: '/wood-piece-offers-list'
       fullPath: '/buyers/$buyerId/wood-piece-offers-list'
       preLoaderRoute: typeof BuyersBuyerIdWoodPieceOffersListImport
       parentRoute: typeof BuyersBuyerIdImport
+    }
+    '/sellers/$sellerId/sold-pieces-list': {
+      id: '/sellers/$sellerId/sold-pieces-list'
+      path: '/sold-pieces-list'
+      fullPath: '/sellers/$sellerId/sold-pieces-list'
+      preLoaderRoute: typeof SellersSellerIdSoldPiecesListImport
+      parentRoute: typeof SellersSellerIdImport
     }
     '/sellers/$sellerId/wood-pieces-list': {
       id: '/sellers/$sellerId/wood-pieces-list'
@@ -166,10 +196,12 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface BuyersBuyerIdRouteChildren {
+  BuyersBuyerIdBoughtPiecesListRoute: typeof BuyersBuyerIdBoughtPiecesListRoute
   BuyersBuyerIdWoodPieceOffersListRoute: typeof BuyersBuyerIdWoodPieceOffersListRoute
 }
 
 const BuyersBuyerIdRouteChildren: BuyersBuyerIdRouteChildren = {
+  BuyersBuyerIdBoughtPiecesListRoute: BuyersBuyerIdBoughtPiecesListRoute,
   BuyersBuyerIdWoodPieceOffersListRoute: BuyersBuyerIdWoodPieceOffersListRoute,
 }
 
@@ -203,10 +235,12 @@ const InventoryRouteWithChildren = InventoryRoute._addFileChildren(
 )
 
 interface SellersSellerIdRouteChildren {
+  SellersSellerIdSoldPiecesListRoute: typeof SellersSellerIdSoldPiecesListRoute
   SellersSellerIdWoodPiecesListRoute: typeof SellersSellerIdWoodPiecesListRoute
 }
 
 const SellersSellerIdRouteChildren: SellersSellerIdRouteChildren = {
+  SellersSellerIdSoldPiecesListRoute: SellersSellerIdSoldPiecesListRoute,
   SellersSellerIdWoodPiecesListRoute: SellersSellerIdWoodPiecesListRoute,
 }
 
@@ -234,7 +268,9 @@ export interface FileRoutesByFullPath {
   '/inventory/edit': typeof InventoryEditRoute
   '/inventory/list': typeof InventoryListRoute
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
+  '/buyers/$buyerId/bought-pieces-list': typeof BuyersBuyerIdBoughtPiecesListRoute
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
+  '/sellers/$sellerId/sold-pieces-list': typeof SellersSellerIdSoldPiecesListRoute
   '/sellers/$sellerId/wood-pieces-list': typeof SellersSellerIdWoodPiecesListRoute
 }
 
@@ -247,7 +283,9 @@ export interface FileRoutesByTo {
   '/inventory/edit': typeof InventoryEditRoute
   '/inventory/list': typeof InventoryListRoute
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
+  '/buyers/$buyerId/bought-pieces-list': typeof BuyersBuyerIdBoughtPiecesListRoute
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
+  '/sellers/$sellerId/sold-pieces-list': typeof SellersSellerIdSoldPiecesListRoute
   '/sellers/$sellerId/wood-pieces-list': typeof SellersSellerIdWoodPiecesListRoute
 }
 
@@ -261,7 +299,9 @@ export interface FileRoutesById {
   '/inventory/edit': typeof InventoryEditRoute
   '/inventory/list': typeof InventoryListRoute
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
+  '/buyers/$buyerId/bought-pieces-list': typeof BuyersBuyerIdBoughtPiecesListRoute
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
+  '/sellers/$sellerId/sold-pieces-list': typeof SellersSellerIdSoldPiecesListRoute
   '/sellers/$sellerId/wood-pieces-list': typeof SellersSellerIdWoodPiecesListRoute
 }
 
@@ -276,7 +316,9 @@ export interface FileRouteTypes {
     | '/inventory/edit'
     | '/inventory/list'
     | '/sellers/$sellerId'
+    | '/buyers/$buyerId/bought-pieces-list'
     | '/buyers/$buyerId/wood-piece-offers-list'
+    | '/sellers/$sellerId/sold-pieces-list'
     | '/sellers/$sellerId/wood-pieces-list'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -288,7 +330,9 @@ export interface FileRouteTypes {
     | '/inventory/edit'
     | '/inventory/list'
     | '/sellers/$sellerId'
+    | '/buyers/$buyerId/bought-pieces-list'
     | '/buyers/$buyerId/wood-piece-offers-list'
+    | '/sellers/$sellerId/sold-pieces-list'
     | '/sellers/$sellerId/wood-pieces-list'
   id:
     | '__root__'
@@ -300,7 +344,9 @@ export interface FileRouteTypes {
     | '/inventory/edit'
     | '/inventory/list'
     | '/sellers/$sellerId'
+    | '/buyers/$buyerId/bought-pieces-list'
     | '/buyers/$buyerId/wood-piece-offers-list'
+    | '/sellers/$sellerId/sold-pieces-list'
     | '/sellers/$sellerId/wood-pieces-list'
   fileRoutesById: FileRoutesById
 }
@@ -361,6 +407,7 @@ export const routeTree = rootRoute
       "filePath": "buyers/$buyerId.tsx",
       "parent": "/buyers",
       "children": [
+        "/buyers/$buyerId/bought-pieces-list",
         "/buyers/$buyerId/wood-piece-offers-list"
       ]
     },
@@ -376,12 +423,21 @@ export const routeTree = rootRoute
       "filePath": "sellers/$sellerId.tsx",
       "parent": "/sellers",
       "children": [
+        "/sellers/$sellerId/sold-pieces-list",
         "/sellers/$sellerId/wood-pieces-list"
       ]
+    },
+    "/buyers/$buyerId/bought-pieces-list": {
+      "filePath": "buyers/$buyerId/bought-pieces-list.tsx",
+      "parent": "/buyers/$buyerId"
     },
     "/buyers/$buyerId/wood-piece-offers-list": {
       "filePath": "buyers/$buyerId/wood-piece-offers-list.tsx",
       "parent": "/buyers/$buyerId"
+    },
+    "/sellers/$sellerId/sold-pieces-list": {
+      "filePath": "sellers/$sellerId/sold-pieces-list.tsx",
+      "parent": "/sellers/$sellerId"
     },
     "/sellers/$sellerId/wood-pieces-list": {
       "filePath": "sellers/$sellerId/wood-pieces-list.tsx",
