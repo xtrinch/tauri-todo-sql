@@ -50,7 +50,7 @@ function WoodPiecesList() {
       {
         accessorKey: "sequence_no",
         header: () => t("seqNo"),
-        size: 80,
+        size: 60,
         meta: {
           type: "integer",
         },
