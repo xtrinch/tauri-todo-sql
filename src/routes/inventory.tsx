@@ -4,6 +4,7 @@ import {
   Outlet,
   redirect,
 } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/inventory")({
   component: WoodPiecesList,
@@ -20,20 +21,22 @@ export const Route = createFileRoute("/inventory")({
 });
 
 function WoodPiecesList() {
+  const { t, i18n } = useTranslation();
+
   return (
     <div>
       <div className="flex flex-wrap divide-x border-b">
         {(
           [
-            ["/inventory/edit", "Edit"],
-            ["/inventory/list", "List"],
+            ["/inventory/edit", t("edit")],
+            ["/inventory/list", t("list")],
           ] as const
         ).map(([to, label]) => {
           return (
             <Link
               key={to}
               to={to}
-              className="p-2"
+              className="p-2  text-blue-700"
               activeProps={{ className: `font-bold bg-gray-100` }}
             >
               {label}

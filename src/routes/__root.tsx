@@ -11,6 +11,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { info } from "@tauri-apps/plugin-log";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Spinner } from "../components/Spinner";
 import { queryClient } from "../main";
 import type { Auth } from "../utils/auth";
@@ -29,6 +30,8 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootComponent() {
+  const { t, i18n } = useTranslation();
+
   const [changes, setChanges] = useState<boolean | null>(
     localStorage.getItem("changes") === "true"
   );
@@ -114,7 +117,7 @@ function RootComponent() {
     <>
       <div className={`min-h-screen flex flex-col`}>
         <div className={`flex items-center justify-between border-b gap-2`}>
-          <h1 className={`text-3xl p-2`}>App</h1>
+          <h1 className={`text-3xl p-2`}>{t("title")}</h1>
 
           {/* Show a global spinner when the router is transitioning */}
           <div className="flex flex-row pr-2 space-x-2 items-center">
@@ -123,7 +126,7 @@ function RootComponent() {
             </div>
             <div className="text-sm flex flex-col items-end">
               <div>{filePath || ""}</div>
-              {changes && <div>You have unsaved changes</div>}
+              {changes && <div>{t("unsavedChanges")}</div>}
             </div>
             {filePath && (
               <>

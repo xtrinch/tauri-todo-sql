@@ -9,6 +9,7 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import Select, { Options } from "react-select";
 import { z } from "zod";
 import { Spinner } from "../components/Spinner";
@@ -42,6 +43,8 @@ export const Route = createFileRoute("/buyers")({
 });
 
 function BuyersComponent() {
+  const { t, i18n } = useTranslation();
+
   const navigate = useNavigate({ from: Route.fullPath });
   const { buyersView } = Route.useSearch();
   const sortBy = buyersView?.sortBy ?? "buyer_name";
@@ -121,7 +124,7 @@ function BuyersComponent() {
     <div className="flex-1 flex">
       <div className="divide-y">
         <div className="py-2 px-3 flex gap-2 items-center bg-gray-100">
-          <div>Sort:</div>
+          <div>{t("sort")}:</div>
           <Select
             options={options}
             isSearchable={true}
@@ -139,7 +142,7 @@ function BuyersComponent() {
           <input
             value={filterDraft}
             onChange={(e) => setFilterDraft(e.target.value)}
-            placeholder="Search Names..."
+            placeholder={t("searchNames")}
             className="min-w-0 flex-1 border p-1 px-2 rounded"
             spellCheck="false"
           />
@@ -148,7 +151,7 @@ function BuyersComponent() {
           className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 w-100 h-10 m-2"
           onClick={onAdd}
         >
-          Add new
+          {t("addNew")}
         </button>
         {buyers?.map((buyer) => {
           return (

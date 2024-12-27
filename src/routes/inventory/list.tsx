@@ -6,10 +6,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Select from "react-select";
 import { CustomTable } from "../../components/CustomTable";
 import { DropdownCellReadonly } from "../../components/DropdownCellReadonly";
 import { TableCellReadonly } from "../../components/TableCellReadonly";
+import { buyersQueryOptions } from "../../utils/buyerService";
 import { sellersQueryOptions } from "../../utils/sellerService";
 import { treeSpeciesQueryOptions } from "../../utils/treeSpeciesService";
 import {
@@ -22,6 +24,8 @@ export const Route = createFileRoute("/inventory/list")({
 });
 
 function ListInventoryComponent() {
+  const { t, i18n } = useTranslation();
+
   const [filters, setFilters] = useState<{
     tree_species_id?: number;
     tree_species_id_label?: string;
@@ -29,6 +33,8 @@ function ListInventoryComponent() {
     offered_price__isnotnull?: boolean;
     seller_id?: number;
     seller_id_label?: string;
+    buyer_id?: number;
+    buyer_id_label?: string;
   }>();
 
   const woodPiecesQuery = useSuspenseQuery(
@@ -60,14 +66,25 @@ function ListInventoryComponent() {
         value: ts.id,
         label: ts.seller_name,
       })),
-    [treeSpeciesData]
+    [sellers]
+  );
+
+  const buyersQuery = useSuspenseQuery(buyersQueryOptions({}));
+  const buyers = buyersQuery.data;
+  const buyerOptions = useMemo(
+    () =>
+      buyers.map((ts) => ({
+        value: ts.id,
+        label: ts.buyer_name,
+      })),
+    [buyers]
   );
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
       {
         accessorKey: "sequence_no",
-        header: () => "Seq. no.",
+        header: () => t("seqNo"),
         size: 60,
         meta: {
           type: "integer",
@@ -75,7 +92,7 @@ function ListInventoryComponent() {
       },
       {
         accessorKey: "seller_id",
-        header: () => "Seller",
+        header: () => t("seller"),
         size: 200,
         cell: (data) =>
           DropdownCellReadonly({
@@ -88,7 +105,7 @@ function ListInventoryComponent() {
       },
       {
         accessorKey: "tree_species_id",
-        header: () => "Tree species",
+        header: () => t("treeSpecies"),
         size: 200,
         cell: (data) =>
           DropdownCellReadonly({
@@ -98,7 +115,7 @@ function ListInventoryComponent() {
       },
       {
         accessorKey: "width",
-        header: () => "Width (cm)",
+        header: () => t("widthCm"),
         size: 80,
         meta: {
           type: "float",
@@ -106,7 +123,7 @@ function ListInventoryComponent() {
       },
       {
         accessorKey: "length",
-        header: () => "Length (m)",
+        header: () => t("lengthM"),
         size: 80,
         meta: {
           type: "float",
@@ -114,7 +131,7 @@ function ListInventoryComponent() {
       },
       {
         accessorKey: "volume",
-        header: () => "Volume (m3)",
+        header: () => t("volumeM3"),
         size: 80,
         meta: {
           type: "float",
@@ -122,12 +139,12 @@ function ListInventoryComponent() {
       },
       {
         accessorKey: "plate_no",
-        header: () => "Plate no",
+        header: () => t("plateNo"),
         size: 100,
       },
       {
         accessorKey: "offered_price",
-        header: () => "Max price / m3 (EUR)",
+        header: () => t("maxPriceM3"),
         size: 80,
         meta: {
           type: "float",
@@ -137,7 +154,7 @@ function ListInventoryComponent() {
       },
       {
         accessorKey: "offered_total_price",
-        header: () => "Total price (EUR)",
+        header: () => t("totalPriceM3"),
         size: 80,
         meta: {
           type: "float",
@@ -147,7 +164,7 @@ function ListInventoryComponent() {
       },
       {
         accessorKey: "buyer_name",
-        header: () => "Buyer",
+        header: () => t("buyer"),
         size: 80,
         meta: {
           readonly: true,
@@ -171,9 +188,9 @@ function ListInventoryComponent() {
   return (
     <div className="p-3">
       <div className="mb-3">Filters</div>
-      <div className="flex flex-row space-x-3">
+      <div className="flex flex-row space-x-3 mb-3">
         <div>
-          <div className="text-sm"> Tree species</div>
+          <div className="text-sm">Tree species</div>
           <Select
             className="w-[200px]"
             options={treeSpeciesOptions}
@@ -226,7 +243,7 @@ function ListInventoryComponent() {
           />
         </div>
         <div>
-          <div className="text-sm"> Seller</div>
+          <div className="text-sm">{t("seller")}</div>
           <Select
             className="w-[200px]"
             options={sellerOptions}
@@ -241,6 +258,26 @@ function ListInventoryComponent() {
             value={{
               value: filters?.seller_id,
               label: filters?.seller_id_label,
+            }}
+            isClearable={true}
+          />
+        </div>
+        <div>
+          <div className="text-sm">{t("buyer")}</div>
+          <Select
+            className="w-[200px]"
+            options={buyerOptions}
+            isSearchable={true}
+            onChange={(newValue) =>
+              setFilters((prev) => ({
+                ...prev,
+                buyer_id: newValue?.value!,
+                buyer_id_label: newValue?.label!,
+              }))
+            }
+            value={{
+              value: filters?.buyer_id,
+              label: filters?.buyer_id_label,
             }}
             isClearable={true}
           />

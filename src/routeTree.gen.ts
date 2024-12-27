@@ -12,7 +12,6 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as SellersImport } from './routes/sellers'
-import { Route as LoginImport } from './routes/login'
 import { Route as InventoryImport } from './routes/inventory'
 import { Route as BuyersImport } from './routes/buyers'
 import { Route as IndexImport } from './routes/index'
@@ -20,7 +19,6 @@ import { Route as SellersSellerIdImport } from './routes/sellers/$sellerId'
 import { Route as InventoryListImport } from './routes/inventory/list'
 import { Route as InventoryEditImport } from './routes/inventory/edit'
 import { Route as BuyersBuyerIdImport } from './routes/buyers/$buyerId'
-import { Route as AuthProfileImport } from './routes/_auth.profile'
 import { Route as SellersSellerIdWoodPiecesListImport } from './routes/sellers/$sellerId/wood-pieces-list'
 import { Route as BuyersBuyerIdWoodPieceOffersListImport } from './routes/buyers/$buyerId/wood-piece-offers-list'
 
@@ -29,12 +27,6 @@ import { Route as BuyersBuyerIdWoodPieceOffersListImport } from './routes/buyers
 const SellersRoute = SellersImport.update({
   id: '/sellers',
   path: '/sellers',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const LoginRoute = LoginImport.update({
-  id: '/login',
-  path: '/login',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -80,12 +72,6 @@ const BuyersBuyerIdRoute = BuyersBuyerIdImport.update({
   getParentRoute: () => BuyersRoute,
 } as any)
 
-const AuthProfileRoute = AuthProfileImport.update({
-  id: '/_auth/profile',
-  path: '/profile',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const SellersSellerIdWoodPiecesListRoute =
   SellersSellerIdWoodPiecesListImport.update({
     id: '/wood-pieces-list',
@@ -125,25 +111,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InventoryImport
       parentRoute: typeof rootRoute
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginImport
-      parentRoute: typeof rootRoute
-    }
     '/sellers': {
       id: '/sellers'
       path: '/sellers'
       fullPath: '/sellers'
       preLoaderRoute: typeof SellersImport
-      parentRoute: typeof rootRoute
-    }
-    '/_auth/profile': {
-      id: '/_auth/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AuthProfileImport
       parentRoute: typeof rootRoute
     }
     '/buyers/$buyerId': {
@@ -257,9 +229,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/buyers': typeof BuyersRouteWithChildren
   '/inventory': typeof InventoryRouteWithChildren
-  '/login': typeof LoginRoute
   '/sellers': typeof SellersRouteWithChildren
-  '/profile': typeof AuthProfileRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
   '/inventory/edit': typeof InventoryEditRoute
   '/inventory/list': typeof InventoryListRoute
@@ -272,9 +242,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/buyers': typeof BuyersRouteWithChildren
   '/inventory': typeof InventoryRouteWithChildren
-  '/login': typeof LoginRoute
   '/sellers': typeof SellersRouteWithChildren
-  '/profile': typeof AuthProfileRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
   '/inventory/edit': typeof InventoryEditRoute
   '/inventory/list': typeof InventoryListRoute
@@ -288,9 +256,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/buyers': typeof BuyersRouteWithChildren
   '/inventory': typeof InventoryRouteWithChildren
-  '/login': typeof LoginRoute
   '/sellers': typeof SellersRouteWithChildren
-  '/_auth/profile': typeof AuthProfileRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
   '/inventory/edit': typeof InventoryEditRoute
   '/inventory/list': typeof InventoryListRoute
@@ -305,9 +271,7 @@ export interface FileRouteTypes {
     | '/'
     | '/buyers'
     | '/inventory'
-    | '/login'
     | '/sellers'
-    | '/profile'
     | '/buyers/$buyerId'
     | '/inventory/edit'
     | '/inventory/list'
@@ -319,9 +283,7 @@ export interface FileRouteTypes {
     | '/'
     | '/buyers'
     | '/inventory'
-    | '/login'
     | '/sellers'
-    | '/profile'
     | '/buyers/$buyerId'
     | '/inventory/edit'
     | '/inventory/list'
@@ -333,9 +295,7 @@ export interface FileRouteTypes {
     | '/'
     | '/buyers'
     | '/inventory'
-    | '/login'
     | '/sellers'
-    | '/_auth/profile'
     | '/buyers/$buyerId'
     | '/inventory/edit'
     | '/inventory/list'
@@ -349,18 +309,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BuyersRoute: typeof BuyersRouteWithChildren
   InventoryRoute: typeof InventoryRouteWithChildren
-  LoginRoute: typeof LoginRoute
   SellersRoute: typeof SellersRouteWithChildren
-  AuthProfileRoute: typeof AuthProfileRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BuyersRoute: BuyersRouteWithChildren,
   InventoryRoute: InventoryRouteWithChildren,
-  LoginRoute: LoginRoute,
   SellersRoute: SellersRouteWithChildren,
-  AuthProfileRoute: AuthProfileRoute,
 }
 
 export const routeTree = rootRoute
@@ -376,9 +332,7 @@ export const routeTree = rootRoute
         "/",
         "/buyers",
         "/inventory",
-        "/login",
-        "/sellers",
-        "/_auth/profile"
+        "/sellers"
       ]
     },
     "/": {
@@ -397,17 +351,11 @@ export const routeTree = rootRoute
         "/inventory/list"
       ]
     },
-    "/login": {
-      "filePath": "login.tsx"
-    },
     "/sellers": {
       "filePath": "sellers.tsx",
       "children": [
         "/sellers/$sellerId"
       ]
-    },
-    "/_auth/profile": {
-      "filePath": "_auth.profile.tsx"
     },
     "/buyers/$buyerId": {
       "filePath": "buyers/$buyerId.tsx",

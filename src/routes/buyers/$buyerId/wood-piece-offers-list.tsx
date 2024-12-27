@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-table";
 import { info } from "@tauri-apps/plugin-log";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
 import { DropdownCell } from "../../../components/DropdownCell";
 import { RemoveCell } from "../../../components/RemoveCell";
@@ -31,6 +32,8 @@ export const Route = createFileRoute("/buyers/$buyerId/wood-piece-offers-list")(
 );
 
 function WoodPiecesList() {
+  const { t, i18n } = useTranslation();
+
   const params = Route.useParams();
 
   const woodPiecesQuery = useSuspenseQuery(
@@ -52,7 +55,7 @@ function WoodPiecesList() {
       },
       {
         accessorKey: "wood_piece_id",
-        header: () => "Wood piece",
+        header: () => t("woodPiece"),
         size: 400,
         cell: (data) =>
           DropdownCell({
@@ -83,7 +86,7 @@ function WoodPiecesList() {
       },
       {
         accessorKey: "offered_total_price",
-        header: () => "Total price (EUR)",
+        header: () => t("totalPriceM3"),
         size: 80,
         meta: {
           type: "float",

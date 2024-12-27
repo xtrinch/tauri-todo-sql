@@ -11,6 +11,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { CustomTable } from "../../components/CustomTable";
 import { RemoveCell } from "../../components/RemoveCell";
@@ -46,6 +47,8 @@ export const Route = createFileRoute("/buyers/$buyerId")({
 });
 
 function BuyerComponent() {
+  const { t, i18n } = useTranslation();
+
   const params = Route.useParams();
   const buyerQuery = useSuspenseQuery(buyerQueryOptions(params.buyerId));
   const buyer = buyerQuery.data;
@@ -60,7 +63,7 @@ function BuyerComponent() {
     () => [
       {
         accessorKey: "buyer_name",
-        header: () => "Name",
+        header: () => t("name"),
         meta: {},
         size: 200,
       },

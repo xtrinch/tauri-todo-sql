@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import "./../utils/i18n";
 
 export const Route = createFileRoute("/")({
   component: IndexComponent,
@@ -15,12 +16,5 @@ export const Route = createFileRoute("/")({
 });
 
 function IndexComponent() {
-  return (
-    <div className={`p-2`}>
-      <div className={`text-lg`}>Welcome Home!</div>
-      <hr className={`my-2`} />
-      <hr className={`my-2`} />
-      <div className={`max-w-xl`}>:)</div>
-    </div>
-  );
+  return null;
 }

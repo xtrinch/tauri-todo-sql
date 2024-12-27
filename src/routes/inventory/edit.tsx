@@ -6,6 +6,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../components/CustomTable";
 import { DropdownCell } from "../../components/DropdownCell";
 import { RemoveCell } from "../../components/RemoveCell";
@@ -25,6 +26,8 @@ export const Route = createFileRoute("/inventory/edit")({
 });
 
 function RouteComponent() {
+  const { t, i18n } = useTranslation();
+
   const createWoodPieceMutation = useCreateWoodPieceMutation();
   const removeWoodPieceMutation = useRemoveWoodPieceMutation();
   const updateWoodPieceMutation = useUpdateWoodPieceMutation();
@@ -48,7 +51,7 @@ function RouteComponent() {
     () => [
       {
         accessorKey: "sequence_no",
-        header: () => "Seq. no.",
+        header: () => t("seqNo"),
         size: 60,
         meta: {
           type: "integer",
@@ -56,7 +59,7 @@ function RouteComponent() {
       },
       {
         accessorKey: "seller_id",
-        header: () => "Seller",
+        header: () => t("seller"),
         size: 200,
         cell: (data) =>
           DropdownCell({
@@ -69,7 +72,7 @@ function RouteComponent() {
       },
       {
         accessorKey: "tree_species_id",
-        header: () => "Tree species",
+        header: () => t("treeSpecies"),
         size: 200,
         cell: (data) =>
           DropdownCell({
@@ -82,7 +85,7 @@ function RouteComponent() {
       },
       {
         accessorKey: "width",
-        header: () => "Width (cm)",
+        header: () => t("widthCm"),
         size: 80,
         meta: {
           type: "float",
@@ -90,7 +93,7 @@ function RouteComponent() {
       },
       {
         accessorKey: "length",
-        header: () => "Length (m)",
+        header: () => t("lengthM"),
         size: 80,
         meta: {
           type: "float",
@@ -98,7 +101,7 @@ function RouteComponent() {
       },
       {
         accessorKey: "volume",
-        header: () => "Volume (m3)",
+        header: () => t("volumeM3"),
         size: 80,
         meta: {
           type: "float",
@@ -106,7 +109,7 @@ function RouteComponent() {
       },
       {
         accessorKey: "plate_no",
-        header: () => "Plate no",
+        header: () => t("plateNo"),
         size: 100,
       },
       {

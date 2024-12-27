@@ -6,6 +6,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
 import { DropdownCell } from "../../../components/DropdownCell";
 import { RemoveCell } from "../../../components/RemoveCell";
@@ -25,6 +26,8 @@ export const Route = createFileRoute("/sellers/$sellerId/wood-pieces-list")({
 });
 
 function WoodPiecesList() {
+  const { t, i18n } = useTranslation();
+
   const params = Route.useParams();
 
   const createWoodPieceMutation = useCreateWoodPieceMutation();
@@ -47,7 +50,7 @@ function WoodPiecesList() {
     () => [
       {
         accessorKey: "tree_species_id",
-        header: () => "Tree species",
+        header: () => t("treeSpecies"),
         size: 200,
         cell: (data) =>
           DropdownCell({
@@ -60,7 +63,7 @@ function WoodPiecesList() {
       },
       {
         accessorKey: "sequence_no",
-        header: () => "Seq. no.",
+        header: () => t("seqNo"),
         size: 80,
         meta: {
           type: "integer",
@@ -68,7 +71,7 @@ function WoodPiecesList() {
       },
       {
         accessorKey: "width",
-        header: () => "Width (cm)",
+        header: () => t("widthCm"),
         size: 80,
         meta: {
           type: "float",
@@ -76,7 +79,7 @@ function WoodPiecesList() {
       },
       {
         accessorKey: "length",
-        header: () => "Length (m)",
+        header: () => t("lengthM"),
         size: 80,
         meta: {
           type: "float",
@@ -84,7 +87,7 @@ function WoodPiecesList() {
       },
       {
         accessorKey: "volume",
-        header: () => "Volume (m3)",
+        header: () => t("volumeM3"),
         size: 80,
         meta: {
           type: "float",
@@ -92,12 +95,12 @@ function WoodPiecesList() {
       },
       {
         accessorKey: "plate_no",
-        header: () => "Plate no",
+        header: () => t("plateNo"),
         size: 100,
       },
       {
         accessorKey: "offered_price",
-        header: () => "Max price / m3 (EUR)",
+        header: () => t("maxPriceM3"),
         size: 80,
         meta: {
           type: "float",
@@ -107,7 +110,7 @@ function WoodPiecesList() {
       },
       {
         accessorKey: "offered_total_price",
-        header: () => "Total price (EUR)",
+        header: () => t("totalPriceM3"),
         size: 80,
         meta: {
           type: "float",
@@ -117,7 +120,7 @@ function WoodPiecesList() {
       },
       {
         accessorKey: "buyer_name",
-        header: () => "Buyer",
+        header: () => t("buyer"),
         size: 80,
         meta: {
           readonly: true,
