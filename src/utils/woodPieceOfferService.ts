@@ -188,4 +188,5 @@ export const woodPieceOffersQueryOptions = (opts: {
   queryOptions({
     queryKey: ["wood_pieces", opts],
     queryFn: () => ensureWoodPieceOffers(opts),
+    staleTime: Infinity,
   });

@@ -43,6 +43,7 @@ export const TableCell = <TableItem,>({
   const getFormattedVal = (val: any) => {
     if (columnMeta?.type === "float") {
       val = parseFloat(val as string);
+      // .toFixed(2);
       if (isNaN(val as number)) {
         val = 0;
       }
@@ -92,6 +93,8 @@ export const TableCell = <TableItem,>({
     <>
       <input
         value={value as string}
+        // step="0.1"
+        // type="number"
         className="bg-green h-10 min-w-[100%] max-w-[100%] border p-1 px-2 rounded"
         style={{ borderColor: value === 0 ? "red" : undefined }}
         onChange={onChange}

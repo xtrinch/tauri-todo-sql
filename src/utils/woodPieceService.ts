@@ -25,17 +25,27 @@ export type WoodPiece = {
   buyer_name: string;
 };
 
-const ensureWoodPieces = async (opts: {
+interface ListOptions {
   sellerId?: number;
+  tree_species_id?: number;
+  offered_price__isnull?: boolean;
+  offered_price__isnotnull?: boolean;
   filterBy?: string;
   sortBy?: "id" | "sequence_no";
   relations?: string[];
   sortDirection?: "DESC" | "ASC";
-}) => {
-  const db = await getDatabase();
-  const params = [opts.sellerId];
+}
 
-  const where = compact([opts.sellerId ? `"seller_id" = $1 ` : ""]);
+const ensureWoodPieces = async (opts: ListOptions) => {
+  const db = await getDatabase();
+  const params = [opts.sellerId, opts.tree_species_id];
+
+  const where = compact([
+    opts.sellerId ? `"seller_id" = $1 ` : "",
+    opts.tree_species_id ? `"tree_species_id"=$2` : "",
+    opts.offered_price__isnull ? `"offered_price" IS NULL` : "",
+    opts.offered_price__isnotnull ? `"offered_price" IS NOT NULL` : "",
+  ]);
 
   const sql = `
     SELECT 
@@ -201,13 +211,9 @@ export const useUpdateWoodPieceMutation = (onSuccess?: () => void) => {
   });
 };
 
-export const woodPiecesQueryOptions = (opts: {
-  sellerId?: number;
-  filterBy?: string;
-  sortBy?: "id" | "sequence_no";
-  relations?: string[];
-}) =>
+export const woodPiecesQueryOptions = (opts: ListOptions) =>
   queryOptions({
     queryKey: ["wood_pieces", opts],
     queryFn: () => ensureWoodPieces(opts),
+    staleTime: Infinity,
   });

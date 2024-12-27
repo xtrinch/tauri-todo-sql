@@ -125,6 +125,7 @@ export const sellersQueryOptions = (opts: {
   queryOptions({
     queryKey: ["sellers", opts],
     queryFn: () => ensureSellers(opts),
+    staleTime: Infinity,
   });
 
 export async function removeSeller(

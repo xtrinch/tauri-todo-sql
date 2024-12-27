@@ -114,6 +114,7 @@ export const buyersQueryOptions = (opts: {
   queryOptions({
     queryKey: ["buyers", opts],
     queryFn: () => ensureBuyers(opts),
+    staleTime: Infinity,
   });
 
 export async function removeBuyer(

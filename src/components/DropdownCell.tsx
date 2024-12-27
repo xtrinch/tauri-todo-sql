@@ -81,7 +81,7 @@ export const DropdownCell = <TableItem,>({
   }, [initialValue]);
 
   return (
-    <div className="w-full bg-green">
+    <div className="w-full">
       <Select
         options={choiceOptions}
         isSearchable={true}

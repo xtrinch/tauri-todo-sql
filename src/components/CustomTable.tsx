@@ -2,14 +2,22 @@ import { flexRender, Table } from "@tanstack/react-table";
 import { FooterAddCell } from "./FooterAddCell";
 import { CustomTableMeta } from "./TableCell";
 
-export function CustomTable<TableItem>({ table }: { table: Table<TableItem> }) {
+export function CustomTable<TableItem>({
+  table,
+  trClassName,
+  trhClassName,
+}: {
+  table: Table<TableItem>;
+  trClassName?: string;
+  trhClassName?: string;
+}) {
   const meta = table.options.meta as CustomTableMeta;
 
   return (
     <table style={{ tableLayout: "fixed" }}>
       <thead>
         {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
+          <tr key={headerGroup.id} className={trhClassName}>
             {headerGroup.headers.map((header) => (
               <th
                 key={header.id}
@@ -33,7 +41,7 @@ export function CustomTable<TableItem>({ table }: { table: Table<TableItem> }) {
       </thead>
       <tbody>
         {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
+          <tr key={row.id} className={trClassName}>
             {row.getVisibleCells().map((cell) => (
               <td
                 key={cell.id}

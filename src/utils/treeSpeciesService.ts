@@ -128,4 +128,5 @@ export const treeSpeciesQueryOptions = (opts: {
   queryOptions({
     queryKey: ["tree_species", opts],
     queryFn: () => ensureTreeSpecies(opts),
+    staleTime: Infinity,
   });

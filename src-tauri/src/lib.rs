@@ -97,7 +97,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 plate_no VARCHAR,
                 seller_id INTEGER,
                 tree_species_id INTEGER,
-                FOREIGN KEY(seller_id) REFERENCES sellers(id) ON DELETE CASCADE,
+                FOREIGN KEY(seller_id) REFERENCES sellers(id) ON DELETE RESTRICT,
                 FOREIGN KEY(tree_species_id) REFERENCES tree_species(id)
             );"
             }
@@ -107,8 +107,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 offered_price REAL, 
                 wood_piece_id INTEGER,
                 buyer_id INTEGER,
-                FOREIGN KEY(buyer_id) REFERENCES buyers(id) ON DELETE CASCADE,
-                FOREIGN KEY(wood_piece_id) REFERENCES wood_pieces(id) ON DELETE CASCADE
+                FOREIGN KEY(buyer_id) REFERENCES buyers(id) ON DELETE RESTRICT,
+                FOREIGN KEY(wood_piece_id) REFERENCES wood_pieces(id) ON DELETE RESTRICT
             );"
             }
             _ => "",

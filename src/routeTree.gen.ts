@@ -17,6 +17,8 @@ import { Route as InventoryImport } from './routes/inventory'
 import { Route as BuyersImport } from './routes/buyers'
 import { Route as IndexImport } from './routes/index'
 import { Route as SellersSellerIdImport } from './routes/sellers/$sellerId'
+import { Route as InventoryListImport } from './routes/inventory/list'
+import { Route as InventoryEditImport } from './routes/inventory/edit'
 import { Route as BuyersBuyerIdImport } from './routes/buyers/$buyerId'
 import { Route as AuthProfileImport } from './routes/_auth.profile'
 import { Route as SellersSellerIdWoodPiecesListImport } from './routes/sellers/$sellerId/wood-pieces-list'
@@ -58,6 +60,18 @@ const SellersSellerIdRoute = SellersSellerIdImport.update({
   id: '/$sellerId',
   path: '/$sellerId',
   getParentRoute: () => SellersRoute,
+} as any)
+
+const InventoryListRoute = InventoryListImport.update({
+  id: '/list',
+  path: '/list',
+  getParentRoute: () => InventoryRoute,
+} as any)
+
+const InventoryEditRoute = InventoryEditImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => InventoryRoute,
 } as any)
 
 const BuyersBuyerIdRoute = BuyersBuyerIdImport.update({
@@ -139,6 +153,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyersBuyerIdImport
       parentRoute: typeof BuyersImport
     }
+    '/inventory/edit': {
+      id: '/inventory/edit'
+      path: '/edit'
+      fullPath: '/inventory/edit'
+      preLoaderRoute: typeof InventoryEditImport
+      parentRoute: typeof InventoryImport
+    }
+    '/inventory/list': {
+      id: '/inventory/list'
+      path: '/list'
+      fullPath: '/inventory/list'
+      preLoaderRoute: typeof InventoryListImport
+      parentRoute: typeof InventoryImport
+    }
     '/sellers/$sellerId': {
       id: '/sellers/$sellerId'
       path: '/$sellerId'
@@ -188,6 +216,20 @@ const BuyersRouteChildren: BuyersRouteChildren = {
 const BuyersRouteWithChildren =
   BuyersRoute._addFileChildren(BuyersRouteChildren)
 
+interface InventoryRouteChildren {
+  InventoryEditRoute: typeof InventoryEditRoute
+  InventoryListRoute: typeof InventoryListRoute
+}
+
+const InventoryRouteChildren: InventoryRouteChildren = {
+  InventoryEditRoute: InventoryEditRoute,
+  InventoryListRoute: InventoryListRoute,
+}
+
+const InventoryRouteWithChildren = InventoryRoute._addFileChildren(
+  InventoryRouteChildren,
+)
+
 interface SellersSellerIdRouteChildren {
   SellersSellerIdWoodPiecesListRoute: typeof SellersSellerIdWoodPiecesListRoute
 }
@@ -214,11 +256,13 @@ const SellersRouteWithChildren =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/buyers': typeof BuyersRouteWithChildren
-  '/inventory': typeof InventoryRoute
+  '/inventory': typeof InventoryRouteWithChildren
   '/login': typeof LoginRoute
   '/sellers': typeof SellersRouteWithChildren
   '/profile': typeof AuthProfileRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
+  '/inventory/edit': typeof InventoryEditRoute
+  '/inventory/list': typeof InventoryListRoute
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
   '/sellers/$sellerId/wood-pieces-list': typeof SellersSellerIdWoodPiecesListRoute
@@ -227,11 +271,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/buyers': typeof BuyersRouteWithChildren
-  '/inventory': typeof InventoryRoute
+  '/inventory': typeof InventoryRouteWithChildren
   '/login': typeof LoginRoute
   '/sellers': typeof SellersRouteWithChildren
   '/profile': typeof AuthProfileRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
+  '/inventory/edit': typeof InventoryEditRoute
+  '/inventory/list': typeof InventoryListRoute
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
   '/sellers/$sellerId/wood-pieces-list': typeof SellersSellerIdWoodPiecesListRoute
@@ -241,11 +287,13 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/buyers': typeof BuyersRouteWithChildren
-  '/inventory': typeof InventoryRoute
+  '/inventory': typeof InventoryRouteWithChildren
   '/login': typeof LoginRoute
   '/sellers': typeof SellersRouteWithChildren
   '/_auth/profile': typeof AuthProfileRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
+  '/inventory/edit': typeof InventoryEditRoute
+  '/inventory/list': typeof InventoryListRoute
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
   '/sellers/$sellerId/wood-pieces-list': typeof SellersSellerIdWoodPiecesListRoute
@@ -261,6 +309,8 @@ export interface FileRouteTypes {
     | '/sellers'
     | '/profile'
     | '/buyers/$buyerId'
+    | '/inventory/edit'
+    | '/inventory/list'
     | '/sellers/$sellerId'
     | '/buyers/$buyerId/wood-piece-offers-list'
     | '/sellers/$sellerId/wood-pieces-list'
@@ -273,6 +323,8 @@ export interface FileRouteTypes {
     | '/sellers'
     | '/profile'
     | '/buyers/$buyerId'
+    | '/inventory/edit'
+    | '/inventory/list'
     | '/sellers/$sellerId'
     | '/buyers/$buyerId/wood-piece-offers-list'
     | '/sellers/$sellerId/wood-pieces-list'
@@ -285,6 +337,8 @@ export interface FileRouteTypes {
     | '/sellers'
     | '/_auth/profile'
     | '/buyers/$buyerId'
+    | '/inventory/edit'
+    | '/inventory/list'
     | '/sellers/$sellerId'
     | '/buyers/$buyerId/wood-piece-offers-list'
     | '/sellers/$sellerId/wood-pieces-list'
@@ -294,7 +348,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BuyersRoute: typeof BuyersRouteWithChildren
-  InventoryRoute: typeof InventoryRoute
+  InventoryRoute: typeof InventoryRouteWithChildren
   LoginRoute: typeof LoginRoute
   SellersRoute: typeof SellersRouteWithChildren
   AuthProfileRoute: typeof AuthProfileRoute
@@ -303,7 +357,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BuyersRoute: BuyersRouteWithChildren,
-  InventoryRoute: InventoryRoute,
+  InventoryRoute: InventoryRouteWithChildren,
   LoginRoute: LoginRoute,
   SellersRoute: SellersRouteWithChildren,
   AuthProfileRoute: AuthProfileRoute,
@@ -337,7 +391,11 @@ export const routeTree = rootRoute
       ]
     },
     "/inventory": {
-      "filePath": "inventory.tsx"
+      "filePath": "inventory.tsx",
+      "children": [
+        "/inventory/edit",
+        "/inventory/list"
+      ]
     },
     "/login": {
       "filePath": "login.tsx"
@@ -357,6 +415,14 @@ export const routeTree = rootRoute
       "children": [
         "/buyers/$buyerId/wood-piece-offers-list"
       ]
+    },
+    "/inventory/edit": {
+      "filePath": "inventory/edit.tsx",
+      "parent": "/inventory"
+    },
+    "/inventory/list": {
+      "filePath": "inventory/list.tsx",
+      "parent": "/inventory"
     },
     "/sellers/$sellerId": {
       "filePath": "sellers/$sellerId.tsx",
