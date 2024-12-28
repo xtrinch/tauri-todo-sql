@@ -25,15 +25,6 @@ const ensureTreeSpecies = async (opts: {
   return treeSpecies;
 };
 
-export async function fetchTreeSpeciesById(id: number) {
-  const db = await getDatabase();
-  const result = await db.select(`SELECT * from "tree_species" where id = $1`, [
-    id,
-  ]);
-  const treeSpecies = (result as TreeSpecies[])[0];
-  return treeSpecies;
-}
-
 export async function postTreeSpecies(
   partialTreeSpecies: Partial<TreeSpecies>
 ): Promise<TreeSpecies> {
@@ -111,7 +102,6 @@ export const useRemoveTreeSpeciesMutation = (
 
 export const useUpdateTreeSpeciesMutation = (onSuccess?: () => void) => {
   return useMutation({
-    // mutationKey: ["tree_species", "update"],
     mutationFn: patchTreeSpecies,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tree_species"] });

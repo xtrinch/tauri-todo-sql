@@ -88,6 +88,7 @@ export const sellerQueryOptions = (sellerId: number) =>
   queryOptions({
     queryKey: ["sellers", sellerId],
     queryFn: () => fetchSellerById(sellerId),
+    staleTime: Infinity,
   });
 
 export const useCreateSellerMutation = (

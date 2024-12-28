@@ -172,6 +172,7 @@ export async function patchWoodPiece(
     );
   } catch (e) {
     info(JSON.stringify(e));
+    throw e;
   }
 }
 
@@ -179,6 +180,7 @@ export const woodPieceQueryOptions = (woodPieceId: number) =>
   queryOptions({
     queryKey: ["wood_pieces", woodPieceId],
     queryFn: () => fetchWoodPieceById(woodPieceId),
+    staleTime: Infinity,
   });
 
 export const useCreateWoodPieceMutation = (

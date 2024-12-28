@@ -135,14 +135,15 @@ export async function patchWoodPieceOffer(
     );
   } catch (e) {
     info(JSON.stringify(e));
+    throw e;
   }
-  info(JSON.stringify(params));
 }
 
 export const woodPieceQueryOptions = (woodPieceId: number) =>
   queryOptions({
     queryKey: ["wood_pieces", woodPieceId],
     queryFn: () => fetchWoodPieceOfferById(woodPieceId),
+    staleTime: Infinity,
   });
 
 export const useCreateWoodPieceOfferMutation = (

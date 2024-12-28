@@ -79,6 +79,7 @@ export const buyerQueryOptions = (buyerId: number) =>
   queryOptions({
     queryKey: ["buyers", buyerId],
     queryFn: () => fetchBuyerById(buyerId),
+    staleTime: Infinity,
   });
 
 export const useCreateBuyerMutation = (onSuccess?: (buyer: Buyer) => void) => {

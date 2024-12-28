@@ -9,7 +9,6 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
-import { info } from "@tauri-apps/plugin-log";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Spinner } from "../components/Spinner";
@@ -101,7 +100,6 @@ function RootComponent() {
 
   useEffect(() => {
     function checkUserData() {
-      info("CHANGED");
       const localStorageChanges = localStorage.getItem("changes") === "true";
       setChanges(localStorageChanges);
     }

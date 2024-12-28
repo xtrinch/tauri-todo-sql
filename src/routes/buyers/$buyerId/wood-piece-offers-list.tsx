@@ -5,7 +5,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { info } from "@tauri-apps/plugin-log";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
@@ -39,7 +38,6 @@ function WoodPiecesList() {
     woodPiecesQueryOptions({ relations: ["sellers", "tree_species"] })
   );
   const woodPiecesData = woodPiecesQuery.data;
-  info(JSON.stringify(woodPiecesData));
   const columns = useMemo<ColumnDef<WoodPieceOffer>[]>(
     () => [
       // {
