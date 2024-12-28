@@ -37,11 +37,14 @@ function RouteComponent() {
       ...Route.useLoaderDeps(),
       ...Route.useParams(),
       relations: [],
+      language: i18n.language as "sl" | "en",
     })
   );
   const woodPieces = woodPiecesQuery.data;
 
-  const treeSpeciesQuery = useSuspenseQuery(treeSpeciesQueryOptions({}));
+  const treeSpeciesQuery = useSuspenseQuery(
+    treeSpeciesQueryOptions({ language: i18n.language as "en" | "sl" })
+  );
   const treeSpeciesData = treeSpeciesQuery.data;
 
   const sellersQuery = useSuspenseQuery(sellersQueryOptions({}));

@@ -20,12 +20,15 @@ export type WoodPieceOffer = {
   is_max_offer: boolean;
 };
 
-const ensureWoodPieceOffers = async (opts: {
+interface ListOptions {
   buyerId?: number;
   filterBy?: string;
   sortBy?: "name" | "id";
   sortDirection?: "DESC" | "ASC";
-}) => {
+  language?: "en" | "sl";
+}
+
+const ensureWoodPieceOffers = async (opts: ListOptions) => {
   const db = await getDatabase();
   const params = [opts.buyerId];
 
@@ -38,7 +41,7 @@ const ensureWoodPieceOffers = async (opts: {
       "wood_piece_offers"."id" as id,
       "wood_piece_offers"."offered_price" as "offered_price",
       "wood_piece_offers"."buyer_id" as "buyer_id",
-      ---"wood_piece_offers_max"."offered_price" as "offered_max_price",
+      ${opts.language === "sl" ? "tree_species_name_slo" : "tree_species_name"} as "tree_species_name",
       MAX("wood_piece_offers_max"."offered_price") as "offered_max_price",
       "wood_piece_offers"."offered_price" * "wood_pieces"."volume" as "offered_total_price",
       CASE WHEN "wood_piece_offers"."offered_price" >= "wood_piece_offers_max"."offered_price" AND "wood_piece_offers"."offered_price" != 0 THEN "true" ELSE "false" END as "is_max_offer"
@@ -181,11 +184,7 @@ export const useUpdateWoodPieceOfferMutation = (onSuccess?: () => void) => {
   });
 };
 
-export const woodPieceOffersQueryOptions = (opts: {
-  sellerId?: number;
-  filterBy?: string;
-  sortBy?: "name" | "id";
-}) =>
+export const woodPieceOffersQueryOptions = (opts: ListOptions) =>
   queryOptions({
     queryKey: ["wood_pieces", opts],
     queryFn: () => ensureWoodPieceOffers(opts),

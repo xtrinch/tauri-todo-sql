@@ -43,11 +43,14 @@ function ListInventoryComponent() {
       ...Route.useParams(),
       relations: [],
       ...filters,
+      language: i18n.language as "sl" | "en",
     })
   );
   const woodPieces = woodPiecesQuery.data;
 
-  const treeSpeciesQuery = useSuspenseQuery(treeSpeciesQueryOptions({}));
+  const treeSpeciesQuery = useSuspenseQuery(
+    treeSpeciesQueryOptions({ language: i18n.language as "en" | "sl" })
+  );
   const treeSpeciesData = treeSpeciesQuery.data;
   const treeSpeciesOptions = useMemo(
     () =>
@@ -187,10 +190,10 @@ function ListInventoryComponent() {
 
   return (
     <div className="p-3">
-      <div className="mb-3">Filters</div>
+      <div className="mb-3">{t("filters")}</div>
       <div className="flex flex-row space-x-3 mb-3">
         <div>
-          <div className="text-sm">Tree species</div>
+          <div className="text-sm">{t("treeSpecies")}</div>
           <Select
             className="w-[200px]"
             options={treeSpeciesOptions}
@@ -210,12 +213,12 @@ function ListInventoryComponent() {
           />
         </div>
         <div>
-          <div className="text-sm">Max price</div>
+          <div className="text-sm">{t("maxPrice")}</div>
           <Select
             className="w-[200px]"
             options={[
-              { label: "Is defined", value: "offered_price_isnotnull" },
-              { label: "Is not defined", value: "offered_price_isnull" },
+              { label: t("isDefined"), value: "offered_price_isnotnull" },
+              { label: t("isNotDefined"), value: "offered_price_isnull" },
             ]}
             isSearchable={true}
             onChange={(newValue) =>
@@ -234,9 +237,9 @@ function ListInventoryComponent() {
                   ? "offered_price_isnotnull"
                   : "",
               label: filters?.offered_price__isnull
-                ? "Is not defined"
+                ? t("isNotDefined")
                 : filters?.offered_price__isnotnull
-                  ? "Is defined"
+                  ? t("isDefined")
                   : "",
             }}
             isClearable={true}

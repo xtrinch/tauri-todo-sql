@@ -35,7 +35,10 @@ function WoodPiecesList() {
   const params = Route.useParams();
 
   const woodPiecesQuery = useSuspenseQuery(
-    woodPiecesQueryOptions({ relations: ["sellers", "tree_species"] })
+    woodPiecesQueryOptions({
+      relations: ["sellers", "tree_species"],
+      language: i18n.language as "sl" | "en",
+    })
   );
   const woodPiecesData = woodPiecesQuery.data;
   const columns = useMemo<ColumnDef<WoodPieceOffer>[]>(
@@ -65,7 +68,7 @@ function WoodPiecesList() {
       },
       {
         accessorKey: "offered_price",
-        header: () => "Offered price / m3 (EUR)",
+        header: () => t("offeredPriceM3"),
         size: 160,
         meta: {
           type: "float",
@@ -118,6 +121,7 @@ function WoodPiecesList() {
     woodPieceOffersQueryOptions({
       ...Route.useLoaderDeps(),
       ...Route.useParams(),
+      language: i18n.language as "en" | "sl",
     })
   );
   const woodPieces = woodPieceOffersQuery.data;

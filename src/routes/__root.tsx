@@ -9,6 +9,7 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
+import { info } from "@tauri-apps/plugin-log";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Spinner } from "../components/Spinner";
@@ -111,6 +112,11 @@ function RootComponent() {
     };
   }, []);
 
+  useEffect(() => {
+    i18n.changeLanguage("sl");
+    info(i18n.language);
+  }, []);
+
   return (
     <>
       <div className={`min-h-screen flex flex-col`}>
@@ -132,13 +138,13 @@ function RootComponent() {
                   className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
                   onClick={() => saveOnly()}
                 >
-                  Save
+                  {t("save")}
                 </button>
                 <button
                   className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
                   onClick={() => resetToSaved()}
                 >
-                  Reset to saved
+                  {t("resetToSaved")}
                 </button>
               </>
             )}
@@ -146,19 +152,19 @@ function RootComponent() {
               className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
               onClick={() => saveAs()}
             >
-              Save as
+              {t("saveAs")}
             </button>
             <button
               className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
               onClick={() => loadFile()}
             >
-              Open
+              {t("open")}
             </button>
             <button
               className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
               onClick={() => undo()}
             >
-              Undo
+              {t("undo")}
             </button>
           </div>
         </div>
@@ -166,9 +172,9 @@ function RootComponent() {
           <div className={`divide-y w-36 min-w-36`}>
             {(
               [
-                ["/sellers", "Sellers"],
-                ["/buyers", "Buyers"],
-                ["/inventory", "Inventory"],
+                ["/sellers", t("sellers")],
+                ["/buyers", t("buyers")],
+                ["/inventory", t("inventory")],
               ] as const
             ).map(([to, label]) => {
               return (

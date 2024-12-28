@@ -38,11 +38,14 @@ function WoodPiecesList() {
       ...Route.useLoaderDeps(),
       seller_id: params.sellerId,
       relations: [],
+      language: i18n.language as "sl" | "en",
     })
   );
   const woodPieces = woodPiecesQuery.data;
 
-  const treeSpeciesQuery = useSuspenseQuery(treeSpeciesQueryOptions({}));
+  const treeSpeciesQuery = useSuspenseQuery(
+    treeSpeciesQueryOptions({ language: i18n.language as "en" | "sl" })
+  );
   const treeSpeciesData = treeSpeciesQuery.data;
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(

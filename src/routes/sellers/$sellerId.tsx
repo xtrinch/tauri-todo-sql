@@ -70,13 +70,13 @@ function SellerComponent() {
       },
       {
         accessorKey: "address_line1",
-        header: () => "Address line 1",
+        header: () => t("addressLine1"),
         meta: {},
         size: 200,
       },
       {
         accessorKey: "address_line2",
-        header: () => "Address line 2",
+        header: () => t("addressLine2"),
         meta: {},
         size: 200,
       },
@@ -119,7 +119,7 @@ function SellerComponent() {
   return (
     <div className="flex flex-col space-y-3">
       <div className="flex flex-col space-y-3 p-3">
-        <h3>Seller</h3>
+        <h3>{t("seller")}</h3>
         <CustomTable table={table} />
       </div>
       <div className="flex flex-wrap divide-x border-b">

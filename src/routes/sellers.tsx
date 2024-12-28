@@ -116,8 +116,8 @@ function SellersComponent() {
   }, [filterDraft]);
 
   const options = [
-    { value: "seller_name", label: "name" },
-    { value: "id", label: "id" },
+    { value: "id", label: t("sortId") },
+    { value: "seller_name", label: t("name") },
   ] as Options<{ value: any; label: any }>;
 
   return (
@@ -126,6 +126,7 @@ function SellersComponent() {
         <div className="py-2 px-3 flex gap-2 items-center bg-gray-100">
           <div>{t("sort")}:</div>
           <Select
+            options={options}
             isSearchable={true}
             onChange={(newValue) =>
               setSortBy(newValue?.value as SellersViewSortBy)

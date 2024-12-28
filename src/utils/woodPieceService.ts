@@ -35,6 +35,7 @@ interface ListOptions {
   sortBy?: "id" | "sequence_no";
   relations?: string[];
   sortDirection?: "DESC" | "ASC";
+  language?: "en" | "sl";
 }
 
 const ensureWoodPieces = async (opts: ListOptions) => {
@@ -43,7 +44,7 @@ const ensureWoodPieces = async (opts: ListOptions) => {
 
   const where = compact([
     opts.seller_id ? `"seller_id" = $1 ` : "",
-    opts.tree_species_id ? `"tree_species_id"=$2` : "",
+    opts.tree_species_id ? `"tree_species_id" = $2` : "",
     opts.offered_price__isnull ? `"offered_price" IS NULL` : "",
     opts.offered_price__isnotnull ? `"offered_price" IS NOT NULL` : "",
   ]);
@@ -53,7 +54,8 @@ const ensureWoodPieces = async (opts: ListOptions) => {
       *, 
       "wood_pieces".id as id,
       "offered_price" * "volume" as "offered_total_price",
-      MAX("wood_piece_offers"."offered_price") as "offered_price"
+      MAX("wood_piece_offers"."offered_price") as "offered_price",
+      ${opts.language === "sl" ? "tree_species_name_slo" : "tree_species_name"} as "tree_species_name"
     FROM "wood_pieces"
     LEFT JOIN "tree_species" ON "wood_pieces"."tree_species_id" = "tree_species"."id"
     LEFT JOIN "sellers" ON "wood_pieces"."seller_id" = "sellers"."id"

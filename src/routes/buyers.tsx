@@ -117,9 +117,10 @@ function BuyersComponent() {
   }, [filterDraft]);
 
   const options = [
-    { value: "buyer_name", label: "name" },
-    { value: "id", label: "id" },
+    { value: "id", label: t("sortId") },
+    { value: "buyer_name", label: t("name") },
   ] as Options<{ value: any; label: any }>;
+
   return (
     <div className="flex-1 flex">
       <div className="divide-y">

@@ -10,15 +10,25 @@ export type TreeSpecies = {
   id: number;
   tree_species_name: string;
   latin_name: string;
+  tree_species_name_slo: string;
 };
 
-const ensureTreeSpecies = async (opts: {
+interface ListOptions {
   filterBy?: string;
   sortBy?: "name" | "id" | "email";
-}) => {
+  language?: "en" | "sl";
+}
+
+const ensureTreeSpecies = async (opts: ListOptions) => {
   const db = await getDatabase();
   const params = compact([opts.sortBy || "id"]);
-  const sql = `SELECT * from "tree_species" ORDER BY $1`;
+  const sql = `
+    SELECT 
+      *, 
+      ${opts.language === "sl" ? "tree_species_name_slo" : "tree_species_name"} as "tree_species_name" 
+    FROM "tree_species" 
+    ORDER BY $1
+  `;
   const result = await db.select(sql, params);
 
   const treeSpecies = result as TreeSpecies[];
@@ -40,7 +50,18 @@ export async function postTreeSpecies(
 
   const db = await getDatabaseForModify();
   const result = await db.execute(
-    `INSERT INTO "tree_species" ("length", "width", "plate_no", "seller_id") values ($1, $2, $3, $4, $5)`,
+    `INSERT INTO "tree_species" (
+      "length", 
+      "width", 
+      "plate_no", 
+      "seller_id"
+    ) values (
+      $1, 
+      $2, 
+      $3, 
+      $4, 
+      $5
+    )`,
     [0, 0, 0, 0, partialTreeSpecies.tree_species_name]
   );
 
@@ -111,10 +132,7 @@ export const useUpdateTreeSpeciesMutation = (onSuccess?: () => void) => {
   });
 };
 
-export const treeSpeciesQueryOptions = (opts: {
-  filterBy?: string;
-  sortBy?: "name" | "id" | "email";
-}) =>
+export const treeSpeciesQueryOptions = (opts: ListOptions) =>
   queryOptions({
     queryKey: ["tree_species", opts],
     queryFn: () => ensureTreeSpecies(opts),
