@@ -44,7 +44,9 @@ function WoodPiecesList() {
           );
         })}
       </div>
-      <Outlet />
+      <div className="p-3 max-h-[calc(100vh-100px)] overflow-auto">
+        <Outlet />
+      </div>
     </div>
   );
 }

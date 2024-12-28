@@ -36,8 +36,20 @@ function SoldPiecesList() {
   );
   const woodPieces = woodPiecesQuery.data;
 
-  const treeSpeciesQuery = useSuspenseQuery(treeSpeciesQueryOptions({}));
+  const treeSpeciesQuery = useSuspenseQuery(
+    treeSpeciesQueryOptions({
+      language: i18n.language as "sl" | "en",
+    })
+  );
   const treeSpeciesData = treeSpeciesQuery.data;
+  const treeSpeciesOptions = useMemo(
+    () =>
+      treeSpeciesData.map((ts) => ({
+        value: ts.id,
+        label: ts.tree_species_name,
+      })),
+    [treeSpeciesData]
+  );
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
@@ -56,10 +68,7 @@ function SoldPiecesList() {
         cell: (data) =>
           DropdownCellReadonly({
             ...data,
-            choices: treeSpeciesData.map((ts) => ({
-              value: ts.id,
-              label: ts.tree_species_name,
-            })),
+            choices: treeSpeciesOptions,
           }),
       },
       {
@@ -112,7 +121,7 @@ function SoldPiecesList() {
         cell: TableCellReadonly,
       },
     ],
-    [treeSpeciesData]
+    [treeSpeciesOptions]
   );
 
   const table = useReactTable({

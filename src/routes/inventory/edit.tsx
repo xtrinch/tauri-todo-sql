@@ -150,7 +150,7 @@ function RouteComponent() {
   });
 
   return (
-    <div className="p-3">
+    <div>
       <CustomTable table={table} />
     </div>
   );

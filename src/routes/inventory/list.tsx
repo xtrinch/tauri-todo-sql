@@ -175,7 +175,7 @@ function ListInventoryComponent() {
         cell: TableCellReadonly,
       },
     ],
-    []
+    [treeSpeciesOptions]
   );
 
   const table = useReactTable({
@@ -189,7 +189,7 @@ function ListInventoryComponent() {
   });
 
   return (
-    <div className="p-3">
+    <div>
       <div className="mb-3">{t("filters")}</div>
       <div className="flex flex-row space-x-3 mb-3">
         <div>
