@@ -122,7 +122,7 @@ function SellersComponent() {
 
   return (
     <div className="flex-1 flex">
-      <div className="divide-y max-h-[calc(100vh-50px)] overflow-auto min-w-[280px]">
+      <div className="divide-y h-[calc(100vh-50px)] overflow-auto min-w-[280px]">
         <div className="py-2 px-3 flex gap-2 items-center bg-gray-100">
           <div>{t("sort")}:</div>
           <Select
@@ -184,7 +184,7 @@ function SellersComponent() {
           );
         })}
       </div>
-      <div className="flex-initial border-l max-h-[calc(100vh-50px)] overflow-auto w-full">
+      <div className="flex-initial border-l h-[calc(100vh-50px)] overflow-auto w-full">
         <Outlet />
       </div>
     </div>
