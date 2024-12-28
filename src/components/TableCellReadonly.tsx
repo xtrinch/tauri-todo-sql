@@ -19,6 +19,7 @@ export interface CustomTableMeta extends TableMeta<{}> {
 
 export const TableCellReadonly = <TableItem,>({
   getValue,
+  column,
 }: {
   getValue: Getter<unknown>;
   row: Row<TableItem>;
@@ -26,6 +27,24 @@ export const TableCellReadonly = <TableItem,>({
   table: Table<TableItem>;
 }) => {
   const initialValue = getValue() as string;
+  const columnMeta = column.columnDef.meta as CustomColumnMeta;
 
-  return <div className="text-sm">{initialValue || ""}</div>;
+  const getFormattedVal = (val: any) => {
+    if (columnMeta?.type === "float") {
+      val = parseFloat(val as string).toFixed(2);
+      if (isNaN(val as number)) {
+        val = 0;
+      }
+    }
+    if (columnMeta?.type === "integer") {
+      val = parseInt(val as string);
+      if (isNaN(val as number)) {
+        val = 0;
+      }
+    }
+
+    return val;
+  };
+
+  return <div className="text-sm">{getFormattedVal(initialValue) || ""}</div>;
 };

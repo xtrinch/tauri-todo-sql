@@ -48,7 +48,7 @@ export const Route = createFileRoute("/buyers/$buyerId")({
 });
 
 function BuyerComponent() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const params = Route.useParams();
   const buyerQuery = useSuspenseQuery(buyerQueryOptions(params.buyerId));

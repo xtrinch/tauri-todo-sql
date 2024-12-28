@@ -43,7 +43,7 @@ export const Route = createFileRoute("/sellers")({
 });
 
 function SellersComponent() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate({ from: Route.fullPath });
   const { sellersView } = Route.useSearch();
   const sortBy = sellersView?.sortBy ?? "seller_name";

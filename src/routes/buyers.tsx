@@ -43,7 +43,7 @@ export const Route = createFileRoute("/buyers")({
 });
 
 function BuyersComponent() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const navigate = useNavigate({ from: Route.fullPath });
   const { buyersView } = Route.useSearch();

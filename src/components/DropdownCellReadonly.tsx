@@ -8,9 +8,6 @@ interface Option {
 }
 export const DropdownCellReadonly = <TableItem,>({
   getValue,
-  row,
-  column,
-  table,
   choices: choiceData,
 }: {
   getValue: Getter<unknown>;

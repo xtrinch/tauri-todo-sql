@@ -3,7 +3,7 @@ import "./../utils/i18n";
 
 export const Route = createFileRoute("/")({
   component: IndexComponent,
-  beforeLoad: ({ location, params }) => {
+  beforeLoad: ({ location }) => {
     const shouldRedirect = [`/`].includes(location.pathname);
 
     if (shouldRedirect) {

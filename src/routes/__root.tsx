@@ -9,7 +9,6 @@ import {
 // import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
-import { info } from "@tauri-apps/plugin-log";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Spinner } from "../components/Spinner";
@@ -114,15 +113,35 @@ function RootComponent() {
 
   useEffect(() => {
     i18n.changeLanguage("sl");
-    info(i18n.language);
   }, []);
 
   return (
     <>
       <div className={`min-h-screen flex flex-col`}>
         <div className={`flex items-center justify-between border-b gap-2`}>
-          <h1 className={`text-3xl p-2`}>{t("title")}</h1>
-
+          <div className="flex flex-row space-x-3 items-center">
+            <h1 className={`text-3xl p-2 w-[130px]`}>{t("title")}</h1>
+            <button
+              style={{
+                backgroundColor: i18n.language === "en" ? "white" : undefined,
+                color: i18n.language === "en" ? "rgb(59,130,246)" : undefined,
+              }}
+              className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+              onClick={() => i18n.changeLanguage("sl")}
+            >
+              SL
+            </button>
+            <button
+              style={{
+                backgroundColor: i18n.language === "sl" ? "white" : undefined,
+                color: i18n.language === "sl" ? "rgb(59,130,246)" : undefined,
+              }}
+              className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+              onClick={() => i18n.changeLanguage("en")}
+            >
+              EN
+            </button>
+          </div>
           {/* Show a global spinner when the router is transitioning */}
           <div className="flex flex-row pr-2 space-x-2 items-center">
             <div className={`text-3xl`}>

@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/inventory")({
   component: WoodPiecesList,
-  beforeLoad: ({ location, params }) => {
+  beforeLoad: ({ location }) => {
     const shouldRedirect = [`/inventory`].includes(location.pathname);
 
     if (shouldRedirect) {
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/inventory")({
 });
 
 function WoodPiecesList() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <div>

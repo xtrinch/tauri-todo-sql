@@ -42,8 +42,7 @@ export const TableCell = <TableItem,>({
 
   const getFormattedVal = (val: any) => {
     if (columnMeta?.type === "float") {
-      val = parseFloat(val as string);
-      // .toFixed(2);
+      val = parseFloat(val as string).toFixed(2);
       if (isNaN(val as number)) {
         val = 0;
       }
