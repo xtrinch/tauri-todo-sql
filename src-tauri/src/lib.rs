@@ -1,4 +1,4 @@
-use csv::ReaderBuilder;
+// use csv::ReaderBuilder;
 use std::error::Error;
 use tauri_plugin_sql::{Migration, MigrationKind};
 mod commands;
@@ -11,30 +11,30 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     // Open the input CSV file
     println!("Current working directory: {:?}", std::env::current_dir()?);
 
-    let file_path = std::env::current_dir()?.join("tree_species.csv");
-    let mut reader = ReaderBuilder::new()
-        .has_headers(true) // Assume the first row contains headers
-        .from_path(file_path)?;
-
     // Prepare the output SQL statement
-    let mut sql_statement =
-        String::from("INSERT INTO tree_species (tree_species_name, latin_name, tree_species_name_slo) VALUES\n");
-
-    // Iterate through the CSV records
-    for result in reader.records() {
-        let record = result?;
-        let name = record.get(0).unwrap_or("").replace("'", "''");
-        let latin_name = record.get(1).unwrap_or("").replace("'", "''");
-        let name_slo = record.get(2).unwrap_or("").replace("'", "''");
-
-        sql_statement.push_str(&format!("('{}', '{}', '{}'),\n", name, latin_name, name_slo));
-    }
-
-    // Remove the trailing comma and newline, and add a semicolon
-    if sql_statement.ends_with(",\n") {
-        sql_statement.truncate(sql_statement.len() - 2);
-    }
-    sql_statement.push_str(";");
+    let sql_statement =
+        String::from("INSERT INTO tree_species (tree_species_name, latin_name, tree_species_name_slo) VALUES 
+        ('Sessile oak', 'Quercus petraea', 'Hrast graden'),
+        ('Pedunculate oak', 'Quercus robur', 'Hrast dob'),
+        ('Beech', 'Fagus sylvatica', 'Bukev'),
+        ('Black locust', 'Robinia pseudoacacia', 'Robinija'),
+        ('European ash', 'Fraxinus excelsior', 'Veliki jesen'),
+        ('Linden', 'Tilia spp.', 'Lipa'),
+        ('Wild cherry', 'Prunus avium', 'Divja češnja'),
+        ('Sharp-leaved ash', 'Fraxinus angustifolia', 'Ostrolistni jesen'),
+        ('Black alder', 'Alnus glutinosa', 'Črna jelša'),
+        ('Walnut', 'Juglans regia', 'Domači oreh'),
+        ('Black poplar', 'Populus nigra', 'Črni topol'),
+        ('Pear', 'Pyrus spp.', 'Hruška'),
+        ('Sweet chestnut', 'Castanea sativa', 'Pravi kostanj'),
+        ('Douglas fir', 'Pseudotsuga menziesii', 'Duglazija'),
+        ('Northern red oak', 'Quercus rubra', 'Rdeči hrast'),
+        ('European white elm', 'Ulmus laevis', 'Vezi'),
+        ('Eastern white pine', 'Pinus strobus', 'Zeleni bor'),
+        ('Scots pine', 'Pinus sylvestris', 'Rdeči bor'),
+        ('Spruce', 'Picea abies', 'Smreka'),
+        ('Sycamore maple', 'Acer pseudoplatanus', 'Gorski javor');
+        \n");
 
     // Use Box::leak to ensure sql_statement has a 'static lifetime
     let sql_statement_static: &'static str = Box::leak(sql_statement.into_boxed_str());
