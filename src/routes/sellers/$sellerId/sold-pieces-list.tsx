@@ -9,6 +9,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
 import { DropdownCellReadonly } from "../../../components/DropdownCellReadonly";
+import { SumFooter } from "../../../components/SumFooter";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
@@ -87,6 +88,7 @@ function SoldPiecesList() {
         meta: {
           type: "float",
         },
+        footer: (info) => <SumFooter info={info} measure="m3" />,
       },
       {
         accessorKey: "plate_no",
@@ -112,6 +114,7 @@ function SoldPiecesList() {
           readonly: true,
         },
         cell: TableCellReadonly,
+        footer: (info) => <SumFooter info={info} measure="EUR" />,
       },
       {
         accessorKey: "buyer_name",
@@ -138,7 +141,11 @@ function SoldPiecesList() {
 
   return (
     <div className="p-3">
-      <CustomTable table={table} />
+      <CustomTable
+        table={table}
+        trClassName="border-b"
+        trhClassName="border-b"
+      />
     </div>
   );
 }

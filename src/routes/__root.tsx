@@ -11,6 +11,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { FaArrowRotateLeft, FaRegFloppyDisk } from "react-icons/fa6";
 import { Spinner } from "../components/Spinner";
 import { queryClient } from "../main";
 import type { Auth } from "../utils/auth";
@@ -154,10 +155,11 @@ function RootComponent() {
             {filePath && (
               <>
                 <button
-                  className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+                  className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10 text-2xl"
                   onClick={() => saveOnly()}
+                  title={t("save")}
                 >
-                  {t("save")}
+                  <FaRegFloppyDisk />
                 </button>
                 <button
                   className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
@@ -180,10 +182,11 @@ function RootComponent() {
               {t("open")}
             </button>
             <button
-              className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+              className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10 text-2xl"
               onClick={() => undo()}
+              title={t("undo")}
             >
-              {t("undo")}
+              <FaArrowRotateLeft />
             </button>
           </div>
         </div>
@@ -194,6 +197,7 @@ function RootComponent() {
                 ["/sellers", t("sellers")],
                 ["/buyers", t("buyers")],
                 ["/inventory", t("inventory")],
+                ["/treeSpecies/edit", t("treeSpeciesPlural")],
               ] as const
             ).map(([to, label]) => {
               return (

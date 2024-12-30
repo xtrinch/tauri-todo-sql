@@ -97,6 +97,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 plate_no VARCHAR,
                 seller_id INTEGER,
                 tree_species_id INTEGER,
+                min_price REAL, 
                 FOREIGN KEY(seller_id) REFERENCES sellers(id) ON DELETE RESTRICT,
                 FOREIGN KEY(tree_species_id) REFERENCES tree_species(id)
             );"
@@ -262,7 +263,7 @@ fn get_column_names(table: &str) -> &str {
         "buyers" => "buyer_name, address_line1, address_line2",
         "sellers" => "seller_name, address_line1, address_line2",
         "tree_species" => "tree_species_name, latin_name, tree_species_name_slo",
-        "wood_pieces" => "length, sequence_no, width, volume, plate_no, seller_id, tree_species_id",
+        "wood_pieces" => "length, sequence_no, width, volume, plate_no, seller_id, tree_species_id, min_price",
         "wood_piece_offers" => "offered_price, wood_piece_id, buyer_id",
         _ => "",
     }

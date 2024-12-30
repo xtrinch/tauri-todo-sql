@@ -9,6 +9,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
 import { DropdownCell } from "../../../components/DropdownCell";
+import { FooterAddCell } from "../../../components/FooterAddCell";
 import { RemoveCell } from "../../../components/RemoveCell";
 import { TableCell } from "../../../components/TableCell";
 import {
@@ -43,16 +44,6 @@ function WoodPiecesList() {
   const woodPiecesData = woodPiecesQuery.data;
   const columns = useMemo<ColumnDef<WoodPieceOffer>[]>(
     () => [
-      // {
-      //   accessorKey: "id",
-      //   header: () => "ID",
-      //   size: 80,
-      //   meta: {
-      //     type: "float",
-      //     readonly: true,
-      //   },
-      //   cell: TableCellReadonly,
-      // },
       {
         accessorKey: "wood_piece_id",
         header: () => t("woodPiece"),
@@ -112,6 +103,9 @@ function WoodPiecesList() {
           readonly: true,
         },
         cell: RemoveCell,
+        footer: (info) => {
+          return <FooterAddCell table={info.table} />;
+        },
       },
     ],
     [params.buyerId, woodPiecesData]

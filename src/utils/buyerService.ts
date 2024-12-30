@@ -41,8 +41,7 @@ export async function postBuyer(partialBuyer: Partial<Buyer>): Promise<Buyer> {
   }
 
   const buyer = {
-    buyer_name:
-      partialBuyer.buyer_name ?? `New Buyer ${String(Date.now()).slice(0, 5)}`,
+    buyer_name: partialBuyer.buyer_name,
   };
 
   const db = await getDatabaseForModify();

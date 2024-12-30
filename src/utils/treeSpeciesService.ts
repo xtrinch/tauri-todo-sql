@@ -11,6 +11,7 @@ export type TreeSpecies = {
   tree_species_name: string;
   latin_name: string;
   tree_species_name_slo: string;
+  tree_species_name_en: string;
 };
 
 interface ListOptions {
@@ -25,6 +26,7 @@ const ensureTreeSpecies = async (opts: ListOptions) => {
   const sql = `
     SELECT 
       *, 
+      "tree_species_name" as "tree_species_name_en",
       ${opts.language === "sl" ? "tree_species_name_slo" : "tree_species_name"} as "tree_species_name" 
     FROM "tree_species" 
     ORDER BY $1
@@ -51,18 +53,19 @@ export async function postTreeSpecies(
   const db = await getDatabaseForModify();
   const result = await db.execute(
     `INSERT INTO "tree_species" (
-      "length", 
-      "width", 
-      "plate_no", 
-      "seller_id"
+      "tree_species_name", 
+      "tree_species_name_slo", 
+      "latin_name"
     ) values (
       $1, 
       $2, 
-      $3, 
-      $4, 
-      $5
+      $3
     )`,
-    [0, 0, 0, 0, partialTreeSpecies.tree_species_name]
+    [
+      partialTreeSpecies.tree_species_name,
+      partialTreeSpecies.tree_species_name_slo,
+      partialTreeSpecies.latin_name,
+    ]
   );
 
   return {
@@ -89,11 +92,16 @@ export async function patchTreeSpecies(
   await db.execute(
     `UPDATE "tree_species" 
       SET 
-        "width" = COALESCE($2, "width"), 
-        "length"=COALESCE($3, "length"), 
-        "plate_no"=COALESCE($5, "plate_no")  
+        "tree_species_name" = COALESCE($2, "tree_species_name"), 
+        "tree_species_name_slo"=COALESCE($3, "tree_species_name_slo"), 
+        "latin_name"=COALESCE($4, "latin_name")  
         WHERE id=$1`,
-    [treeSpecies.id, treeSpecies.tree_species_name, treeSpecies.latin_name]
+    [
+      treeSpecies.id,
+      treeSpecies.tree_species_name_en,
+      treeSpecies.tree_species_name_slo,
+      treeSpecies.latin_name,
+    ]
   );
 }
 

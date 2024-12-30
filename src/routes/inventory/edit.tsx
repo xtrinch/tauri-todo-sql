@@ -9,6 +9,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../components/CustomTable";
 import { DropdownCell } from "../../components/DropdownCell";
+import { FooterAddCell } from "../../components/FooterAddCell";
 import { RemoveCell } from "../../components/RemoveCell";
 import { TableCell } from "../../components/TableCell";
 import { sellersQueryOptions } from "../../utils/sellerService";
@@ -124,6 +125,9 @@ function RouteComponent() {
           readonly: true,
         },
         cell: RemoveCell,
+        footer: (info) => {
+          return <FooterAddCell table={info.table} />;
+        },
       },
     ],
     [treeSpeciesData, sellers]

@@ -1,6 +1,4 @@
 import { flexRender, Table } from "@tanstack/react-table";
-import { FooterAddCell } from "./FooterAddCell";
-import { CustomTableMeta } from "./TableCell";
 
 export function CustomTable<TableItem>({
   table,
@@ -11,8 +9,6 @@ export function CustomTable<TableItem>({
   trClassName?: string;
   trhClassName?: string;
 }) {
-  const meta = table.options.meta as CustomTableMeta;
-
   return (
     <table style={{ tableLayout: "fixed" }}>
       <thead>
@@ -58,18 +54,30 @@ export function CustomTable<TableItem>({
           </tr>
         ))}
       </tbody>
-      {meta?.onAdd && (
-        <tfoot>
-          <tr>
-            <th
-              colSpan={table.getCenterLeafColumns().length}
-              className="text-right"
-            >
-              <FooterAddCell table={table} />
-            </th>
+      <tfoot>
+        {table.getFooterGroups().map((footerGroup) => (
+          <tr key={footerGroup.id} className={trhClassName}>
+            {footerGroup.headers.map((footer) => (
+              <th
+                key={footer.id}
+                style={{
+                  width: `${footer.getSize()}px`,
+                  minWidth: `${footer.getSize()}px`,
+                  maxWidth: `${footer.getSize()}px`,
+                }}
+                className="px-1 pb-1 align-bottom"
+              >
+                {footer.isPlaceholder
+                  ? null
+                  : flexRender(
+                      footer.column.columnDef.footer,
+                      footer.getContext()
+                    )}
+              </th>
+            ))}
           </tr>
-        </tfoot>
-      )}
+        ))}
+      </tfoot>
     </table>
   );
 }

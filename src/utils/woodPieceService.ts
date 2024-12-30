@@ -17,8 +17,10 @@ export type WoodPiece = {
   volume: number;
   plate_no: number;
   sequence_no: number;
+  min_price?: number;
 
   // from other tables
+  offered_total_price: number;
   seller_name: string;
   tree_species_name: string;
   offered_price: number;
@@ -159,7 +161,8 @@ export async function patchWoodPiece(
       "tree_species_id" = COALESCE($5, "tree_species_id"),
       "sequence_no" = COALESCE($6, "sequence_no"),
       "seller_id" = COALESCE($7, "seller_id"),
-      "volume" = COALESCE($8, "volume")
+      "volume" = COALESCE($8, "volume"),
+      "min_price" = COALESCE($8, "min_price")
     WHERE id=$1`,
       [
         woodPiece.id,
@@ -170,6 +173,7 @@ export async function patchWoodPiece(
         woodPiece.sequence_no,
         woodPiece.seller_id,
         woodPiece.volume,
+        woodPiece.min_price,
       ]
     );
   } catch (e) {

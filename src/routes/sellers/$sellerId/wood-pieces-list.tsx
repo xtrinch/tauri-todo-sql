@@ -9,6 +9,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
 import { DropdownCell } from "../../../components/DropdownCell";
+import { FooterAddCell } from "../../../components/FooterAddCell";
 import { RemoveCell } from "../../../components/RemoveCell";
 import { TableCell } from "../../../components/TableCell";
 import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
@@ -109,6 +110,9 @@ function WoodPiecesList() {
           readonly: true,
         },
         cell: RemoveCell,
+        footer: (info) => {
+          return <FooterAddCell table={info.table} />;
+        },
       },
     ],
     []

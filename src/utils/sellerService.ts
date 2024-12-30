@@ -42,9 +42,7 @@ export async function postSeller(
   }
 
   const seller: Partial<Seller> = {
-    seller_name:
-      partialSeller.seller_name ??
-      `New Seller ${String(Date.now()).slice(0, 5)}`,
+    seller_name: partialSeller.seller_name,
   };
 
   const db = await getDatabaseForModify();
