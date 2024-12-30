@@ -64,7 +64,7 @@ function SellerComponent() {
     () => [
       {
         accessorKey: "seller_name",
-        header: () => "Name",
+        header: () => t("name"),
         meta: {},
         size: 200,
       },

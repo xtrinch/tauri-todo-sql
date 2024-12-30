@@ -19,7 +19,7 @@ export const SumFooter = (params: {
   );
   return (
     <div className="text-base">
-      <div>{t("total")}:</div>{" "}
+      <div className="font-bold">{t("total")}:</div>{" "}
       <div>
         {total} {params.measure}
       </div>

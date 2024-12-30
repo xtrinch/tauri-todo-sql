@@ -46,5 +46,5 @@ export const TableCellReadonly = <TableItem,>({
     return val;
   };
 
-  return <div className="text-sm">{getFormattedVal(initialValue) || ""}</div>;
+  return <div className="text-base">{getFormattedVal(initialValue) || ""}</div>;
 };

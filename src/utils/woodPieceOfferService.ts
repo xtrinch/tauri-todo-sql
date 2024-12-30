@@ -43,7 +43,7 @@ const ensureWoodPieceOffers = async (opts: ListOptions) => {
       "wood_piece_offers"."buyer_id" as "buyer_id",
       ${opts.language === "sl" ? "tree_species_name_slo" : "tree_species_name"} as "tree_species_name",
       MAX("wood_piece_offers_max"."offered_price") as "offered_max_price",
-      "wood_piece_offers"."offered_price" * "wood_pieces"."volume" as "offered_total_price",
+      "wood_piece_offers"."offered_price" * "volume" as "offered_total_price",
       CASE WHEN "wood_piece_offers"."offered_price" >= "wood_piece_offers_max"."offered_price" AND "wood_piece_offers"."offered_price" != 0 THEN "true" ELSE "false" END as "is_max_offer"
     FROM "wood_piece_offers"
     LEFT JOIN "wood_pieces" ON "wood_piece_offers"."wood_piece_id" = "wood_pieces"."id"

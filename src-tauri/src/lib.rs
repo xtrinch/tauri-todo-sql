@@ -93,7 +93,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 length REAL,
                 sequence_no INTEGER,
                 width REAL, 
-                volume REAL, 
+                volume REAL AS (round(3.14159265359 * width * 0.5 * 0.01 * width * 0.5 * 0.01 * length, 2)) STORED, 
                 plate_no VARCHAR,
                 seller_id INTEGER,
                 tree_species_id INTEGER,
