@@ -92,17 +92,14 @@ export const TableCell = <TableItem,>({
     <>
       <input
         value={value as string}
-        // step="0.1"
-        // type="number"
         className="bg-green h-10 min-w-[100%] max-w-[100%] border p-1 px-2 rounded"
         style={{ borderColor: value === 0 ? "red" : undefined }}
         onChange={onChange}
         onBlur={onBlur} // TODO: save after some time of inactivity
-        readOnly={(column.columnDef.meta as CustomColumnMeta)?.readonly}
-        tabIndex={
-          (column.columnDef.meta as CustomColumnMeta)?.readonly ? -1 : undefined
-        }
+        readOnly={columnMeta?.readonly}
+        tabIndex={columnMeta?.readonly ? -1 : undefined}
         onFocus={onFocus}
+        spellCheck={false}
       />
     </>
   );

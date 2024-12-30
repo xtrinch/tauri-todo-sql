@@ -100,6 +100,8 @@ export const useUpdateBuyerMutation = (
     mutationFn: patchBuyer,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["buyers"] });
+      queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
+
       if (onSuccess) onSuccess();
     },
     gcTime: 1000 * 10,

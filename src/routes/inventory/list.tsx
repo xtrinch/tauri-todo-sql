@@ -146,6 +146,16 @@ function ListInventoryComponent() {
           }),
       },
       {
+        accessorKey: "min_price",
+        header: () => t("minPriceEUR"),
+        size: 80,
+        meta: {
+          type: "float",
+          readonly: true,
+        },
+        cell: TableCellReadonly,
+      },
+      {
         accessorKey: "offered_price",
         header: () => t("maxPriceM3"),
         size: 80,

@@ -11,6 +11,9 @@ export type Seller = {
   address_line2: string;
   iban: string;
   ident: string;
+  is_flat_rate: number; // whether to tax at a flat rate
+  is_vat_liable: number; // whether seller is VAT liable
+  used_transport: number; // whether seller used transport or not
 };
 
 const ensureSellers = async (opts: {
@@ -54,13 +57,19 @@ export async function postSeller(
       "address_line1", 
       "address_line2",
       "iban",
-      "ident"
+      "ident",
+      "is_flat_rate",
+      "is_vat_liable",
+      "used_transport"
     ) values (
       $1, 
       $2, 
       $3,
       $4,
-      $5
+      $5,
+      $6, 
+      $7,
+      $8
     )`,
     [
       seller.seller_name || "",
@@ -68,6 +77,9 @@ export async function postSeller(
       seller.address_line2 || "",
       seller.iban || "",
       seller.ident || "",
+      seller.is_flat_rate || 0,
+      seller.is_vat_liable || 0,
+      seller.used_transport || 0,
     ]
   );
 
@@ -89,7 +101,10 @@ export async function patchSeller({
         "address_line1" = COALESCE($3, "address_line1"), 
         "address_line2" = COALESCE($4, "address_line2"),
         "iban" = COALESCE($5, "iban"),
-        "ident" = COALESCE($6, "ident") 
+        "ident" = COALESCE($6, "ident"),
+        "is_flat_rate" = COALESCE($7, "is_flat_rate"),
+        "is_vat_liable" = COALESCE($8, "is_vat_liable"),
+        "used_transport" = COALESCE($9, "used_transport") 
       WHERE id = $1`,
     [
       id,
@@ -98,6 +113,9 @@ export async function patchSeller({
       updatedSeller.address_line2,
       updatedSeller.iban,
       updatedSeller.ident,
+      updatedSeller.is_flat_rate,
+      updatedSeller.is_vat_liable,
+      updatedSeller.used_transport,
     ]
   );
 }
@@ -130,6 +148,7 @@ export const useUpdateSellerMutation = (
     mutationFn: patchSeller,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sellers"] });
+      queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
       if (onSuccess) onSuccess();
     },
     gcTime: 1000 * 10,

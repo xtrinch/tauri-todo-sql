@@ -121,7 +121,9 @@ function SoldPiecesList() {
           readonly: true,
         },
         cell: TableCellReadonly,
-        footer: (info) => <SumFooter info={info} measure="EUR" />,
+        footer: (info) => (
+          <SumFooter info={info} measure="EUR" label={t("totalGross")} />
+        ),
       },
     ],
     [treeSpeciesOptions]

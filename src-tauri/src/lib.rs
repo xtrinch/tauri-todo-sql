@@ -78,7 +78,10 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 address_line1 VARCHAR, 
                 address_line2 VARCHAR,
                 iban VARCHAR,
-                ident VARCHAR
+                ident VARCHAR,
+                is_flat_rate INTEGER,
+                is_vat_liable INTEGER,
+                used_transport INTEGER
             );"
             }
             "tree_species" => {
@@ -263,7 +266,7 @@ fn on_setup(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
 fn get_column_names(table: &str) -> &str {
     match table {
         "buyers" => "buyer_name, address_line1, address_line2",
-        "sellers" => "seller_name, address_line1, address_line2, iban, ident",
+        "sellers" => "seller_name, address_line1, address_line2, iban, ident, is_flat_rate, is_vat_liable, used_transport",
         "tree_species" => "tree_species_name, latin_name, tree_species_name_slo",
         "wood_pieces" => "length, sequence_no, width, volume, plate_no, seller_id, tree_species_id, min_price",
         "wood_piece_offers" => "offered_price, wood_piece_id, buyer_id",

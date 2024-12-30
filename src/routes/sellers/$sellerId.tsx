@@ -17,6 +17,7 @@ import { z } from "zod";
 import { CustomTable } from "../../components/CustomTable";
 import { RemoveCell } from "../../components/RemoveCell";
 import { TableCell } from "../../components/TableCell";
+import { TableCellCheckbox } from "../../components/TableCellCheckbox";
 import {
   Seller,
   sellerQueryOptions,
@@ -101,12 +102,32 @@ function SellerComponent() {
         meta: {},
         size: 100,
       },
-
       {
         accessorKey: "iban",
         header: () => t("iban"),
         meta: {},
         size: 300,
+      },
+      {
+        accessorKey: "is_flat_rate",
+        header: () => t("isFlatRate"),
+        meta: {},
+        size: 70,
+        cell: TableCellCheckbox,
+      },
+      {
+        accessorKey: "is_vat_liable",
+        header: () => t("isVatLiable"),
+        meta: {},
+        size: 70,
+        cell: TableCellCheckbox,
+      },
+      {
+        accessorKey: "used_transport",
+        header: () => t("usedTransport"),
+        meta: {},
+        size: 70,
+        cell: TableCellCheckbox,
       },
     ],
     []
