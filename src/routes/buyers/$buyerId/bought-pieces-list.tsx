@@ -63,6 +63,11 @@ function SoldPiecesList() {
         },
       },
       {
+        accessorKey: "plate_no",
+        header: () => t("plateNo"),
+        size: 100,
+      },
+      {
         accessorKey: "tree_species_id",
         header: () => t("treeSpecies"),
         size: 200,
@@ -96,11 +101,6 @@ function SoldPiecesList() {
         meta: {
           type: "float",
         },
-      },
-      {
-        accessorKey: "plate_no",
-        header: () => t("plateNo"),
-        size: 100,
       },
       {
         accessorKey: "offered_price",

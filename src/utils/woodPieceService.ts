@@ -113,16 +113,18 @@ export async function postWoodPiece(
       "plate_no", 
       "seller_id",
       "sequence_no",
-      "volume"
+      "volume",
+      "min_price"
     ) values (
       $1, 
       $2, 
       $3, 
       $4, 
       (SELECT COALESCE(MAX("sequence_no"),0)+1 FROM "wood_pieces"),
-      $5
+      $5,
+      $6
     )`,
-      [0, 0, "0", partialWoodPiece.seller_id, 0]
+      [0, 0, "", partialWoodPiece.seller_id, 0, 0]
     );
   } catch (e) {
     info(JSON.stringify(e));
@@ -150,7 +152,7 @@ export async function patchWoodPiece(
   woodPiece: PickAsRequired<Partial<WoodPiece>, "id">
 ) {
   const db = await getDatabaseForModify();
-
+  info(JSON.stringify(woodPiece));
   try {
     await db.execute(
       `UPDATE "wood_pieces" 
@@ -162,7 +164,7 @@ export async function patchWoodPiece(
       "sequence_no" = COALESCE($6, "sequence_no"),
       "seller_id" = COALESCE($7, "seller_id"),
       "volume" = COALESCE($8, "volume"),
-      "min_price" = COALESCE($8, "min_price")
+      "min_price" = COALESCE($9, "min_price")
     WHERE id=$1`,
       [
         woodPiece.id,

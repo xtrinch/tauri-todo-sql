@@ -62,17 +62,9 @@ function RouteComponent() {
         },
       },
       {
-        accessorKey: "seller_id",
-        header: () => t("seller"),
-        size: 200,
-        cell: (data) =>
-          DropdownCell({
-            ...data,
-            choices: sellers.map((ts) => ({
-              value: ts.id,
-              label: ts.seller_name,
-            })),
-          }),
+        accessorKey: "plate_no",
+        header: () => t("plateNo"),
+        size: 100,
       },
       {
         accessorKey: "tree_species_id",
@@ -112,9 +104,25 @@ function RouteComponent() {
         },
       },
       {
-        accessorKey: "plate_no",
-        header: () => t("plateNo"),
-        size: 100,
+        accessorKey: "seller_id",
+        header: () => t("seller"),
+        size: 200,
+        cell: (data) =>
+          DropdownCell({
+            ...data,
+            choices: sellers.map((ts) => ({
+              value: ts.id,
+              label: ts.seller_name,
+            })),
+          }),
+      },
+      {
+        accessorKey: "min_price",
+        header: () => t("minPrice"),
+        size: 80,
+        meta: {
+          type: "float",
+        },
       },
       {
         id: "1",

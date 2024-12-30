@@ -94,7 +94,7 @@ function RouteComponent() {
   });
 
   return (
-    <div className="p-3">
+    <div className="p-3 h-[calc(100vh-53px)] overflow-auto">
       <CustomTable table={table} />
     </div>
   );

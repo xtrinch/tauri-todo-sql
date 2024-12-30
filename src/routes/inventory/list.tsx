@@ -94,17 +94,9 @@ function ListInventoryComponent() {
         },
       },
       {
-        accessorKey: "seller_id",
-        header: () => t("seller"),
-        size: 200,
-        cell: (data) =>
-          DropdownCellReadonly({
-            ...data,
-            choices: sellers.map((ts) => ({
-              value: ts.id,
-              label: ts.seller_name,
-            })),
-          }),
+        accessorKey: "plate_no",
+        header: () => t("plateNo"),
+        size: 100,
       },
       {
         accessorKey: "tree_species_id",
@@ -141,9 +133,17 @@ function ListInventoryComponent() {
         },
       },
       {
-        accessorKey: "plate_no",
-        header: () => t("plateNo"),
-        size: 100,
+        accessorKey: "seller_id",
+        header: () => t("seller"),
+        size: 200,
+        cell: (data) =>
+          DropdownCellReadonly({
+            ...data,
+            choices: sellers.map((ts) => ({
+              value: ts.id,
+              label: ts.seller_name,
+            })),
+          }),
       },
       {
         accessorKey: "offered_price",
