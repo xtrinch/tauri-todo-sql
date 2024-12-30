@@ -1,4 +1,4 @@
-import type { QueryClient } from "@tanstack/react-query";
+import { useSuspenseQuery, type QueryClient } from "@tanstack/react-query";
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   Link,
@@ -15,7 +15,11 @@ import { FaArrowRotateLeft, FaRegFloppyDisk } from "react-icons/fa6";
 import { Spinner } from "../components/Spinner";
 import { queryClient } from "../main";
 import type { Auth } from "../utils/auth";
+import { buyersQueryOptions } from "../utils/buyerService";
+import { sellersQueryOptions } from "../utils/sellerService";
+import { treeSpeciesQueryOptions } from "../utils/treeSpeciesService";
 import { useUndo } from "../utils/undo";
+import { woodPiecesQueryOptions } from "../utils/woodPieceService";
 
 function RouterSpinner() {
   const isLoading = useRouterState({ select: (s) => s.status === "pending" });
@@ -42,6 +46,20 @@ function RootComponent() {
   const { mutate: undo } = useUndo(() => {
     queryClient.invalidateQueries();
   });
+
+  const woodPiecesQuery = useSuspenseQuery(woodPiecesQueryOptions({}));
+  const woodPieces = woodPiecesQuery.data;
+
+  const treeSpeciesQuery = useSuspenseQuery(
+    treeSpeciesQueryOptions({ language: i18n.language as "en" | "sl" })
+  );
+  const treeSpeciesData = treeSpeciesQuery.data;
+
+  const sellersQuery = useSuspenseQuery(sellersQueryOptions({}));
+  const sellers = sellersQuery.data;
+
+  const buyersQuery = useSuspenseQuery(buyersQueryOptions({}));
+  const buyers = buyersQuery.data;
 
   const saveOnly = async (path?: string) => {
     await savePath(path || filePath!);
@@ -194,10 +212,13 @@ function RootComponent() {
           <div className={`divide-y w-[220px]`}>
             {(
               [
-                ["/sellers", t("sellers")],
-                ["/buyers", t("buyers")],
-                ["/inventory", t("inventory")],
-                ["/treeSpecies/edit", t("treeSpeciesPlural")],
+                ["/sellers", `${t("sellers")} (${sellers.length})`],
+                ["/buyers", `${t("buyers")} (${buyers.length})`],
+                ["/inventory", `${t("inventory")} (${woodPieces.length})`],
+                [
+                  "/treeSpecies/edit",
+                  `${t("treeSpeciesPlural")} (${treeSpeciesData.length})`,
+                ],
               ] as const
             ).map(([to, label]) => {
               return (
