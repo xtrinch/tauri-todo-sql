@@ -19,6 +19,7 @@ import { Route as TreeSpeciesEditImport } from './routes/treeSpecies/edit'
 import { Route as SellersSellerIdImport } from './routes/sellers/$sellerId'
 import { Route as InventoryListImport } from './routes/inventory/list'
 import { Route as InventoryEditImport } from './routes/inventory/edit'
+import { Route as InventoryCatalogueImport } from './routes/inventory/catalogue'
 import { Route as BuyersBuyerIdImport } from './routes/buyers/$buyerId'
 import { Route as SellersSellerIdWoodPiecesListImport } from './routes/sellers/$sellerId/wood-pieces-list'
 import { Route as SellersSellerIdSoldPiecesListImport } from './routes/sellers/$sellerId/sold-pieces-list'
@@ -72,6 +73,12 @@ const InventoryListRoute = InventoryListImport.update({
 const InventoryEditRoute = InventoryEditImport.update({
   id: '/edit',
   path: '/edit',
+  getParentRoute: () => InventoryRoute,
+} as any)
+
+const InventoryCatalogueRoute = InventoryCatalogueImport.update({
+  id: '/catalogue',
+  path: '/catalogue',
   getParentRoute: () => InventoryRoute,
 } as any)
 
@@ -147,6 +154,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/buyers/$buyerId'
       preLoaderRoute: typeof BuyersBuyerIdImport
       parentRoute: typeof BuyersImport
+    }
+    '/inventory/catalogue': {
+      id: '/inventory/catalogue'
+      path: '/catalogue'
+      fullPath: '/inventory/catalogue'
+      preLoaderRoute: typeof InventoryCatalogueImport
+      parentRoute: typeof InventoryImport
     }
     '/inventory/edit': {
       id: '/inventory/edit'
@@ -235,11 +249,13 @@ const BuyersRouteWithChildren =
   BuyersRoute._addFileChildren(BuyersRouteChildren)
 
 interface InventoryRouteChildren {
+  InventoryCatalogueRoute: typeof InventoryCatalogueRoute
   InventoryEditRoute: typeof InventoryEditRoute
   InventoryListRoute: typeof InventoryListRoute
 }
 
 const InventoryRouteChildren: InventoryRouteChildren = {
+  InventoryCatalogueRoute: InventoryCatalogueRoute,
   InventoryEditRoute: InventoryEditRoute,
   InventoryListRoute: InventoryListRoute,
 }
@@ -279,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/inventory': typeof InventoryRouteWithChildren
   '/sellers': typeof SellersRouteWithChildren
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
+  '/inventory/catalogue': typeof InventoryCatalogueRoute
   '/inventory/edit': typeof InventoryEditRoute
   '/inventory/list': typeof InventoryListRoute
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
@@ -295,6 +312,7 @@ export interface FileRoutesByTo {
   '/inventory': typeof InventoryRouteWithChildren
   '/sellers': typeof SellersRouteWithChildren
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
+  '/inventory/catalogue': typeof InventoryCatalogueRoute
   '/inventory/edit': typeof InventoryEditRoute
   '/inventory/list': typeof InventoryListRoute
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
@@ -312,6 +330,7 @@ export interface FileRoutesById {
   '/inventory': typeof InventoryRouteWithChildren
   '/sellers': typeof SellersRouteWithChildren
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
+  '/inventory/catalogue': typeof InventoryCatalogueRoute
   '/inventory/edit': typeof InventoryEditRoute
   '/inventory/list': typeof InventoryListRoute
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
@@ -330,6 +349,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/sellers'
     | '/buyers/$buyerId'
+    | '/inventory/catalogue'
     | '/inventory/edit'
     | '/inventory/list'
     | '/sellers/$sellerId'
@@ -345,6 +365,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/sellers'
     | '/buyers/$buyerId'
+    | '/inventory/catalogue'
     | '/inventory/edit'
     | '/inventory/list'
     | '/sellers/$sellerId'
@@ -360,6 +381,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/sellers'
     | '/buyers/$buyerId'
+    | '/inventory/catalogue'
     | '/inventory/edit'
     | '/inventory/list'
     | '/sellers/$sellerId'
@@ -416,6 +438,7 @@ export const routeTree = rootRoute
     "/inventory": {
       "filePath": "inventory.tsx",
       "children": [
+        "/inventory/catalogue",
         "/inventory/edit",
         "/inventory/list"
       ]
@@ -433,6 +456,10 @@ export const routeTree = rootRoute
         "/buyers/$buyerId/bought-pieces-list",
         "/buyers/$buyerId/wood-piece-offers-list"
       ]
+    },
+    "/inventory/catalogue": {
+      "filePath": "inventory/catalogue.tsx",
+      "parent": "/inventory"
     },
     "/inventory/edit": {
       "filePath": "inventory/edit.tsx",

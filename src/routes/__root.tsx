@@ -209,7 +209,7 @@ function RootComponent() {
           </div>
         </div>
         <div className={`flex-1 flex`}>
-          <div className={`divide-y w-[220px]`}>
+          <div className={`divide-y w-[220px] min-w-[220px]`}>
             {(
               [
                 ["/sellers", `${t("sellers")} (${sellers.length})`],

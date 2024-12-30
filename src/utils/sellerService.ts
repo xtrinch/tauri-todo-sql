@@ -9,6 +9,8 @@ export type Seller = {
   seller_name: string;
   address_line1: string;
   address_line2: string;
+  iban: string;
+  ident: string;
 };
 
 const ensureSellers = async (opts: {
@@ -47,11 +49,25 @@ export async function postSeller(
 
   const db = await getDatabaseForModify();
   const result = await db.execute(
-    `INSERT INTO "sellers" ("seller_name", "address_line1", "address_line2") values ($1, $2, $3)`,
+    `INSERT INTO "sellers" (
+      "seller_name", 
+      "address_line1", 
+      "address_line2",
+      "iban",
+      "ident"
+    ) values (
+      $1, 
+      $2, 
+      $3,
+      $4,
+      $5
+    )`,
     [
       seller.seller_name || "",
       seller.address_line1 || "",
       seller.address_line2 || "",
+      seller.iban || "",
+      seller.ident || "",
     ]
   );
 
@@ -71,13 +87,17 @@ export async function patchSeller({
       SET 
         "seller_name" = COALESCE($2, "seller_name"), 
         "address_line1" = COALESCE($3, "address_line1"), 
-        "address_line2" = COALESCE($4, "address_line2") 
+        "address_line2" = COALESCE($4, "address_line2"),
+        "iban" = COALESCE($5, "iban"),
+        "ident" = COALESCE($6, "ident") 
       WHERE id = $1`,
     [
       id,
       updatedSeller.seller_name,
       updatedSeller.address_line1,
       updatedSeller.address_line2,
+      updatedSeller.iban,
+      updatedSeller.ident,
     ]
   );
 }

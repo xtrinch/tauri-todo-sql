@@ -46,7 +46,7 @@ export function CustomTable<TableItem>({
                   minWidth: `${cell.column.getSize()}px`,
                   maxWidth: `${cell.column.getSize()}px`,
                 }}
-                className="px-1 pb-1"
+                className="px-1 pb-1 align-middle"
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>

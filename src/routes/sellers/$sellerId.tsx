@@ -92,6 +92,25 @@ function SellerComponent() {
     ],
     []
   );
+
+  const columns1 = useMemo<ColumnDef<Seller>[]>(
+    () => [
+      {
+        accessorKey: "ident",
+        header: () => t("ident"),
+        meta: {},
+        size: 100,
+      },
+
+      {
+        accessorKey: "iban",
+        header: () => t("iban"),
+        meta: {},
+        size: 300,
+      },
+    ],
+    []
+  );
   const navigate = useNavigate();
   const removeSellerMutation = useRemoveSellerMutation(() => {
     navigate({ to: "/sellers" });
@@ -116,11 +135,28 @@ function SellerComponent() {
     },
   });
 
+  const table1 = useReactTable({
+    data: sellerData,
+    columns: columns1,
+    getCoreRowModel: getCoreRowModel(),
+    defaultColumn,
+    meta: {
+      onEdit: (data: Seller) => {
+        updateSellerMutation.mutate(data);
+      },
+      onRemove: (woodPieceId: number) => {
+        removeSellerMutation.mutate({ id: woodPieceId });
+      },
+    },
+  });
+
   return (
     <div className="flex flex-col space-y-3">
       <div className="flex flex-col space-y-3 p-3">
-        <h3>{t("seller")}</h3>
-        <CustomTable table={table} />
+        <div>
+          <CustomTable table={table} />
+          <CustomTable table={table1} />
+        </div>
       </div>
       <div className="flex flex-wrap divide-x border-b">
         {(

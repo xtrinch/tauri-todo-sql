@@ -56,6 +56,10 @@ const resources = {
       noName: "No name",
       latinName: "Latin",
       remove: "Delete",
+      iban: "IBAN",
+      ident: "Identifier",
+      catalogue: "Catalogue",
+      sellerIdent: "Seller identifier",
     },
   },
   sl: {
@@ -109,6 +113,10 @@ const resources = {
       noName: "Brez imena",
       latinName: "Latinsko",
       remove: "Izbrisi",
+      iban: "IBAN",
+      ident: "Identifikator",
+      catalogue: "Katalog",
+      sellerIdent: "Identifikator prodajalca",
     },
   },
 };

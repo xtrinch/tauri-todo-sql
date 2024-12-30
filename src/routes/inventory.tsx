@@ -30,6 +30,7 @@ function WoodPiecesList() {
           [
             ["/inventory/edit", t("edit")],
             ["/inventory/list", t("list")],
+            ["/inventory/catalogue", t("catalogue")],
           ] as const
         ).map(([to, label]) => {
           return (
