@@ -143,12 +143,14 @@ function SoldPiecesList() {
   });
 
   const rows = table.getFilteredRowModel().rows;
+
   const totalVolume = useMemo(
     () =>
       rows.reduce((sum, row) => (row.getValue("volume") as number) + sum, 0),
     [rows]
   );
-  const total = useMemo(
+
+  const totalPrice = useMemo(
     () =>
       rows.reduce(
         (sum, row) => (row.getValue("offered_total_price") as number) + sum,
@@ -184,8 +186,8 @@ function SoldPiecesList() {
   );
 
   const sellerIncomeGross = useMemo(
-    () => total - costsAbove350 - costsBelow350,
-    [total, costsBelow350, costsAbove350]
+    () => totalPrice - costsAbove350 - costsBelow350,
+    [totalPrice, costsBelow350, costsAbove350]
   );
 
   const transportCosts = useMemo(
@@ -242,7 +244,7 @@ function SoldPiecesList() {
         </tr>
         <tr className="border-b">
           <td className="px-2">{t("totalGross")}</td>
-          <td className="px-2">{total} EUR</td>
+          <td className="px-2">{totalPrice} EUR</td>
         </tr>
         <tr className="border-b">
           <td className="px-2">{t("costsTo350")}</td>
