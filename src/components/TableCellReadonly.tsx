@@ -20,11 +20,14 @@ export interface CustomTableMeta extends TableMeta<{}> {
 export const TableCellReadonly = <TableItem,>({
   getValue,
   column,
+  shouldBeRed,
+  row,
 }: {
   getValue: Getter<unknown>;
   row: Row<TableItem>;
   column: Column<TableItem>;
   table: Table<TableItem>;
+  shouldBeRed?: (row: Row<TableItem>) => boolean;
 }) => {
   const initialValue = getValue() as string;
   const columnMeta = column.columnDef.meta as CustomColumnMeta;
@@ -47,6 +50,14 @@ export const TableCellReadonly = <TableItem,>({
   };
 
   return (
-    <div className="text-base py-1">{getFormattedVal(initialValue) || ""}</div>
+    <div
+      className="text-base py-1"
+      style={{
+        color: shouldBeRed?.(row) ? "red" : undefined,
+        fontWeight: shouldBeRed?.(row) ? "red" : undefined,
+      }}
+    >
+      {getFormattedVal(initialValue) || ""}
+    </div>
   );
 };

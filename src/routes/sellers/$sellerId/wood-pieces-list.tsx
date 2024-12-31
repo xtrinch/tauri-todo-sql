@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   ColumnDef,
   getCoreRowModel,
+  Row,
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
@@ -115,7 +116,18 @@ function SoldPiecesList() {
           type: "float",
           readonly: true,
         },
-        cell: TableCellReadonly,
+        cell: (info) => (
+          <TableCellReadonly
+            {...info}
+            shouldBeRed={(row: Row<WoodPiece>) => {
+              return (
+                !!(row.getValue("offered_price") as number) &&
+                (row.getValue("min_price") as number) >
+                  (row.getValue("offered_price") as number)
+              );
+            }}
+          />
+        ),
       },
       {
         accessorKey: "offered_total_price",
@@ -126,7 +138,6 @@ function SoldPiecesList() {
           readonly: true,
         },
         cell: TableCellReadonly,
-        // footer: (info) => <SumFooter info={info} measure="EUR" />,
       },
       {
         accessorKey: "buyer_name",
