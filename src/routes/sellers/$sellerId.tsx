@@ -40,7 +40,7 @@ export const Route = createFileRoute("/sellers/$sellerId")({
 
     if (shouldRedirect) {
       redirect({
-        to: "/sellers/$sellerId/wood-pieces-list",
+        to: "/sellers/$sellerId/edit-wood-pieces",
         throw: true,
         params: { sellerId: params.sellerId },
       });
@@ -182,6 +182,7 @@ function SellerComponent() {
       <div className="flex flex-wrap divide-x border-b">
         {(
           [
+            ["/sellers/$sellerId/edit-wood-pieces", t("editWoodPieces")],
             ["/sellers/$sellerId/wood-pieces-list", t("woodPieces")],
             ["/sellers/$sellerId/sold-pieces-list", t("soldWoodPieces")],
           ] as const

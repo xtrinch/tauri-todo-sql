@@ -77,6 +77,7 @@ const resources = {
       transportCosts: "Transport costs",
       transportVAT: "Transport VAT (22%)",
       payout: "Payout",
+      editWoodPieces: "Edit wood pieces",
     },
   },
   sl: {
@@ -151,6 +152,7 @@ const resources = {
       transportCosts: "Strosek prevoza",
       transportVAT: "DDV za prevoz (22%)",
       payout: "Za izplacilo",
+      editWoodPieces: "Uredi hlode",
     },
   },
 };

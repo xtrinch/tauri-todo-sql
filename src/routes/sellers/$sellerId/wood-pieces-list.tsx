@@ -8,31 +8,26 @@ import {
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
-import { DropdownCell } from "../../../components/DropdownCell";
-import { FooterAddCell } from "../../../components/FooterAddCell";
-import { RemoveCell } from "../../../components/RemoveCell";
-import { TableCell } from "../../../components/TableCell";
+import { DropdownCellReadonly } from "../../../components/DropdownCellReadonly";
+import { SumFooter } from "../../../components/SumFooter";
+import { TableCellReadonly } from "../../../components/TableCellReadonly";
+import { sellerQueryOptions } from "../../../utils/sellerService";
 import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
-  useCreateWoodPieceMutation,
-  useRemoveWoodPieceMutation,
-  useUpdateWoodPieceMutation,
   WoodPiece,
   woodPiecesQueryOptions,
 } from "../../../utils/woodPieceService";
-
 export const Route = createFileRoute("/sellers/$sellerId/wood-pieces-list")({
-  component: WoodPiecesList,
+  component: SoldPiecesList,
 });
 
-function WoodPiecesList() {
+function SoldPiecesList() {
   const { t, i18n } = useTranslation();
 
   const params = Route.useParams();
 
-  const createWoodPieceMutation = useCreateWoodPieceMutation();
-  const removeWoodPieceMutation = useRemoveWoodPieceMutation();
-  const updateWoodPieceMutation = useUpdateWoodPieceMutation();
+  const sellerQuery = useSuspenseQuery(sellerQueryOptions(params.sellerId));
+  const seller = sellerQuery.data;
 
   const woodPiecesQuery = useSuspenseQuery(
     woodPiecesQueryOptions({
@@ -69,7 +64,7 @@ function WoodPiecesList() {
         header: () => t("treeSpecies"),
         size: 200,
         cell: (data) =>
-          DropdownCell({
+          DropdownCellReadonly({
             ...data,
             choices: treeSpeciesData.map((ts) => ({
               value: ts.id,
@@ -93,37 +88,47 @@ function WoodPiecesList() {
           type: "float",
         },
       },
-      // {
-      //   accessorKey: "volume",
-      //   header: () => t("volumeM3"),
-      //   size: 80,
-      //   meta: {
-      //     type: "float",
-      //   },
-      // },
       {
-        accessorKey: "min_price",
-        header: () => t("minPrice"),
+        accessorKey: "volume",
+        header: () => t("volumeM3"),
         size: 80,
         meta: {
           type: "float",
         },
+        footer: (info) => <SumFooter info={info} measure="m3" />,
       },
       {
-        id: "1",
-        header: () => "",
-        size: 45,
-        accessorFn: () => 1,
+        accessorKey: "offered_price",
+        header: () => t("maxPriceM3"),
+        size: 80,
+        meta: {
+          type: "float",
+          readonly: true,
+        },
+        cell: TableCellReadonly,
+      },
+      {
+        accessorKey: "offered_total_price",
+        header: () => t("totalPriceM3"),
+        size: 80,
+        meta: {
+          type: "float",
+          readonly: true,
+        },
+        cell: TableCellReadonly,
+        // footer: (info) => <SumFooter info={info} measure="EUR" />,
+      },
+      {
+        accessorKey: "buyer_name",
+        header: () => t("buyer"),
+        size: 80,
         meta: {
           readonly: true,
         },
-        cell: RemoveCell,
-        footer: (info) => {
-          return <FooterAddCell table={info.table} />;
-        },
+        cell: TableCellReadonly,
       },
     ],
-    []
+    [treeSpeciesData]
   );
 
   const table = useReactTable({
@@ -131,24 +136,18 @@ function WoodPiecesList() {
     columns,
     getCoreRowModel: getCoreRowModel(),
     defaultColumn: {
-      cell: TableCell,
+      cell: TableCellReadonly,
     },
-    meta: {
-      onAdd: () => {
-        createWoodPieceMutation.mutate({ seller_id: params.sellerId });
-      },
-      onEdit: (data: WoodPiece) => {
-        updateWoodPieceMutation.mutate(data);
-      },
-      onRemove: (woodPieceId: number) => {
-        removeWoodPieceMutation.mutate({ id: woodPieceId });
-      },
-    },
+    meta: {},
   });
 
   return (
     <div className="p-3">
-      <CustomTable table={table} />
+      <CustomTable
+        table={table}
+        trClassName="border-b"
+        trhClassName="border-b"
+      />
     </div>
   );
 }
