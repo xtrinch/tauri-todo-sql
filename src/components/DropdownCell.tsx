@@ -65,7 +65,7 @@ export const DropdownCell = <TableItem,>({
 
   const choiceOptions = (choiceData || []).map((c) => ({
     value: c.value,
-    label: `${c.label}`,
+    label: `${c.label || "No label"}`,
   }));
 
   // If the initialValue is changed external, sync it up with our state

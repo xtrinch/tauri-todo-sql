@@ -212,7 +212,7 @@ function ListInventoryComponent() {
               setFilters((prev) => ({
                 ...prev,
                 tree_species_id: newValue?.value!,
-                tree_species_id_label: newValue?.label!,
+                tree_species_id_label: newValue?.label || "No label",
               }))
             }
             value={{
@@ -265,7 +265,7 @@ function ListInventoryComponent() {
               setFilters((prev) => ({
                 ...prev,
                 seller_id: newValue?.value!,
-                seller_id_label: newValue?.label!,
+                seller_id_label: newValue?.label || "No label",
               }))
             }
             value={{
