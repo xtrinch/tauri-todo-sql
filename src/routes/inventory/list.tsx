@@ -220,6 +220,7 @@ function ListInventoryComponent() {
               label: filters?.tree_species_id_label,
             }}
             isClearable={true}
+            placeholder={t("select")}
           />
         </div>
         <div>
@@ -253,6 +254,7 @@ function ListInventoryComponent() {
                   : "",
             }}
             isClearable={true}
+            placeholder={t("select")}
           />
         </div>
         <div>
@@ -273,6 +275,7 @@ function ListInventoryComponent() {
               label: filters?.seller_id_label,
             }}
             isClearable={true}
+            placeholder={t("select")}
           />
         </div>
         <div>
@@ -293,6 +296,7 @@ function ListInventoryComponent() {
               label: filters?.buyer_id_label,
             }}
             isClearable={true}
+            placeholder={t("select")}
           />
         </div>
       </div>

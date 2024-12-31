@@ -1,6 +1,7 @@
 import { Column, Getter, Row, Table } from "@tanstack/react-table";
 import "choices.js/public/assets/styles/choices.css";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Select from "react-select";
 import { CustomTableMeta } from "./TableCell";
 
@@ -22,6 +23,7 @@ export const DropdownCell = <TableItem,>({
   choices: Option[];
 }) => {
   const initialValue: number = getValue() as number;
+  const { t } = useTranslation();
 
   const labelForValue = (val: number): string => {
     return choiceData.find((i) => i.value === val)?.label || "";
@@ -91,6 +93,7 @@ export const DropdownCell = <TableItem,>({
         onBlur={onBlur}
         value={value}
         onFocus={onFocus}
+        placeholder={t("select")}
       />
     </div>
   );

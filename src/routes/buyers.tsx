@@ -140,6 +140,7 @@ function BuyersComponent() {
               value: sortBy,
               label: options.find((v) => v.value === sortBy)?.label,
             }}
+            placeholder={t("select")}
           />
         </div>
         <div className="py-2 px-3 flex gap-2 items-center bg-gray-100">

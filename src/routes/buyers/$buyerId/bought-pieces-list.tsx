@@ -237,11 +237,11 @@ function SoldPiecesList() {
         <table className="mt-5">
           <tr className="border-b">
             <td className="px-2">{t("totalVolume")}</td>
-            <td className="px-2">{totalVolume.toFixed()} m3</td>
+            <td className="px-2">{totalVolume.toFixed(2)} m3</td>
           </tr>
           <tr className="border-b">
             <td className="px-2 font-bold">{t("totalGross")}</td>
-            <td className="px-2">{totalPrice.toFixed()} EUR</td>
+            <td className="px-2">{totalPrice.toFixed(2)} EUR</td>
           </tr>
         </table>
       </div>

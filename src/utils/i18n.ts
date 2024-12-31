@@ -75,7 +75,7 @@ const resources = {
       vat: "VAT (22%)",
       totalVolume: "Total volume",
       usedTransport: "Used transport",
-      transportCosts: "Transport costs",
+      transportCosts: "Transport costs (18 EUR / m3)",
       transportVAT: "Transport VAT (22%)",
       payout: "Payout",
       editWoodPieces: "Edit wood pieces",
@@ -84,6 +84,7 @@ const resources = {
       couldNotUpdate: "Could not update",
       couldNotCreate: "Could not create",
       summary: "Summary",
+      select: "Select",
     },
   },
   sl: {
@@ -156,7 +157,7 @@ const resources = {
       vat: "DDV (22%)",
       totalVolume: "Skupaj kubatura",
       usedTransport: "Uporabljen prevoz",
-      transportCosts: "Strosek prevoza",
+      transportCosts: "Strosek prevoza (18 EUR / m3)",
       transportVAT: "DDV za prevoz (22%)",
       payout: "Za izplacilo",
       editWoodPieces: "Uredi hlode",
@@ -166,6 +167,7 @@ const resources = {
       couldNotUpdate: "Napaka pri shranjevanju lokalnih sprememb",
       couldNotCreate: "Napaka pri ustvarjanju podatkov",
       summary: "Povzetek",
+      select: "Izberi",
     },
   },
 };
