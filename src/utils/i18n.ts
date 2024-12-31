@@ -79,7 +79,9 @@ const resources = {
       payout: "Payout",
       editWoodPieces: "Edit wood pieces",
       saveSuccess: "Saved successfully",
-      couldNotDelete: "Could not delete. Delete related data first.",
+      couldNotDelete: "Could not delete. Delete related data first",
+      couldNotUpdate: "Could not update",
+      couldNotCreate: "Could not create",
     },
   },
   sl: {
@@ -158,6 +160,8 @@ const resources = {
       saveSuccess: "Uspesno shranjeno",
       couldNotDelete:
         "Napaka pri brisanju. Najprej pobrisite povezane podatke.",
+      couldNotUpdate: "Napaka pri shranjevanju lokalnih sprememb",
+      couldNotCreate: "Napaka pri ustvarjanju podatkov",
     },
   },
 };

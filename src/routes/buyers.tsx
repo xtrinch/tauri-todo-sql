@@ -9,6 +9,7 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import * as React from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import Select, { Options } from "react-select";
 import { z } from "zod";
@@ -67,11 +68,16 @@ function BuyersComponent() {
     setFilterDraft(filterBy ?? "");
   }, [filterBy]);
 
-  const createBuyerMutation = useCreateBuyerMutation((buyer: Buyer) => {
-    navigate({
-      to: "/buyers/$buyerId",
-      params: { buyerId: buyer.id },
-    });
+  const createBuyerMutation = useCreateBuyerMutation({
+    onSuccess: (buyer: Buyer) => {
+      navigate({
+        to: "/buyers/$buyerId",
+        params: { buyerId: buyer.id },
+      });
+    },
+    onError: () => {
+      toast.error(t("couldNotCreate"));
+    },
   });
 
   const onAdd = () => {

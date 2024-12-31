@@ -28,13 +28,21 @@ export const Route = createFileRoute("/treeSpecies/edit")({
 function RouteComponent() {
   const { t, i18n } = useTranslation();
 
-  const createTreeSpeciesMutation = useCreateTreeSpeciesMutation();
+  const createTreeSpeciesMutation = useCreateTreeSpeciesMutation({
+    onError: () => {
+      toast.error(t("couldNotCreate"));
+    },
+  });
   const removeTreeSpeciesMutation = useRemoveTreeSpeciesMutation({
     onError: () => {
       toast.error(t("couldNotDelete"));
     },
   });
-  const updateTreeSpeciesMutation = useUpdateTreeSpeciesMutation();
+  const updateTreeSpeciesMutation = useUpdateTreeSpeciesMutation({
+    onError: () => {
+      toast.error(t("couldNotUpdate"));
+    },
+  });
 
   const treeSpeciesQuery = useSuspenseQuery(
     treeSpeciesQueryOptions({ language: i18n.language as "en" | "sl" })

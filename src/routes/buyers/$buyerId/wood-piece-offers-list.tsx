@@ -121,7 +121,11 @@ function WoodPiecesList() {
   );
   const woodPieces = woodPieceOffersQuery.data;
 
-  const createWoodPieceMutation = useCreateWoodPieceOfferMutation();
+  const createWoodPieceMutation = useCreateWoodPieceOfferMutation({
+    onError: () => {
+      toast.error(t("couldNotCreate"));
+    },
+  });
   const removeWoodPieceMutation = useRemoveWoodPieceOfferMutation({
     onError: () => {
       toast.error(t("couldNotRemove"));
@@ -132,7 +136,11 @@ function WoodPiecesList() {
     cell: TableCell,
   };
 
-  const updateWoodPieceMutation = useUpdateWoodPieceOfferMutation();
+  const updateWoodPieceMutation = useUpdateWoodPieceOfferMutation({
+    onError: () => {
+      toast.error(t("couldNotUpdate"));
+    },
+  });
 
   const table = useReactTable({
     data: woodPieces,

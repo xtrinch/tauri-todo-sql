@@ -60,7 +60,11 @@ function SellerComponent() {
     cell: TableCell,
   };
 
-  const updateSellerMutation = useUpdateSellerMutation(seller.id, () => {});
+  const updateSellerMutation = useUpdateSellerMutation(seller.id, {
+    onError: () => {
+      toast.error(t("couldNotUpdate"));
+    },
+  });
 
   const columns = useMemo<ColumnDef<Seller>[]>(
     () => [

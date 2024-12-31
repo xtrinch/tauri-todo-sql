@@ -106,17 +106,19 @@ export async function patchTreeSpecies(
   );
 }
 
-export const useCreateTreeSpeciesMutation = (
-  onSuccess?: (treeSpecies: TreeSpecies) => void
-) => {
+export const useCreateTreeSpeciesMutation = (opts?: {
+  onSuccess?: (treeSpecies: TreeSpecies) => void;
+  onError?: (error: Error) => void;
+}) => {
   return useMutation({
     mutationFn: postTreeSpecies,
     onSuccess: (treeSpecies: TreeSpecies) => {
       queryClient.invalidateQueries({ queryKey: ["tree_species"] });
-      if (onSuccess) onSuccess(treeSpecies);
+      if (opts?.onSuccess) opts.onSuccess(treeSpecies);
     },
     onError: (e) => {
       info(JSON.stringify(e));
+      if (opts?.onError) opts.onError(e);
     },
   });
 };
@@ -138,16 +140,20 @@ export const useRemoveTreeSpeciesMutation = (opts?: {
   });
 };
 
-export const useUpdateTreeSpeciesMutation = (onSuccess?: () => void) => {
+export const useUpdateTreeSpeciesMutation = (opts?: {
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+}) => {
   return useMutation({
     mutationFn: patchTreeSpecies,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tree_species"] });
-      if (onSuccess) onSuccess();
+      if (opts?.onSuccess) opts.onSuccess();
     },
     gcTime: 1000 * 10,
     onError: (e) => {
       info(JSON.stringify(e));
+      if (opts?.onError) opts.onError(e);
     },
   });
 };

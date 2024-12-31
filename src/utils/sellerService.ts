@@ -128,24 +128,29 @@ export const sellerQueryOptions = (sellerId: number) =>
     staleTime: Infinity,
   });
 
-export const useCreateSellerMutation = (
-  onSuccess?: (seller: Seller) => void
-) => {
+export const useCreateSellerMutation = (opts?: {
+  onSuccess?: (seller: Seller) => void;
+  onError?: (error: Error) => void;
+}) => {
   return useMutation({
     mutationFn: postSeller,
     onSuccess: (seller: Seller) => {
       queryClient.invalidateQueries({ queryKey: ["sellers"] });
-      if (onSuccess) onSuccess(seller);
+      if (opts?.onSuccess) opts.onSuccess(seller);
     },
     onError: (e) => {
       info(JSON.stringify(e));
+      if (opts?.onError) opts.onError(e);
     },
   });
 };
 
 export const useUpdateSellerMutation = (
   sellerId: number,
-  onSuccess?: () => void
+  opts?: {
+    onSuccess?: () => void;
+    onError?: (error: Error) => void;
+  }
 ) => {
   return useMutation({
     mutationKey: ["sellers", "update", sellerId],
@@ -153,11 +158,12 @@ export const useUpdateSellerMutation = (
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sellers"] });
       queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
-      if (onSuccess) onSuccess();
+      if (opts?.onSuccess) opts.onSuccess();
     },
     gcTime: 1000 * 10,
     onError: (e) => {
       info(JSON.stringify(e));
+      if (opts?.onError) opts.onError(e);
     },
   });
 };

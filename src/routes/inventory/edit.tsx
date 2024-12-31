@@ -30,13 +30,21 @@ export const Route = createFileRoute("/inventory/edit")({
 function RouteComponent() {
   const { t, i18n } = useTranslation();
 
-  const createWoodPieceMutation = useCreateWoodPieceMutation();
+  const createWoodPieceMutation = useCreateWoodPieceMutation({
+    onError: () => {
+      toast.error(t("couldNotCreate"));
+    },
+  });
   const removeWoodPieceMutation = useRemoveWoodPieceMutation({
     onError: () => {
       toast.error(t("couldNotDelete"));
     },
   });
-  const updateWoodPieceMutation = useUpdateWoodPieceMutation();
+  const updateWoodPieceMutation = useUpdateWoodPieceMutation({
+    onError: () => {
+      toast.error(t("couldNotUpdate"));
+    },
+  });
 
   const woodPiecesQuery = useSuspenseQuery(
     woodPiecesQueryOptions({

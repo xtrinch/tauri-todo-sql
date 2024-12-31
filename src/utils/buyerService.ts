@@ -82,22 +82,29 @@ export const buyerQueryOptions = (buyerId: number) =>
     staleTime: Infinity,
   });
 
-export const useCreateBuyerMutation = (onSuccess?: (buyer: Buyer) => void) => {
+export const useCreateBuyerMutation = (opts?: {
+  onSuccess?: (buyer: Buyer) => void;
+  onError?: (error: Error) => void;
+}) => {
   return useMutation({
     mutationFn: postBuyer,
     onSuccess: (buyer: Buyer) => {
       queryClient.invalidateQueries({ queryKey: ["buyers"] });
-      if (onSuccess) onSuccess(buyer);
+      if (opts?.onSuccess) opts.onSuccess(buyer);
     },
     onError: (e) => {
       info(JSON.stringify(e));
+      if (opts?.onError) opts.onError(e);
     },
   });
 };
 
 export const useUpdateBuyerMutation = (
   buyerId: number,
-  onSuccess?: () => void
+  opts?: {
+    onSuccess?: () => void;
+    onError?: (error: Error) => void;
+  }
 ) => {
   return useMutation({
     mutationKey: ["buyers", "update", buyerId],
@@ -106,11 +113,12 @@ export const useUpdateBuyerMutation = (
       queryClient.invalidateQueries({ queryKey: ["buyers"] });
       queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
 
-      if (onSuccess) onSuccess();
+      if (opts?.onSuccess) opts.onSuccess();
     },
     gcTime: 1000 * 10,
     onError: (e) => {
       info(JSON.stringify(e));
+      if (opts?.onError) opts.onError(e);
     },
   });
 };
@@ -135,7 +143,7 @@ export async function removeBuyer(
   return partialBuyer as Buyer;
 }
 
-export const useRemoveBuyerMutation = (opts: {
+export const useRemoveBuyerMutation = (opts?: {
   onSuccess?: (buyer: Buyer) => void;
   onError?: (error: Error) => void;
 }) => {

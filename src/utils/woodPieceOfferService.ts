@@ -139,17 +139,19 @@ export const woodPieceQueryOptions = (woodPieceId: number) =>
     staleTime: Infinity,
   });
 
-export const useCreateWoodPieceOfferMutation = (
-  onSuccess?: (woodPiece: WoodPieceOffer) => void
-) => {
+export const useCreateWoodPieceOfferMutation = (opts?: {
+  onSuccess?: (woodPieceOffer: WoodPieceOffer) => void;
+  onError?: (error: Error) => void;
+}) => {
   return useMutation({
     mutationFn: postWoodPieceOffer,
     onSuccess: (woodPiece: WoodPieceOffer) => {
       queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
-      if (onSuccess) onSuccess(woodPiece);
+      if (opts?.onSuccess) opts.onSuccess(woodPiece);
     },
     onError: (e) => {
       info(JSON.stringify(e));
+      if (opts?.onError) opts.onError(e);
     },
   });
 };
@@ -171,16 +173,20 @@ export const useRemoveWoodPieceOfferMutation = (opts: {
   });
 };
 
-export const useUpdateWoodPieceOfferMutation = (onSuccess?: () => void) => {
+export const useUpdateWoodPieceOfferMutation = (opts?: {
+  onSuccess?: () => void;
+  onError?: (e: Error) => void;
+}) => {
   return useMutation({
     mutationFn: patchWoodPieceOffer,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
-      if (onSuccess) onSuccess();
+      if (opts?.onSuccess) opts.onSuccess();
     },
     gcTime: 1000 * 10,
     onError: (e) => {
       info(JSON.stringify(e));
+      if (opts?.onError) opts.onError(e);
     },
   });
 };

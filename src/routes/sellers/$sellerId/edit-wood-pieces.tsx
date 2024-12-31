@@ -31,13 +31,21 @@ function WoodPiecesList() {
 
   const params = Route.useParams();
 
-  const createWoodPieceMutation = useCreateWoodPieceMutation();
+  const createWoodPieceMutation = useCreateWoodPieceMutation({
+    onError: () => {
+      toast.error(t("couldNotCreate"));
+    },
+  });
   const removeWoodPieceMutation = useRemoveWoodPieceMutation({
     onError: () => {
       toast.error(t("couldNotDelete"));
     },
   });
-  const updateWoodPieceMutation = useUpdateWoodPieceMutation();
+  const updateWoodPieceMutation = useUpdateWoodPieceMutation({
+    onError: () => {
+      toast.error(t("couldNotUpdate"));
+    },
+  });
 
   const woodPiecesQuery = useSuspenseQuery(
     woodPiecesQueryOptions({

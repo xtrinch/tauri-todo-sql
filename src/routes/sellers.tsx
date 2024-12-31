@@ -9,6 +9,7 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import * as React from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import Select, { Options } from "react-select";
 import { z } from "zod";
@@ -66,11 +67,16 @@ function SellersComponent() {
     setFilterDraft(filterBy ?? "");
   }, [filterBy]);
 
-  const createSellerMutation = useCreateSellerMutation((seller: Seller) => {
-    navigate({
-      to: "/sellers/$sellerId",
-      params: { sellerId: seller.id },
-    });
+  const createSellerMutation = useCreateSellerMutation({
+    onSuccess: (seller: Seller) => {
+      navigate({
+        to: "/sellers/$sellerId",
+        params: { sellerId: seller.id },
+      });
+    },
+    onError: () => {
+      toast.error(t("couldNotCreate"));
+    },
   });
 
   const onAdd = () => {
