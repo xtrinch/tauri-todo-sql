@@ -116,7 +116,11 @@ function RootComponent() {
   };
 
   useEffect(() => {
-    localStorage.setItem("save_file_path", filePath || undefined!);
+    if (filePath) {
+      localStorage.setItem("save_file_path", filePath);
+    } else {
+      localStorage.removeItem("save_file_path");
+    }
   }, [filePath]);
 
   useEffect(() => {

@@ -59,7 +59,7 @@ export const TableCell = <TableItem,>({
 
   const meta = table.options.meta;
 
-  const onFocus = (event: any) => {
+  const onFocus = () => {
     setValueOnFocus(value);
   };
 

@@ -1,3 +1,4 @@
+import ReactPDF from "@react-pdf/renderer";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -5,8 +6,11 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { save } from "@tauri-apps/plugin-dialog";
+import { info } from "@tauri-apps/plugin-log";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { CatalogueExport } from "../../components/CatalogueExport";
 import { CustomTable } from "../../components/CustomTable";
 import { DropdownCellReadonly } from "../../components/DropdownCellReadonly";
 import { TableCellReadonly } from "../../components/TableCellReadonly";
@@ -114,8 +118,36 @@ function CatalogueComponent() {
     meta: {},
   });
 
+  const exportToFile = async () => {
+    const path = await save({
+      filters: [
+        {
+          name: "Catalog Filter",
+          extensions: ["pdf"],
+        },
+      ],
+      defaultPath: "catalog",
+    });
+    if (path) {
+      info(path);
+      try {
+        const response = await ReactPDF.render(<CatalogueExport />, path);
+        console.log(response);
+      } catch (e) {
+        info((e as any).message);
+        throw e;
+      }
+    }
+  };
+
   return (
     <div>
+      <button
+        className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+        onClick={exportToFile}
+      >
+        Export
+      </button>
       <CustomTable
         table={table}
         trClassName="border-b"
