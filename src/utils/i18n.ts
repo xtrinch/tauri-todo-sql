@@ -89,6 +89,7 @@ const resources = {
       select: "Select",
       isLowerThanMin: "Is lower than min",
       usedLogging: "Used logging",
+      bypassMinPrice: "Bypass min price",
     },
   },
   sl: {
@@ -176,6 +177,7 @@ const resources = {
       loggingCosts: "Posek gozdni (100 EUR / m3)",
       loggingCostsVAT: "Posek gozdni VAT (9.5%)",
       usedLogging: "Posek gozdni",
+      bypassMinPrice: "Dovoli nizjo ceno",
     },
   },
 };

@@ -5,16 +5,16 @@ let dbInstance: Database | null = null;
 
 export async function getDatabase(): Promise<Database> {
   if (!dbInstance) {
-    dbInstance = await Database.load("sqlite:main.db");
+    dbInstance = await Database.load("sqlite:main_database.db");
   }
   return dbInstance;
 }
 
 export async function getDatabaseForModify(): Promise<Database> {
-  localStorage.setItem("changes", "true");
+  localStorage.setItem("unsaved_changes", "true");
   window.dispatchEvent(new Event("storage"));
   if (!dbInstance) {
-    dbInstance = await Database.load("sqlite:main.db");
+    dbInstance = await Database.load("sqlite:main_database.db");
   }
   return dbInstance;
 }

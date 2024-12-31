@@ -163,23 +163,14 @@ function SoldPiecesList() {
           .round(2),
         costsBelow350: rows
           .reduce(
-            (sum, row) =>
-              sum.plus(
-                (row.getValue("offered_price") as number) <= 350
-                  ? 22 * (row.getValue("volume") as number)
-                  : 0
-              ),
+            (sum, row) => sum.plus(22 * (row.getValue("volume") as number)),
             new Big(0)
           )
           .round(2),
         costsAbove350: rows
           .reduce(
             (sum, row) =>
-              sum.plus(
-                (row.getValue("offered_price") as number) > 350
-                  ? 0.05 * (row.getValue("offered_total_price") as number)
-                  : 0
-              ),
+              sum.plus(0.05 * (row.getValue("offered_total_price") as number)),
             new Big(0)
           )
           .round(2),
@@ -228,8 +219,8 @@ function SoldPiecesList() {
 
   const sellerIncomeGrossAfterTax = useMemo(() => {
     return sellerIncomeGross
-      .minus(sellerIncomeTaxFlat)
-      .minus(sellerIncomeTaxVat)
+      .plus(sellerIncomeTaxFlat)
+      .plus(sellerIncomeTaxVat)
       .round(2);
   }, [sellerIncomeGross, sellerIncomeTaxVat, sellerIncomeTaxFlat]);
 

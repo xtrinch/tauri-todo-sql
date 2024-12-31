@@ -38,10 +38,10 @@ function RootComponent() {
   const { t, i18n } = useTranslation();
 
   const [changes, setChanges] = useState<boolean | null>(
-    localStorage.getItem("changes") === "true"
+    localStorage.getItem("unsaved_changes") === "true"
   );
   const [filePath, setFilePath] = useState<string | null>(
-    localStorage.getItem("file_path")
+    localStorage.getItem("save_file_path")
   );
 
   const { mutate: undo } = useUndo(() => {
@@ -64,14 +64,14 @@ function RootComponent() {
 
   const saveOnly = async (path?: string) => {
     await savePath(path || filePath!);
-    localStorage.setItem("changes", "false");
+    localStorage.setItem("unsaved_changes", "false");
     window.dispatchEvent(new Event("storage"));
     toast.success(t("saveSuccess"));
   };
 
   const loadOnly = async (path?: string) => {
     await invoke("load_sqlite_db", { filePath: path || filePath });
-    localStorage.setItem("changes", "false");
+    localStorage.setItem("unsaved_changes", "false");
     window.dispatchEvent(new Event("storage"));
     await queryClient.invalidateQueries();
   };
@@ -82,7 +82,7 @@ function RootComponent() {
 
   const savePath = async (path: string) => {
     await invoke("dump_sqlite_db", { filePath: path });
-    localStorage.setItem("changes", "false");
+    localStorage.setItem("unsaved_changes", "false");
   };
 
   const saveAs = async () => {
@@ -116,12 +116,13 @@ function RootComponent() {
   };
 
   useEffect(() => {
-    localStorage.setItem("file_path", filePath || undefined!);
+    localStorage.setItem("save_file_path", filePath || undefined!);
   }, [filePath]);
 
   useEffect(() => {
     function checkUserData() {
-      const localStorageChanges = localStorage.getItem("changes") === "true";
+      const localStorageChanges =
+        localStorage.getItem("unsaved_changes") === "true";
       setChanges(localStorageChanges);
     }
 

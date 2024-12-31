@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
 import { DropdownCellReadonly } from "../../../components/DropdownCellReadonly";
 import { SumFooter } from "../../../components/SumFooter";
+import { TableCellCheckboxReadonly } from "../../../components/TableCellCheckboxReadonly";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
@@ -117,6 +118,7 @@ function SoldPiecesList() {
             {...info}
             shouldBeRed={(row: Row<WoodPiece>) => {
               return (
+                (row.getValue("bypass_min_price") as number) === 0 &&
                 !!(row.getValue("offered_price") as number) &&
                 (row.getValue("min_price") as number) >
                   (row.getValue("offered_price") as number)
@@ -124,6 +126,13 @@ function SoldPiecesList() {
             }}
           />
         ),
+      },
+      {
+        accessorKey: "bypass_min_price",
+        header: () => t("bypassMinPrice"),
+        size: 80,
+        meta: {},
+        cell: TableCellCheckboxReadonly,
       },
       {
         accessorKey: "offered_total_price",

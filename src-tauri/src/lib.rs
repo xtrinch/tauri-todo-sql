@@ -68,7 +68,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 buyer_name VARCHAR, 
                 address_line1 VARCHAR, 
-                address_line2 VARCHAR
+                address_line2 VARCHAR,
+                additional_costs REAL
             );"
             }
             "sellers" => {
@@ -82,7 +83,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 is_flat_rate INTEGER,
                 is_vat_liable INTEGER,
                 used_transport INTEGER,
-                used_logging INTEGER
+                used_logging INTEGER,
+                additional_costs REAL
             );"
             }
             "tree_species" => {
@@ -104,6 +106,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 seller_id INTEGER,
                 tree_species_id INTEGER,
                 min_price REAL, 
+                bypass_min_price INTEGER,
                 FOREIGN KEY(seller_id) REFERENCES sellers(id) ON DELETE RESTRICT,
                 FOREIGN KEY(tree_species_id) REFERENCES tree_species(id)
             );"
@@ -191,7 +194,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(
             tauri_plugin_sql::Builder::default()
-                .add_migrations("sqlite:main.db", migrations)
+                .add_migrations("sqlite:main_database.db", migrations)
                 .build(),
         )
         .invoke_handler(tauri::generate_handler![
@@ -218,7 +221,7 @@ fn event_handler(window: &Window, event: &WindowEvent) {
             match window.path().app_data_dir() {
                 Ok(app_data_dir) => {
                     // Construct the path to the SQLite database file
-                    let sqlite_file = app_data_dir.join("main.db");
+                    let sqlite_file = app_data_dir.join("main_database.db");
 
                     // Attempt to remove the file
                     if sqlite_file.exists() {
@@ -250,7 +253,7 @@ fn on_setup(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
         .map_err(|e| format!("Failed to resolve app data directory: {}", e))?;
     
     // Construct the path to the SQLite database file
-    let sqlite_file = app_data_dir.join("main.db");
+    let sqlite_file = app_data_dir.join("main_database.db");
 
     // Attempt to remove the file
     if sqlite_file.exists() {
@@ -266,10 +269,10 @@ fn on_setup(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
 // Helper function to generate column names for tables
 fn get_column_names(table: &str) -> &str {
     match table {
-        "buyers" => "buyer_name, address_line1, address_line2",
-        "sellers" => "seller_name, address_line1, address_line2, iban, ident, is_flat_rate, is_vat_liable, used_transport, used_logging",
+        "buyers" => "buyer_name, address_line1, address_line2, additional_costs",
+        "sellers" => "seller_name, address_line1, address_line2, iban, ident, is_flat_rate, is_vat_liable, used_transport, used_logging, additional_costs",
         "tree_species" => "tree_species_name, latin_name, tree_species_name_slo",
-        "wood_pieces" => "length, sequence_no, width, volume, plate_no, seller_id, tree_species_id, min_price",
+        "wood_pieces" => "length, sequence_no, width, volume, plate_no, seller_id, tree_species_id, min_price, bypass_min_price",
         "wood_piece_offers" => "offered_price, wood_piece_id, buyer_id",
         _ => "",
     }

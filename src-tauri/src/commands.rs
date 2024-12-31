@@ -24,7 +24,7 @@ pub fn get_connection(app_handle: tauri::AppHandle) -> Result<Connection, String
         .map_err(|e| format!("Failed to resolve app data directory: {}", e))?;
     
     // Construct the path to the SQLite database file
-    let sqlite_file = app_data_dir.join("main.db");
+    let sqlite_file = app_data_dir.join("main_database.db");
 
     // Open the SQLite connection
     Connection::open(sqlite_file).map_err(|e| e.to_string())
@@ -66,7 +66,7 @@ pub fn clear_db(app_handle: tauri::AppHandle) -> Result<(), String> {
     let app_data_dir = app_handle.path().app_data_dir().map_err(|e| format!("Failed to remove file: {}", e))?;
     
     // Construct the path to the SQLite database file
-    let sqlite_file = app_data_dir.join("main.db");
+    let sqlite_file = app_data_dir.join("main_database.db");
 
     // Attempt to remove the file
     if sqlite_file.exists() {

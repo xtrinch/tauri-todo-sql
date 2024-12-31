@@ -13,6 +13,7 @@ import { DropdownCell } from "../../../components/DropdownCell";
 import { FooterAddCell } from "../../../components/FooterAddCell";
 import { RemoveCell } from "../../../components/RemoveCell";
 import { TableCell } from "../../../components/TableCell";
+import { TableCellCheckbox } from "../../../components/TableCellCheckbox";
 import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
   useCreateWoodPieceMutation,
@@ -121,6 +122,13 @@ function WoodPiecesList() {
         meta: {
           type: "float",
         },
+      },
+      {
+        accessorKey: "bypass_min_price",
+        header: () => t("bypassMinPrice"),
+        size: 80,
+        meta: {},
+        cell: TableCellCheckbox,
       },
       {
         id: "1",

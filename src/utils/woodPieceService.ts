@@ -18,6 +18,7 @@ export type WoodPiece = {
   plate_no: number;
   sequence_no: number;
   min_price?: number;
+  bypass_min_price?: boolean; // whether we can bypass min price for final sale
 
   // from other tables
   offered_total_price: number;
@@ -54,7 +55,7 @@ const ensureWoodPieces = async (opts: ListOptions) => {
     opts.offered_price__isnotnull ? `"offered_price" IS NOT NULL` : "",
     opts.offered_price__islowerthanmin ? `"offered_price" < "min_price"` : "",
     opts.min_price_used
-      ? `("min_price" <= "offered_price" OR "min_price" IS NULL)`
+      ? `("min_price" <= "offered_price" OR "min_price" IS NULL OR "bypass_min_price" = 1)`
       : "",
   ]);
 
@@ -130,16 +131,18 @@ export async function postWoodPiece(
       "plate_no", 
       "seller_id",
       "sequence_no",
-      "min_price"
+      "min_price",
+      "bypass_min_price"
     ) values (
       $1, 
       $2, 
       $3, 
       $4, 
       (SELECT COALESCE(MAX("sequence_no"),0)+1 FROM "wood_pieces"),
-      $6
+      $6,
+      $7
     )`,
-    [0, 0, "", partialWoodPiece.seller_id, 0]
+    [0, 0, "", partialWoodPiece.seller_id, 0, 0]
   );
 
   return {
@@ -172,7 +175,8 @@ export async function patchWoodPiece(
       "tree_species_id" = COALESCE($5, "tree_species_id"),
       "sequence_no" = COALESCE($6, "sequence_no"),
       "seller_id" = COALESCE($7, "seller_id"),
-      "min_price" = COALESCE($8, "min_price")
+      "min_price" = COALESCE($8, "min_price"),
+      "bypass_min_price" = COALESCE($9, "bypass_min_price")
     WHERE id=$1`,
     [
       woodPiece.id,
@@ -183,6 +187,7 @@ export async function patchWoodPiece(
       woodPiece.sequence_no,
       woodPiece.seller_id,
       woodPiece.min_price,
+      woodPiece.bypass_min_price,
     ]
   );
 }
