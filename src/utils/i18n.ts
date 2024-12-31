@@ -78,6 +78,8 @@ const resources = {
       transportVAT: "Transport VAT (22%)",
       payout: "Payout",
       editWoodPieces: "Edit wood pieces",
+      saveSuccess: "Saved successfully",
+      couldNotDelete: "Could not delete. Delete related data first.",
     },
   },
   sl: {
@@ -153,6 +155,9 @@ const resources = {
       transportVAT: "DDV za prevoz (22%)",
       payout: "Za izplacilo",
       editWoodPieces: "Uredi hlode",
+      saveSuccess: "Uspesno shranjeno",
+      couldNotDelete:
+        "Napaka pri brisanju. Najprej pobrisite povezane podatke.",
     },
   },
 };

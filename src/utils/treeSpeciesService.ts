@@ -1,4 +1,5 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
+import { info } from "@tauri-apps/plugin-log";
 import { compact } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase, getDatabaseForModify } from "./database";
@@ -114,6 +115,9 @@ export const useCreateTreeSpeciesMutation = (
       queryClient.invalidateQueries({ queryKey: ["tree_species"] });
       if (onSuccess) onSuccess(treeSpecies);
     },
+    onError: (e) => {
+      info(JSON.stringify(e));
+    },
   });
 };
 
@@ -126,6 +130,9 @@ export const useRemoveTreeSpeciesMutation = (
       queryClient.invalidateQueries({ queryKey: ["tree_species"] });
       if (onSuccess) onSuccess(treeSpecies);
     },
+    onError: (e) => {
+      info(JSON.stringify(e));
+    },
   });
 };
 
@@ -137,6 +144,9 @@ export const useUpdateTreeSpeciesMutation = (onSuccess?: () => void) => {
       if (onSuccess) onSuccess();
     },
     gcTime: 1000 * 10,
+    onError: (e) => {
+      info(JSON.stringify(e));
+    },
   });
 };
 

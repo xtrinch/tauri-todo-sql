@@ -1,4 +1,5 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
+import { info } from "@tauri-apps/plugin-log";
 import { queryClient } from "../main";
 import { getDatabase, getDatabaseForModify } from "./database";
 
@@ -88,6 +89,9 @@ export const useCreateBuyerMutation = (onSuccess?: (buyer: Buyer) => void) => {
       queryClient.invalidateQueries({ queryKey: ["buyers"] });
       if (onSuccess) onSuccess(buyer);
     },
+    onError: (e) => {
+      info(JSON.stringify(e));
+    },
   });
 };
 
@@ -105,6 +109,9 @@ export const useUpdateBuyerMutation = (
       if (onSuccess) onSuccess();
     },
     gcTime: 1000 * 10,
+    onError: (e) => {
+      info(JSON.stringify(e));
+    },
   });
 };
 
@@ -134,6 +141,9 @@ export const useRemoveBuyerMutation = (onSuccess?: (buyer: Buyer) => void) => {
     onSuccess: (buyer: Buyer) => {
       queryClient.invalidateQueries({ queryKey: ["buyers"] });
       if (onSuccess) onSuccess(buyer);
+    },
+    onError: (e) => {
+      info(JSON.stringify(e));
     },
   });
 };

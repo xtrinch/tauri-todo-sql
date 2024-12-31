@@ -1,72 +1,77 @@
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   ColumnDef,
   getCoreRowModel,
   useReactTable,
-} from '@tanstack/react-table'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { CustomTable } from '../../../components/CustomTable'
-import { DropdownCell } from '../../../components/DropdownCell'
-import { FooterAddCell } from '../../../components/FooterAddCell'
-import { RemoveCell } from '../../../components/RemoveCell'
-import { TableCell } from '../../../components/TableCell'
-import { treeSpeciesQueryOptions } from '../../../utils/treeSpeciesService'
+} from "@tanstack/react-table";
+import { useMemo } from "react";
+import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
+import { CustomTable } from "../../../components/CustomTable";
+import { DropdownCell } from "../../../components/DropdownCell";
+import { FooterAddCell } from "../../../components/FooterAddCell";
+import { RemoveCell } from "../../../components/RemoveCell";
+import { TableCell } from "../../../components/TableCell";
+import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
   useCreateWoodPieceMutation,
   useRemoveWoodPieceMutation,
   useUpdateWoodPieceMutation,
   WoodPiece,
   woodPiecesQueryOptions,
-} from '../../../utils/woodPieceService'
+} from "../../../utils/woodPieceService";
 
-export const Route = createFileRoute('/sellers/$sellerId/edit-wood-pieces')({
+export const Route = createFileRoute("/sellers/$sellerId/edit-wood-pieces")({
   component: WoodPiecesList,
-})
+});
 
 function WoodPiecesList() {
-  const { t, i18n } = useTranslation()
+  const { t, i18n } = useTranslation();
 
-  const params = Route.useParams()
+  const params = Route.useParams();
 
-  const createWoodPieceMutation = useCreateWoodPieceMutation()
-  const removeWoodPieceMutation = useRemoveWoodPieceMutation()
-  const updateWoodPieceMutation = useUpdateWoodPieceMutation()
+  const createWoodPieceMutation = useCreateWoodPieceMutation();
+  const removeWoodPieceMutation = useRemoveWoodPieceMutation({
+    onError: () => {
+      toast.error(t("couldNotDelete"));
+    },
+  });
+  const updateWoodPieceMutation = useUpdateWoodPieceMutation();
 
   const woodPiecesQuery = useSuspenseQuery(
     woodPiecesQueryOptions({
       ...Route.useLoaderDeps(),
       seller_id: params.sellerId,
       relations: [],
-      language: i18n.language as 'sl' | 'en',
-    }),
-  )
-  const woodPieces = woodPiecesQuery.data
+      language: i18n.language as "sl" | "en",
+    })
+  );
+  const woodPieces = woodPiecesQuery.data;
 
   const treeSpeciesQuery = useSuspenseQuery(
-    treeSpeciesQueryOptions({ language: i18n.language as 'en' | 'sl' }),
-  )
-  const treeSpeciesData = treeSpeciesQuery.data
+    treeSpeciesQueryOptions({ language: i18n.language as "en" | "sl" })
+  );
+  const treeSpeciesData = treeSpeciesQuery.data;
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
       {
-        accessorKey: 'sequence_no',
-        header: () => t('seqNo'),
+        accessorKey: "sequence_no",
+        header: () => t("seqNo"),
         size: 60,
         meta: {
-          type: 'integer',
+          type: "integer",
         },
       },
       {
-        accessorKey: 'plate_no',
-        header: () => t('plateNo'),
+        accessorKey: "plate_no",
+        header: () => t("plateNo"),
         size: 100,
       },
       {
-        accessorKey: 'tree_species_id',
-        header: () => t('treeSpecies'),
+        accessorKey: "tree_species_id",
+        header: () => t("treeSpecies"),
         size: 200,
         cell: (data) =>
           DropdownCell({
@@ -78,19 +83,19 @@ function WoodPiecesList() {
           }),
       },
       {
-        accessorKey: 'width',
-        header: () => t('widthCm'),
+        accessorKey: "width",
+        header: () => t("widthCm"),
         size: 80,
         meta: {
-          type: 'float',
+          type: "float",
         },
       },
       {
-        accessorKey: 'length',
-        header: () => t('lengthM'),
+        accessorKey: "length",
+        header: () => t("lengthM"),
         size: 80,
         meta: {
-          type: 'float',
+          type: "float",
         },
       },
       // {
@@ -102,16 +107,16 @@ function WoodPiecesList() {
       //   },
       // },
       {
-        accessorKey: 'min_price',
-        header: () => t('minPrice'),
+        accessorKey: "min_price",
+        header: () => t("minPrice"),
         size: 80,
         meta: {
-          type: 'float',
+          type: "float",
         },
       },
       {
-        id: '1',
-        header: () => '',
+        id: "1",
+        header: () => "",
         size: 45,
         accessorFn: () => 1,
         meta: {
@@ -119,12 +124,12 @@ function WoodPiecesList() {
         },
         cell: RemoveCell,
         footer: (info) => {
-          return <FooterAddCell table={info.table} />
+          return <FooterAddCell table={info.table} />;
         },
       },
     ],
-    [],
-  )
+    []
+  );
 
   const table = useReactTable({
     data: woodPieces,
@@ -135,20 +140,20 @@ function WoodPiecesList() {
     },
     meta: {
       onAdd: () => {
-        createWoodPieceMutation.mutate({ seller_id: params.sellerId })
+        createWoodPieceMutation.mutate({ seller_id: params.sellerId });
       },
       onEdit: (data: WoodPiece) => {
-        updateWoodPieceMutation.mutate(data)
+        updateWoodPieceMutation.mutate(data);
       },
       onRemove: (woodPieceId: number) => {
-        removeWoodPieceMutation.mutate({ id: woodPieceId })
+        removeWoodPieceMutation.mutate({ id: woodPieceId });
       },
     },
-  })
+  });
 
   return (
     <div className="p-3">
       <CustomTable table={table} />
     </div>
-  )
+  );
 }

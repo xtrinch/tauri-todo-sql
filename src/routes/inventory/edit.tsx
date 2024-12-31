@@ -6,6 +6,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../components/CustomTable";
 import { DropdownCell } from "../../components/DropdownCell";
@@ -30,7 +31,11 @@ function RouteComponent() {
   const { t, i18n } = useTranslation();
 
   const createWoodPieceMutation = useCreateWoodPieceMutation();
-  const removeWoodPieceMutation = useRemoveWoodPieceMutation();
+  const removeWoodPieceMutation = useRemoveWoodPieceMutation({
+    onError: () => {
+      toast.error(t("couldNotDelete"));
+    },
+  });
   const updateWoodPieceMutation = useUpdateWoodPieceMutation();
 
   const woodPiecesQuery = useSuspenseQuery(

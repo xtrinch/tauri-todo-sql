@@ -105,9 +105,8 @@ export async function postWoodPiece(
 
   const db = await getDatabaseForModify();
   let result;
-  try {
-    result = await db.execute(
-      `INSERT INTO "wood_pieces" (
+  result = await db.execute(
+    `INSERT INTO "wood_pieces" (
       "length", 
       "width", 
       "plate_no", 
@@ -122,12 +121,8 @@ export async function postWoodPiece(
       (SELECT COALESCE(MAX("sequence_no"),0)+1 FROM "wood_pieces"),
       $6
     )`,
-      [0, 0, "", partialWoodPiece.seller_id, 0]
-    );
-  } catch (e) {
-    info(JSON.stringify(e));
-    throw e;
-  }
+    [0, 0, "", partialWoodPiece.seller_id, 0]
+  );
 
   return {
     ...woodPiece,
@@ -150,10 +145,8 @@ export async function patchWoodPiece(
   woodPiece: PickAsRequired<Partial<WoodPiece>, "id">
 ) {
   const db = await getDatabaseForModify();
-  info(JSON.stringify(woodPiece));
-  try {
-    await db.execute(
-      `UPDATE "wood_pieces" 
+  await db.execute(
+    `UPDATE "wood_pieces" 
     SET 
       "width" = COALESCE($2, "width"), 
       "length" = COALESCE($3, "length"), 
@@ -163,21 +156,17 @@ export async function patchWoodPiece(
       "seller_id" = COALESCE($7, "seller_id"),
       "min_price" = COALESCE($8, "min_price")
     WHERE id=$1`,
-      [
-        woodPiece.id,
-        woodPiece.width,
-        woodPiece.length,
-        woodPiece.plate_no,
-        woodPiece.tree_species_id,
-        woodPiece.sequence_no,
-        woodPiece.seller_id,
-        woodPiece.min_price,
-      ]
-    );
-  } catch (e) {
-    info(JSON.stringify(e));
-    throw e;
-  }
+    [
+      woodPiece.id,
+      woodPiece.width,
+      woodPiece.length,
+      woodPiece.plate_no,
+      woodPiece.tree_species_id,
+      woodPiece.sequence_no,
+      woodPiece.seller_id,
+      woodPiece.min_price,
+    ]
+  );
 }
 
 export const woodPieceQueryOptions = (woodPieceId: number) =>
@@ -196,17 +185,25 @@ export const useCreateWoodPieceMutation = (
       queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
       if (onSuccess) onSuccess(woodPiece);
     },
+    onError: (e) => {
+      info(JSON.stringify(e));
+    },
   });
 };
 
-export const useRemoveWoodPieceMutation = (
-  onSuccess?: (woodPiece: WoodPiece) => void
-) => {
+export const useRemoveWoodPieceMutation = (opts?: {
+  onSuccess?: (woodPiece: WoodPiece) => void;
+  onError?: () => void;
+}) => {
   return useMutation({
     mutationFn: removeWoodPiece,
     onSuccess: (woodPiece: WoodPiece) => {
       queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
-      if (onSuccess) onSuccess(woodPiece);
+      if (opts?.onSuccess) opts.onSuccess(woodPiece);
+    },
+    onError: (e) => {
+      info(JSON.stringify(e));
+      if (opts?.onError) opts.onError();
     },
   });
 };
@@ -219,6 +216,9 @@ export const useUpdateWoodPieceMutation = (onSuccess?: () => void) => {
       if (onSuccess) onSuccess();
     },
     gcTime: 1000 * 10,
+    onError: (e) => {
+      info(JSON.stringify(e));
+    },
   });
 };
 

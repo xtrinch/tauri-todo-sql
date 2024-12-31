@@ -1,4 +1,5 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
+import { info } from "@tauri-apps/plugin-log";
 import { queryClient } from "../main";
 import { getDatabase, getDatabaseForModify } from "./database";
 type PickAsRequired<TValue, TKey extends keyof TValue> = Omit<TValue, TKey> &
@@ -136,6 +137,9 @@ export const useCreateSellerMutation = (
       queryClient.invalidateQueries({ queryKey: ["sellers"] });
       if (onSuccess) onSuccess(seller);
     },
+    onError: (e) => {
+      info(JSON.stringify(e));
+    },
   });
 };
 
@@ -152,6 +156,9 @@ export const useUpdateSellerMutation = (
       if (onSuccess) onSuccess();
     },
     gcTime: 1000 * 10,
+    onError: (e) => {
+      info(JSON.stringify(e));
+    },
   });
 };
 
@@ -185,6 +192,9 @@ export const useRemoveSellerMutation = (
     onSuccess: (seller: Seller) => {
       queryClient.invalidateQueries({ queryKey: ["sellers"] });
       if (onSuccess) onSuccess(seller);
+    },
+    onError: (e) => {
+      info(JSON.stringify(e));
     },
   });
 };

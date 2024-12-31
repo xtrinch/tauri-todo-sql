@@ -10,6 +10,7 @@ import {
 import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { useEffect, useState } from "react";
+import { Toaster, toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { FaArrowRotateLeft, FaRegFloppyDisk } from "react-icons/fa6";
 import { Spinner } from "../components/Spinner";
@@ -65,6 +66,7 @@ function RootComponent() {
     await savePath(path || filePath!);
     localStorage.setItem("changes", "false");
     window.dispatchEvent(new Event("storage"));
+    toast.success(t("saveSuccess"));
   };
 
   const loadOnly = async (path?: string) => {
@@ -136,6 +138,10 @@ function RootComponent() {
 
   return (
     <>
+      <div>
+        <Toaster position="bottom-right" />
+      </div>
+
       <div className={`min-h-screen flex flex-col`}>
         <div className={`flex items-center justify-between border-b gap-2`}>
           <div className="flex flex-row space-x-3 items-center">

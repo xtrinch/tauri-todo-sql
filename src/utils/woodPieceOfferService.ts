@@ -84,9 +84,8 @@ export async function postWoodPieceOffer(
 
   const db = await getDatabaseForModify();
   let result;
-  try {
-    result = await db.execute(
-      `INSERT INTO "wood_piece_offers" (
+  result = await db.execute(
+    `INSERT INTO "wood_piece_offers" (
         "offered_price", 
         "wood_piece_id", 
         "buyer_id"
@@ -95,12 +94,8 @@ export async function postWoodPieceOffer(
         $2, 
         $3
       )`,
-      [woodPiece.offered_price, woodPiece.wood_piece_id, woodPiece.buyer_id]
-    );
-  } catch (e) {
-    info(JSON.stringify(e));
-    throw e;
-  }
+    [woodPiece.offered_price, woodPiece.wood_piece_id, woodPiece.buyer_id]
+  );
 
   return {
     ...woodPiece,
@@ -127,19 +122,14 @@ export async function patchWoodPieceOffer(
     woodPiece.wood_piece_id,
     woodPiece.offered_price,
   ];
-  try {
-    await db.execute(
-      `UPDATE "wood_piece_offers" 
+  await db.execute(
+    `UPDATE "wood_piece_offers" 
     SET 
       "wood_piece_id" = COALESCE($2, "wood_piece_id"),
       "offered_price" = COALESCE($3, "offered_price")
     WHERE id = $1`,
-      params
-    );
-  } catch (e) {
-    info(JSON.stringify(e));
-    throw e;
-  }
+    params
+  );
 }
 
 export const woodPieceQueryOptions = (woodPieceId: number) =>
@@ -158,6 +148,9 @@ export const useCreateWoodPieceOfferMutation = (
       queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
       if (onSuccess) onSuccess(woodPiece);
     },
+    onError: (e) => {
+      info(JSON.stringify(e));
+    },
   });
 };
 
@@ -170,6 +163,9 @@ export const useRemoveWoodPieceOfferMutation = (
       queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
       if (onSuccess) onSuccess(woodPiece);
     },
+    onError: (e) => {
+      info(JSON.stringify(e));
+    },
   });
 };
 
@@ -181,6 +177,9 @@ export const useUpdateWoodPieceOfferMutation = (onSuccess?: () => void) => {
       if (onSuccess) onSuccess();
     },
     gcTime: 1000 * 10,
+    onError: (e) => {
+      info(JSON.stringify(e));
+    },
   });
 };
 
