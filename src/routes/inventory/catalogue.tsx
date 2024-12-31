@@ -5,13 +5,11 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../components/CustomTable";
 import { DropdownCellReadonly } from "../../components/DropdownCellReadonly";
 import { TableCellReadonly } from "../../components/TableCellReadonly";
-import { buyersQueryOptions } from "../../utils/buyerService";
-import { sellersQueryOptions } from "../../utils/sellerService";
 import { treeSpeciesQueryOptions } from "../../utils/treeSpeciesService";
 import {
   WoodPiece,
@@ -25,23 +23,11 @@ export const Route = createFileRoute("/inventory/catalogue")({
 function CatalogueComponent() {
   const { t, i18n } = useTranslation();
 
-  const [filters, setFilters] = useState<{
-    tree_species_id?: number;
-    tree_species_id_label?: string;
-    offered_price__isnull?: boolean;
-    offered_price__isnotnull?: boolean;
-    seller_id?: number;
-    seller_id_label?: string;
-    buyer_id?: number;
-    buyer_id_label?: string;
-  }>();
-
   const woodPiecesQuery = useSuspenseQuery(
     woodPiecesQueryOptions({
       ...Route.useLoaderDeps(),
       ...Route.useParams(),
       relations: [],
-      ...filters,
       language: i18n.language as "sl" | "en",
     })
   );
@@ -58,28 +44,6 @@ function CatalogueComponent() {
         label: ts.tree_species_name,
       })),
     [treeSpeciesData]
-  );
-
-  const sellersQuery = useSuspenseQuery(sellersQueryOptions({}));
-  const sellers = sellersQuery.data;
-  const sellerOptions = useMemo(
-    () =>
-      sellers.map((ts) => ({
-        value: ts.id,
-        label: ts.seller_name,
-      })),
-    [sellers]
-  );
-
-  const buyersQuery = useSuspenseQuery(buyersQueryOptions({}));
-  const buyers = buyersQuery.data;
-  const buyerOptions = useMemo(
-    () =>
-      buyers.map((ts) => ({
-        value: ts.id,
-        label: ts.buyer_name,
-      })),
-    [buyers]
   );
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(

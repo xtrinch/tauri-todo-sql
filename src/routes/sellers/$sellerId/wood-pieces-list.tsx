@@ -12,7 +12,6 @@ import { CustomTable } from "../../../components/CustomTable";
 import { DropdownCellReadonly } from "../../../components/DropdownCellReadonly";
 import { SumFooter } from "../../../components/SumFooter";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
-import { sellerQueryOptions } from "../../../utils/sellerService";
 import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
   WoodPiece,
@@ -26,9 +25,6 @@ function SoldPiecesList() {
   const { t, i18n } = useTranslation();
 
   const params = Route.useParams();
-
-  const sellerQuery = useSuspenseQuery(sellerQueryOptions(params.sellerId));
-  const seller = sellerQuery.data;
 
   const woodPiecesQuery = useSuspenseQuery(
     woodPiecesQueryOptions({

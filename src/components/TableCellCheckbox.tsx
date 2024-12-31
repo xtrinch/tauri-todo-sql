@@ -36,7 +36,7 @@ export const TableCellCheckbox = <TableItem,>({
   // We need to keep and update the state of the cell normally
   const [value, setValue] = useState(initialValue);
 
-  const onChange = (e: any) => {
+  const onChange = () => {
     const newValue = !value;
     setValue(newValue);
     (meta as CustomTableMeta)?.onEdit({
