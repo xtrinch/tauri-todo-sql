@@ -1,4 +1,5 @@
 import { HeaderContext } from "@tanstack/react-table";
+import Big from "big.js";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -12,17 +13,19 @@ export const SumFooter = (params: {
   const rows = params.info.table.getFilteredRowModel().rows;
   const total = useMemo(
     () =>
-      rows.reduce(
-        (sum, row) => (row.getValue(params.info.column.id) as number) + sum,
-        0
-      ),
+      rows
+        .reduce(
+          (sum, row) => sum.plus(row.getValue(params.info.column.id) as number),
+          new Big(0)
+        )
+        .round(2),
     [rows]
   );
   return (
     <div className="text-base">
       <div className="font-bold">{params.label || t("total")}:</div>{" "}
       <div>
-        {total} {params.measure}
+        {total.toFixed(2)} {params.measure}
       </div>
     </div>
   );
