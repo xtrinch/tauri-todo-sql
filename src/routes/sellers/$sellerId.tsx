@@ -12,6 +12,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { CustomTable } from "../../components/CustomTable";
@@ -133,8 +134,13 @@ function SellerComponent() {
     []
   );
   const navigate = useNavigate();
-  const removeSellerMutation = useRemoveSellerMutation(() => {
-    navigate({ to: "/sellers" });
+  const removeSellerMutation = useRemoveSellerMutation({
+    onSuccess: () => {
+      navigate({ to: "/sellers" });
+    },
+    onError: () => {
+      toast(t("couldNotRemove"));
+    },
   });
 
   const sellerData = useMemo(() => {

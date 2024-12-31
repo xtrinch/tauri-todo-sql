@@ -184,17 +184,19 @@ export async function removeSeller(
   return partialWoodPiece as Seller;
 }
 
-export const useRemoveSellerMutation = (
-  onSuccess?: (seller: Seller) => void
-) => {
+export const useRemoveSellerMutation = (opts?: {
+  onSuccess?: (seller: Seller) => void;
+  onError?: (error: Error) => void;
+}) => {
   return useMutation({
     mutationFn: removeSeller,
     onSuccess: (seller: Seller) => {
       queryClient.invalidateQueries({ queryKey: ["sellers"] });
-      if (onSuccess) onSuccess(seller);
+      if (opts?.onSuccess) opts.onSuccess(seller);
     },
     onError: (e) => {
       info(JSON.stringify(e));
+      if (opts?.onError) opts.onError(e);
     },
   });
 };

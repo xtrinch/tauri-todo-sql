@@ -135,15 +135,21 @@ export async function removeBuyer(
   return partialBuyer as Buyer;
 }
 
-export const useRemoveBuyerMutation = (onSuccess?: (buyer: Buyer) => void) => {
+export const useRemoveBuyerMutation = (opts: {
+  onSuccess?: (buyer: Buyer) => void;
+  onError?: (error: Error) => void;
+}) => {
   return useMutation({
     mutationFn: removeBuyer,
     onSuccess: (buyer: Buyer) => {
       queryClient.invalidateQueries({ queryKey: ["buyers"] });
-      if (onSuccess) onSuccess(buyer);
+      if (opts?.onSuccess) opts.onSuccess(buyer);
     },
     onError: (e) => {
       info(JSON.stringify(e));
+      if (opts?.onError) {
+        opts.onError(e);
+      }
     },
   });
 };

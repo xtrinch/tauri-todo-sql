@@ -6,6 +6,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
 import { DropdownCell } from "../../../components/DropdownCell";
@@ -121,7 +122,11 @@ function WoodPiecesList() {
   const woodPieces = woodPieceOffersQuery.data;
 
   const createWoodPieceMutation = useCreateWoodPieceOfferMutation();
-  const removeWoodPieceMutation = useRemoveWoodPieceOfferMutation();
+  const removeWoodPieceMutation = useRemoveWoodPieceOfferMutation({
+    onError: () => {
+      toast.error(t("couldNotRemove"));
+    },
+  });
 
   const defaultColumn: Partial<ColumnDef<WoodPieceOffer>> = {
     cell: TableCell,

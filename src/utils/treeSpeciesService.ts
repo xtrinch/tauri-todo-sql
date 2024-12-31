@@ -121,17 +121,19 @@ export const useCreateTreeSpeciesMutation = (
   });
 };
 
-export const useRemoveTreeSpeciesMutation = (
-  onSuccess?: (treeSpecies: TreeSpecies) => void
-) => {
+export const useRemoveTreeSpeciesMutation = (opts?: {
+  onSuccess?: (treeSpecies: TreeSpecies) => void;
+  onError?: (error: Error) => void;
+}) => {
   return useMutation({
     mutationFn: removeTreeSpecies,
     onSuccess: (treeSpecies: TreeSpecies) => {
       queryClient.invalidateQueries({ queryKey: ["tree_species"] });
-      if (onSuccess) onSuccess(treeSpecies);
+      if (opts?.onSuccess) opts.onSuccess(treeSpecies);
     },
     onError: (e) => {
       info(JSON.stringify(e));
+      if (opts?.onError) opts.onError(e);
     },
   });
 };

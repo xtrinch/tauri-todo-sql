@@ -154,17 +154,19 @@ export const useCreateWoodPieceOfferMutation = (
   });
 };
 
-export const useRemoveWoodPieceOfferMutation = (
-  onSuccess?: (woodPiece: WoodPieceOffer) => void
-) => {
+export const useRemoveWoodPieceOfferMutation = (opts: {
+  onSuccess?: (woodPiece: WoodPieceOffer) => void;
+  onError?: (error: Error) => void;
+}) => {
   return useMutation({
     mutationFn: removeWoodPieceOffer,
     onSuccess: (woodPiece: WoodPieceOffer) => {
       queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
-      if (onSuccess) onSuccess(woodPiece);
+      if (opts?.onSuccess) opts.onSuccess(woodPiece);
     },
     onError: (e) => {
       info(JSON.stringify(e));
+      if (opts?.onError) opts.onError(e);
     },
   });
 };

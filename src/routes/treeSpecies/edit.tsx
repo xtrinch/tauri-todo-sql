@@ -6,6 +6,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../components/CustomTable";
 import { FooterAddCell } from "../../components/FooterAddCell";
@@ -28,7 +29,11 @@ function RouteComponent() {
   const { t, i18n } = useTranslation();
 
   const createTreeSpeciesMutation = useCreateTreeSpeciesMutation();
-  const removeTreeSpeciesMutation = useRemoveTreeSpeciesMutation();
+  const removeTreeSpeciesMutation = useRemoveTreeSpeciesMutation({
+    onError: () => {
+      toast.error(t("couldNotDelete"));
+    },
+  });
   const updateTreeSpeciesMutation = useUpdateTreeSpeciesMutation();
 
   const treeSpeciesQuery = useSuspenseQuery(
