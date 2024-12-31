@@ -27,4 +27,4 @@ tauri-plugin-log = "2"
 csv = "1.2"
 tauri-plugin-dialog = "2"
 rusqlite = { version = "0.32.1", features = ["backup"] }
-tauri-plugin-fs = "2.2.0"
+tauri-plugin-fs = "2"

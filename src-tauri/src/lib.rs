@@ -12,8 +12,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     println!("Current working directory: {:?}", std::env::current_dir()?);
 
     // Prepare the output SQL statement
-    let sql_statement =
-        String::from("INSERT INTO tree_species (tree_species_name, latin_name, tree_species_name_slo) VALUES 
+    let sql_statement = String::from(
+        "INSERT INTO tree_species (tree_species_name, latin_name, tree_species_name_slo) VALUES 
         ('Sessile oak', 'Quercus petraea', 'Hrast graden'),
         ('Pedunculate oak', 'Quercus robur', 'Hrast dob'),
         ('Beech', 'Fagus sylvatica', 'Bukev'),
@@ -34,7 +34,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         ('Scots pine', 'Pinus sylvestris', 'Rdeči bor'),
         ('Spruce', 'Picea abies', 'Smreka'),
         ('Sycamore maple', 'Acer pseudoplatanus', 'Gorski javor');
-        \n");
+        \n",
+    );
 
     // Use Box::leak to ensure sql_statement has a 'static lifetime
     let sql_statement_static: &'static str = Box::leak(sql_statement.into_boxed_str());
@@ -188,6 +189,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
     // Tauri builder
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         // .setup(on_setup)
         // .on_window_event(event_handler)
         .plugin(tauri_plugin_dialog::init())
@@ -249,9 +251,11 @@ fn event_handler(window: &Window, event: &WindowEvent) {
 
 fn on_setup(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
     // Get the app data directory path
-    let app_data_dir = app.path().app_data_dir()
+    let app_data_dir = app
+        .path()
+        .app_data_dir()
         .map_err(|e| format!("Failed to resolve app data directory: {}", e))?;
-    
+
     // Construct the path to the SQLite database file
     let sqlite_file = app_data_dir.join("main_database.db");
 
@@ -262,7 +266,7 @@ fn on_setup(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
     } else {
         println!("File does not exist: {:?}", sqlite_file);
     }
-    
+
     Ok(())
 }
 

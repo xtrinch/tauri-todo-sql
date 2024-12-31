@@ -1,4 +1,4 @@
-import ReactPDF from "@react-pdf/renderer";
+import { pdf } from "@react-pdf/renderer";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -7,6 +7,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { save } from "@tauri-apps/plugin-dialog";
+import { writeFile } from "@tauri-apps/plugin-fs";
 import { info } from "@tauri-apps/plugin-log";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -130,13 +131,19 @@ function CatalogueComponent() {
     });
     if (path) {
       info(path);
-      try {
-        const response = await ReactPDF.render(<CatalogueExport />, path);
-        console.log(response);
-      } catch (e) {
-        info((e as any).message);
-        throw e;
-      }
+
+      const blob = await pdf(
+        <CatalogueExport
+          woodPiecesData={woodPieces}
+          treeSpeciesData={treeSpeciesData}
+        />
+      ).toBlob();
+      // Convert Blob to ArrayBuffer
+      const arrayBuffer = await blob.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+
+      // Write the PDF file to the file system
+      await writeFile(path, uint8Array);
     }
   };
 

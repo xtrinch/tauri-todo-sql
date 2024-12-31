@@ -11,6 +11,8 @@
     "sql:default",
     "log:default",
     "sql:allow-execute",
-    "dialog:default"
+    "dialog:default",
+    "fs:default",
+    "fs:allow-app-write"
   ]
 }
