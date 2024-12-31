@@ -5,7 +5,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { round } from "lodash";
+import Big from "big.js";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
@@ -144,81 +144,89 @@ function SoldPiecesList() {
 
   const rows = table.getFilteredRowModel().rows;
 
-  const { totalVolume, totalPrice, costsBelow350, costsAbove350 } = useMemo(
-    () => ({
-      totalVolume: rows.reduce(
-        (sum, row) => (row.getValue("volume") as number) + sum,
-        0
-      ),
-      totalPrice: rows.reduce(
-        (sum, row) => (row.getValue("offered_total_price") as number) + sum,
-        0
-      ),
-      costsBelow350: rows.reduce(
-        (sum, row) =>
-          ((row.getValue("offered_price") as number) <= 350
-            ? parseFloat((22 * (row.getValue("volume") as number)).toFixed(2))
-            : 0) + sum,
-        0
-      ),
-      costsAbove350: rows.reduce(
-        (sum, row) =>
-          ((row.getValue("offered_price") as number) > 350
-            ? parseFloat(
-                (
-                  0.05 * (row.getValue("offered_total_price") as number)
-                ).toFixed(2)
-              )
-            : 0) + sum,
-        0
-      ),
-    }),
-    []
-  );
+  const { totalVolume, totalPrice, costsBelow350, costsAbove350 } =
+    useMemo(() => {
+      return {
+        totalVolume: rows
+          .reduce(
+            (sum: Big, row) => sum.plus(row.getValue("volume") as number),
+            new Big(0)
+          )
+          .round(2),
+        totalPrice: rows
+          .reduce(
+            (sum, row) =>
+              sum.plus(row.getValue("offered_total_price") as number),
+            new Big(0)
+          )
+          .round(2),
+        costsBelow350: rows
+          .reduce(
+            (sum, row) =>
+              sum.plus(
+                (row.getValue("offered_price") as number) <= 350
+                  ? 22 * (row.getValue("volume") as number)
+                  : 0
+              ),
+            new Big(0)
+          )
+          .round(2),
+        costsAbove350: rows
+          .reduce(
+            (sum, row) =>
+              sum.plus(
+                (row.getValue("offered_price") as number) > 350
+                  ? 0.05 * (row.getValue("offered_total_price") as number)
+                  : 0
+              ),
+            new Big(0)
+          )
+          .round(2),
+      };
+    }, [rows]);
 
   const sellerIncomeGross = useMemo(
-    () => totalPrice - costsAbove350 - costsBelow350,
+    () => totalPrice.minus(costsAbove350).minus(costsBelow350).round(2),
     [totalPrice, costsBelow350, costsAbove350]
   );
 
   const transportCosts = useMemo(
-    () => parseFloat((seller.used_transport ? totalVolume * 18 : 0).toFixed(2)),
+    () => (seller.used_transport ? totalVolume.mul(18) : new Big(0)).round(2),
     [totalVolume, seller]
   );
 
   const transportVAT = useMemo(
     () =>
-      parseFloat(
-        (seller.used_transport ? transportCosts * 0.22 : 0).toFixed(2)
-      ),
+      (seller.used_transport ? transportCosts.mul(0.22) : new Big(0)).round(2),
     [transportCosts, seller]
   );
 
-  const sellerIncomeTaxFlat = useMemo(
-    () =>
-      parseFloat(
-        (seller.is_flat_rate ? sellerIncomeGross * 0.08 : 0).toFixed(2)
-      ),
-    [sellerIncomeGross, seller]
-  );
-
-  const sellerIncomeTaxVat = useMemo(
-    () =>
-      parseFloat(
-        (seller.is_vat_liable ? sellerIncomeGross * 0.22 : 0).toFixed(2)
-      ),
+  const { sellerIncomeTaxFlat, sellerIncomeTaxVat } = useMemo(
+    () => ({
+      sellerIncomeTaxFlat: (seller.is_flat_rate
+        ? sellerIncomeGross.mul(0.08)
+        : new Big(0)
+      ).round(2),
+      sellerIncomeTaxVat: (seller.is_vat_liable
+        ? sellerIncomeGross.mul(0.22)
+        : new Big(0)
+      ).round(2),
+    }),
     [sellerIncomeGross, seller]
   );
 
   const sellerIncomeGrossAfterTax = useMemo(() => {
-    return round(
-      sellerIncomeGross - sellerIncomeTaxFlat - sellerIncomeTaxVat,
-      2
-    );
+    return sellerIncomeGross
+      .minus(sellerIncomeTaxFlat)
+      .minus(sellerIncomeTaxVat)
+      .round(2);
   }, [sellerIncomeGross, sellerIncomeTaxVat, sellerIncomeTaxFlat]);
 
   const payout = useMemo(() => {
-    return round(sellerIncomeGrossAfterTax - transportCosts - transportVAT, 2);
+    return sellerIncomeGrossAfterTax
+      .minus(transportCosts)
+      .minus(transportVAT)
+      .round(2);
   }, [sellerIncomeGrossAfterTax, transportCosts, transportVAT]);
 
   return (
@@ -231,55 +239,55 @@ function SoldPiecesList() {
       <table className="mt-5">
         <tr className="border-b">
           <td className="px-2">{t("totalVolume")}</td>
-          <td className="px-2">{totalVolume} m3</td>
+          <td className="px-2">{totalVolume.toString()} m3</td>
         </tr>
         <tr className="border-b">
           <td className="px-2">{t("totalGross")}</td>
-          <td className="px-2">{totalPrice} EUR</td>
+          <td className="px-2">{totalPrice.toString()} EUR</td>
         </tr>
         <tr className="border-b">
           <td className="px-2">{t("costsTo350")}</td>
-          <td className="px-2">{costsBelow350} EUR</td>
+          <td className="px-2">{costsBelow350.toString()} EUR</td>
         </tr>
         <tr className="border-b">
           <td className="px-2">{t("costsAbove350")}</td>
-          <td className="px-2">{costsAbove350} EUR</td>
+          <td className="px-2">{costsAbove350.toString()} EUR</td>
         </tr>
         <tr className="border-b">
           <td className="px-2">{t("sellerIncome")}</td>
-          <td className="px-2">{sellerIncomeGross} EUR</td>
+          <td className="px-2">{sellerIncomeGross.toString()} EUR</td>
         </tr>
         {seller.is_flat_rate > 0 && (
           <tr className="border-b">
             <td className="px-2">{t("flatRate")}</td>
-            <td className="px-2">{sellerIncomeTaxFlat} EUR</td>
+            <td className="px-2">{sellerIncomeTaxFlat.toString()} EUR</td>
           </tr>
         )}
         {seller.is_vat_liable > 0 && (
           <tr className="border-b">
             <td className="px-2">{t("vat")}</td>
-            <td className="px-2">{sellerIncomeTaxVat} EUR</td>
+            <td className="px-2">{sellerIncomeTaxVat.toString()} EUR</td>
           </tr>
         )}
         <tr className="border-b">
           <td className="px-2 font-bold">{t("sellerIncomeGross")}</td>
-          <td className="px-2">{sellerIncomeGrossAfterTax} EUR</td>
+          <td className="px-2">{sellerIncomeGrossAfterTax.toString()} EUR</td>
         </tr>
         {seller.used_transport > 0 && (
           <>
             <tr className="border-b">
               <td className="px-2">{t("transportCosts")}</td>
-              <td className="px-2">{transportCosts} EUR</td>
+              <td className="px-2">{transportCosts.toString()} EUR</td>
             </tr>
             <tr className="border-b">
               <td className="px-2">{t("transportVAT")}</td>
-              <td className="px-2">{transportVAT} EUR</td>
+              <td className="px-2">{transportVAT.toString()} EUR</td>
             </tr>
           </>
         )}
         <tr className="border-b">
           <td className="px-2 font-bold">{t("payout")}</td>
-          <td className="px-2">{payout} EUR</td>
+          <td className="px-2">{payout.toString()} EUR</td>
         </tr>
       </table>
     </div>
