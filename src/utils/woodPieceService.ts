@@ -33,6 +33,7 @@ interface ListOptions {
   buyer_id?: number;
   offered_price__isnull?: boolean;
   offered_price__isnotnull?: boolean;
+  offered_price__islowerthanmin?: boolean;
   groupBy_tree_species?: boolean;
   filterBy?: string;
   sortBy?: "id" | "sequence_no";
@@ -51,6 +52,7 @@ const ensureWoodPieces = async (opts: ListOptions) => {
     opts.tree_species_id ? `"tree_species_id" = $2` : "",
     opts.offered_price__isnull ? `"offered_price" IS NULL` : "",
     opts.offered_price__isnotnull ? `"offered_price" IS NOT NULL` : "",
+    opts.offered_price__islowerthanmin ? `"offered_price" < "min_price"` : "",
     opts.min_price_used
       ? `("min_price" <= "offered_price" OR "min_price" IS NULL)`
       : "",

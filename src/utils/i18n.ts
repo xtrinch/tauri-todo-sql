@@ -85,6 +85,7 @@ const resources = {
       couldNotCreate: "Could not create",
       summary: "Summary",
       select: "Select",
+      isLowerThanMin: "Is lower than min",
     },
   },
   sl: {
@@ -168,6 +169,7 @@ const resources = {
       couldNotCreate: "Napaka pri ustvarjanju podatkov",
       summary: "Povzetek",
       select: "Izberi",
+      isLowerThanMin: "Nizja kot pricakovana",
     },
   },
 };
