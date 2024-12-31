@@ -34,17 +34,11 @@ export const TableCell = <TableItem,>({
   const columnMeta = column.columnDef.meta as CustomColumnMeta;
   const isReadonly = columnMeta?.readonly;
 
-  // We need to keep and update the state of the cell normally
-  const [value, setValue] = useState(initialValue);
-  const [valueOnFocus, setValueOnFocus] = useState(initialValue);
-
-  const meta = table.options.meta;
-
   const getFormattedVal = (val: any) => {
     if (columnMeta?.type === "float") {
       val = parseFloat(val as string).toFixed(2);
       if (isNaN(val as number)) {
-        val = 0;
+        val = (0).toFixed(2);
       }
     }
     if (columnMeta?.type === "integer") {
@@ -57,7 +51,15 @@ export const TableCell = <TableItem,>({
     return val;
   };
 
-  const onFocus = () => {
+  // We need to keep and update the state of the cell normally
+  const [value, setValue] = useState<string>(getFormattedVal(initialValue));
+  const [valueOnFocus, setValueOnFocus] = useState(
+    getFormattedVal(initialValue)
+  );
+
+  const meta = table.options.meta;
+
+  const onFocus = (event: any) => {
     setValueOnFocus(value);
   };
 
@@ -75,7 +77,6 @@ export const TableCell = <TableItem,>({
         [column.id]: val,
       });
     }
-    // TODO: this technically should not be needed
     setValue(val);
   };
 
@@ -93,7 +94,7 @@ export const TableCell = <TableItem,>({
       <input
         value={value as string}
         className="bg-green h-10 min-w-[100%] max-w-[100%] border p-1 px-2 rounded"
-        style={{ borderColor: value === 0 ? "red" : undefined }}
+        // style={{ borderColor: value === 0 ? "red" : undefined }}
         onChange={onChange}
         onBlur={onBlur} // TODO: save after some time of inactivity
         readOnly={columnMeta?.readonly}

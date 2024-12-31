@@ -142,7 +142,7 @@ export async function postWoodPiece(
       $6,
       $7
     )`,
-    [0, 0, "", partialWoodPiece.seller_id, 0, 0]
+    [0.0, 0.0, "", partialWoodPiece.seller_id, 0.0, 0]
   );
 
   return {
