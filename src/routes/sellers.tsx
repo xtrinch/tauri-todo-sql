@@ -11,6 +11,7 @@ import {
 import * as React from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
+import { FaPlus } from "react-icons/fa6";
 import Select, { Options } from "react-select";
 import { z } from "zod";
 import { Spinner } from "../components/Spinner";
@@ -153,10 +154,10 @@ function SellersComponent() {
           />
         </div>
         <button
-          className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 w-100 h-10 m-2"
+          className="bg-green-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 w-10 h-10 m-2 justify-center items-center flex text-2xl"
           onClick={onAdd}
         >
-          {t("addNew")}
+          <FaPlus />
         </button>
         {sellers?.map((seller) => {
           return (
@@ -166,7 +167,7 @@ function SellersComponent() {
                 params={{
                   sellerId: seller.id,
                 }}
-                className="block py-2 px-3 text-blue-700"
+                className="block py-2 px-3 text-blue-600"
                 activeProps={{ className: `font-bold bg-gray-100` }}
               >
                 <div className="text-m">

@@ -239,56 +239,58 @@ function SoldPiecesList() {
       />
       <table className="mt-5">
         <tr className="border-b">
-          <td className="px-2">{t("totalVolume")}</td>
-          <td className="px-2">{totalVolume.toFixed(2)} m3</td>
+          <td className="px-2 py-2">{t("totalVolume")}</td>
+          <td className="px-2 py-2">{totalVolume.toFixed(2)} m3</td>
         </tr>
         <tr className="border-b">
-          <td className="px-2">{t("totalGross")}</td>
-          <td className="px-2">{totalPrice.toFixed(2)} EUR</td>
+          <td className="px-2 py-2">{t("totalGross")}</td>
+          <td className="px-2 py-2">{totalPrice.toFixed(2)} EUR</td>
         </tr>
         <tr className="border-b">
-          <td className="px-2">{t("costsTo350")}</td>
-          <td className="px-2">{costsBelow350.toFixed(2)} EUR</td>
+          <td className="px-2 py-2">{t("costsTo350")}</td>
+          <td className="px-2 py-2">{costsBelow350.toFixed(2)} EUR</td>
         </tr>
         <tr className="border-b">
-          <td className="px-2">{t("costsAbove350")}</td>
-          <td className="px-2">{costsAbove350.toFixed(2)} EUR</td>
+          <td className="px-2 py-2">{t("costsAbove350")}</td>
+          <td className="px-2 py-2">{costsAbove350.toFixed(2)} EUR</td>
         </tr>
         <tr className="border-b">
-          <td className="px-2">{t("sellerIncome")}</td>
-          <td className="px-2">{sellerIncomeGross.toFixed(2)} EUR</td>
+          <td className="px-2 py-2">{t("sellerIncome")}</td>
+          <td className="px-2 py-2">{sellerIncomeGross.toFixed(2)} EUR</td>
         </tr>
         {seller.is_flat_rate > 0 && (
           <tr className="border-b">
-            <td className="px-2">{t("flatRate")}</td>
-            <td className="px-2">{sellerIncomeTaxFlat.toFixed(2)} EUR</td>
+            <td className="px-2 py-2">{t("flatRate")}</td>
+            <td className="px-2 py-2">{sellerIncomeTaxFlat.toFixed(2)} EUR</td>
           </tr>
         )}
         {seller.is_vat_liable > 0 && (
           <tr className="border-b">
-            <td className="px-2">{t("vat")}</td>
-            <td className="px-2">{sellerIncomeTaxVat.toFixed(2)} EUR</td>
+            <td className="px-2 py-2">{t("vat")}</td>
+            <td className="px-2 py-2">{sellerIncomeTaxVat.toFixed(2)} EUR</td>
           </tr>
         )}
         <tr className="border-b">
-          <td className="px-2 font-bold">{t("sellerIncomeGross")}</td>
-          <td className="px-2">{sellerIncomeGrossAfterTax.toFixed(2)} EUR</td>
+          <td className="px-2 py-2 font-bold">{t("sellerIncomeGross")}</td>
+          <td className="px-2 py-2">
+            {sellerIncomeGrossAfterTax.toFixed(2)} EUR
+          </td>
         </tr>
         {seller.used_transport > 0 && (
           <>
             <tr className="border-b">
-              <td className="px-2">{t("transportCosts")}</td>
-              <td className="px-2">{transportCosts.toFixed(2)} EUR</td>
+              <td className="px-2 py-2">{t("transportCosts")}</td>
+              <td className="px-2 py-2">{transportCosts.toFixed(2)} EUR</td>
             </tr>
             <tr className="border-b">
-              <td className="px-2">{t("transportVAT")}</td>
-              <td className="px-2">{transportVAT.toFixed(2)} EUR</td>
+              <td className="px-2 py-2">{t("transportVAT")}</td>
+              <td className="px-2 py-2">{transportVAT.toFixed(2)} EUR</td>
             </tr>
           </>
         )}
         <tr className="border-b">
-          <td className="px-2 font-bold">{t("payout")}</td>
-          <td className="px-2">{payout.toFixed(2)} EUR</td>
+          <td className="px-2 py-2 font-bold">{t("payout")}</td>
+          <td className="px-2 py-2">{payout.toFixed(2)} EUR</td>
         </tr>
       </table>
     </div>

@@ -151,7 +151,7 @@ function RootComponent() {
                 backgroundColor: i18n.language === "en" ? "white" : undefined,
                 color: i18n.language === "en" ? "rgb(59,130,246)" : undefined,
               }}
-              className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+              className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
               onClick={() => i18n.changeLanguage("sl")}
             >
               SL
@@ -161,7 +161,7 @@ function RootComponent() {
                 backgroundColor: i18n.language === "sl" ? "white" : undefined,
                 color: i18n.language === "sl" ? "rgb(59,130,246)" : undefined,
               }}
-              className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+              className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
               onClick={() => i18n.changeLanguage("en")}
             >
               EN
@@ -179,14 +179,14 @@ function RootComponent() {
             {filePath && (
               <>
                 <button
-                  className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10 text-2xl"
+                  className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10 text-2xl"
                   onClick={() => saveOnly()}
                   title={t("save")}
                 >
                   <FaRegFloppyDisk />
                 </button>
                 <button
-                  className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+                  className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
                   onClick={() => resetToSaved()}
                 >
                   {t("resetToSaved")}
@@ -194,19 +194,19 @@ function RootComponent() {
               </>
             )}
             <button
-              className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+              className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
               onClick={() => saveAs()}
             >
               {t("saveAs")}
             </button>
             <button
-              className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+              className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
               onClick={() => loadFile()}
             >
               {t("open")}
             </button>
             <button
-              className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10 text-2xl"
+              className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10 text-2xl"
               onClick={() => undo()}
               title={t("undo")}
             >
@@ -232,7 +232,7 @@ function RootComponent() {
                   <Link
                     to={to}
                     activeOptions={{}}
-                    className={`block py-2 px-3 text-blue-700`}
+                    className={`block py-2 px-3 text-blue-600`}
                     // Make "active" links bold
                     activeProps={{ className: `font-bold bg-gray-100` }}
                   >

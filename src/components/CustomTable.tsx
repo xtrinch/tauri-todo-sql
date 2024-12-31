@@ -4,10 +4,12 @@ export function CustomTable<TableItem>({
   table,
   trClassName,
   trhClassName,
+  trfClassName,
 }: {
   table: Table<TableItem>;
   trClassName?: string;
   trhClassName?: string;
+  trfClassName?: string;
 }) {
   return (
     <table style={{ tableLayout: "fixed" }}>
@@ -56,7 +58,7 @@ export function CustomTable<TableItem>({
       </tbody>
       <tfoot>
         {table.getFooterGroups().map((footerGroup) => (
-          <tr key={footerGroup.id} className={trhClassName}>
+          <tr key={footerGroup.id} className={trfClassName}>
             {footerGroup.headers.map((footer) => (
               <th
                 key={footer.id}

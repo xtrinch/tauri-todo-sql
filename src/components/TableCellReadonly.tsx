@@ -46,5 +46,7 @@ export const TableCellReadonly = <TableItem,>({
     return val;
   };
 
-  return <div className="text-base">{getFormattedVal(initialValue) || ""}</div>;
+  return (
+    <div className="text-base py-1">{getFormattedVal(initialValue) || ""}</div>
+  );
 };

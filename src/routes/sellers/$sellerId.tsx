@@ -204,7 +204,7 @@ function SellerComponent() {
               params={{
                 sellerId: seller.id,
               }}
-              className="p-2  text-blue-700"
+              className="p-2  text-blue-600"
               activeProps={{ className: `font-bold bg-gray-100` }}
             >
               {label}

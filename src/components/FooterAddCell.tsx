@@ -11,7 +11,7 @@ export const FooterAddCell = <TableItem,>({
   return (
     <div className="footer-buttons">
       <button
-        className="bg-blue-500 rounded p-2 uppercase text-white font-black disabled:opacity-50 w-10 h-10 text-2xl flex items-center justify-center"
+        className=" bg-green-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 w-10 h-10 text-2xl flex items-center justify-center"
         onClick={(meta as CustomTableMeta)?.onAdd}
       >
         <FaPlus />
