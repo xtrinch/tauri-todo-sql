@@ -77,6 +77,8 @@ const resources = {
       usedTransport: "Used transport",
       transportCosts: "Transport costs (18 EUR / m3)",
       transportVAT: "Transport VAT (22%)",
+      loggingCosts: "Logging costs (100 EUR / m3)",
+      loggingCostsVAT: "Logging VAT (9.5%)",
       payout: "Payout",
       editWoodPieces: "Edit wood pieces",
       saveSuccess: "Saved successfully",
@@ -86,6 +88,7 @@ const resources = {
       summary: "Summary",
       select: "Select",
       isLowerThanMin: "Is lower than min",
+      usedLogging: "Used logging",
     },
   },
   sl: {
@@ -170,6 +173,9 @@ const resources = {
       summary: "Povzetek",
       select: "Izberi",
       isLowerThanMin: "Nizja kot pricakovana",
+      loggingCosts: "Posek gozdni (100 EUR / m3)",
+      loggingCostsVAT: "Posek gozdni VAT (9.5%)",
+      usedLogging: "Posek gozdni",
     },
   },
 };

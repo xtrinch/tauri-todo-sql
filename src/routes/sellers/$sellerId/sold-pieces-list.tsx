@@ -202,6 +202,16 @@ function SoldPiecesList() {
     [transportCosts, seller]
   );
 
+  const loggingCosts = useMemo(
+    () => (seller.used_logging ? totalVolume.mul(18) : new Big(0)).round(2),
+    [totalVolume, seller]
+  );
+
+  const loggingCostsVAT = useMemo(
+    () => (seller.used_logging ? loggingCosts.mul(0.095) : new Big(0)).round(2),
+    [loggingCosts, seller]
+  );
+
   const { sellerIncomeTaxFlat, sellerIncomeTaxVat } = useMemo(
     () => ({
       sellerIncomeTaxFlat: (seller.is_flat_rate
@@ -227,8 +237,16 @@ function SoldPiecesList() {
     return sellerIncomeGrossAfterTax
       .minus(transportCosts)
       .minus(transportVAT)
+      .minus(loggingCosts)
+      .minus(loggingCostsVAT)
       .round(2);
-  }, [sellerIncomeGrossAfterTax, transportCosts, transportVAT]);
+  }, [
+    sellerIncomeGrossAfterTax,
+    transportCosts,
+    transportVAT,
+    loggingCosts,
+    loggingCostsVAT,
+  ]);
 
   return (
     <div className="p-3">
@@ -285,6 +303,18 @@ function SoldPiecesList() {
             <tr className="border-b">
               <td className="px-2 py-2">{t("transportVAT")}</td>
               <td className="px-2 py-2">{transportVAT.toFixed(2)} EUR</td>
+            </tr>
+          </>
+        )}
+        {seller.used_logging > 0 && (
+          <>
+            <tr className="border-b">
+              <td className="px-2 py-2">{t("loggingCosts")}</td>
+              <td className="px-2 py-2">{loggingCosts.toFixed(2)} EUR</td>
+            </tr>
+            <tr className="border-b">
+              <td className="px-2 py-2">{t("loggingCostsVAT")}</td>
+              <td className="px-2 py-2">{loggingCostsVAT.toFixed(2)} EUR</td>
             </tr>
           </>
         )}

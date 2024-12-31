@@ -15,6 +15,7 @@ export type Seller = {
   is_flat_rate: number; // whether to tax at a flat rate
   is_vat_liable: number; // whether seller is VAT liable
   used_transport: number; // whether seller used transport or not
+  used_logging: number;
 };
 
 const ensureSellers = async (opts: {
@@ -61,7 +62,8 @@ export async function postSeller(
       "ident",
       "is_flat_rate",
       "is_vat_liable",
-      "used_transport"
+      "used_transport",
+      "used_logging"
     ) values (
       $1, 
       $2, 
@@ -70,7 +72,8 @@ export async function postSeller(
       $5,
       $6, 
       $7,
-      $8
+      $8,
+      $9
     )`,
     [
       seller.seller_name || "",
@@ -81,6 +84,7 @@ export async function postSeller(
       seller.is_flat_rate || 0,
       seller.is_vat_liable || 0,
       seller.used_transport || 0,
+      seller.used_logging || 0,
     ]
   );
 
@@ -105,7 +109,8 @@ export async function patchSeller({
         "ident" = COALESCE($6, "ident"),
         "is_flat_rate" = COALESCE($7, "is_flat_rate"),
         "is_vat_liable" = COALESCE($8, "is_vat_liable"),
-        "used_transport" = COALESCE($9, "used_transport") 
+        "used_transport" = COALESCE($9, "used_transport"),
+        "used_logging" = COALESCE($10, "used_logging") 
       WHERE id = $1`,
     [
       id,
@@ -117,6 +122,7 @@ export async function patchSeller({
       updatedSeller.is_flat_rate,
       updatedSeller.is_vat_liable,
       updatedSeller.used_transport,
+      updatedSeller.used_logging,
     ]
   );
 }

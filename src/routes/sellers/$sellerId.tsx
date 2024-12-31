@@ -134,6 +134,13 @@ function SellerComponent() {
         size: 70,
         cell: TableCellCheckbox,
       },
+      {
+        accessorKey: "used_logging",
+        header: () => t("usedLogging"),
+        meta: {},
+        size: 70,
+        cell: TableCellCheckbox,
+      },
     ],
     []
   );
