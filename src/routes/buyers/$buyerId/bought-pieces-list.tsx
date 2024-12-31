@@ -5,11 +5,11 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import Big from "big.js";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
 import { DropdownCellReadonly } from "../../../components/DropdownCellReadonly";
-import { SumFooter } from "../../../components/SumFooter";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
@@ -31,11 +31,25 @@ function SoldPiecesList() {
       ...Route.useLoaderDeps(),
       buyer_id: params.buyerId,
       offered_price__isnotnull: true,
+      min_price_used: true,
       relations: [],
       language: i18n.language as "sl" | "en",
     })
   );
   const woodPieces = woodPiecesQuery.data;
+
+  const woodPiecesQueryGrouped = useSuspenseQuery(
+    woodPiecesQueryOptions({
+      ...Route.useLoaderDeps(),
+      buyer_id: params.buyerId,
+      offered_price__isnotnull: true,
+      groupBy_tree_species: true,
+      min_price_used: true,
+      relations: [],
+      language: i18n.language as "sl" | "en",
+    })
+  );
+  const woodPiecesGrouped = woodPiecesQueryGrouped.data;
 
   const treeSpeciesQuery = useSuspenseQuery(
     treeSpeciesQueryOptions({
@@ -96,7 +110,7 @@ function SoldPiecesList() {
       {
         accessorKey: "volume",
         header: () => t("volumeM3"),
-        footer: (info) => <SumFooter info={info} measure="m3" />,
+        // footer: (info) => <SumFooter info={info} measure="m3" />,
         size: 80,
         meta: {
           type: "float",
@@ -121,9 +135,9 @@ function SoldPiecesList() {
           readonly: true,
         },
         cell: TableCellReadonly,
-        footer: (info) => (
-          <SumFooter info={info} measure="EUR" label={t("totalGross")} />
-        ),
+        // footer: (info) => (
+        //   <SumFooter info={info} measure="EUR" label={t("totalGross")} />
+        // ),
       },
     ],
     [treeSpeciesOptions]
@@ -139,13 +153,98 @@ function SoldPiecesList() {
     meta: {},
   });
 
+  const columnsGrouped = useMemo<ColumnDef<WoodPiece>[]>(
+    () => [
+      {
+        accessorKey: "tree_species_id",
+        header: () => t("treeSpecies"),
+        size: 200,
+        cell: (data) =>
+          DropdownCellReadonly({
+            ...data,
+            choices: treeSpeciesOptions,
+          }),
+      },
+      {
+        accessorKey: "volume",
+        header: () => t("volumeM3"),
+        size: 80,
+        meta: {
+          type: "float",
+        },
+      },
+      {
+        accessorKey: "offered_total_price",
+        header: () => t("totalPriceM3"),
+        size: 80,
+        meta: {
+          type: "float",
+          readonly: true,
+        },
+        cell: TableCellReadonly,
+      },
+    ],
+    [treeSpeciesOptions]
+  );
+
+  const tableGrouped = useReactTable({
+    data: woodPiecesGrouped,
+    columns: columnsGrouped,
+    getCoreRowModel: getCoreRowModel(),
+    defaultColumn: {
+      cell: TableCellReadonly,
+    },
+    meta: {},
+  });
+
+  const rows = table.getFilteredRowModel().rows;
+
+  const { totalVolume, totalPrice } = useMemo(() => {
+    return {
+      totalVolume: rows
+        .reduce(
+          (sum: Big, row) => sum.plus(row.getValue("volume") as number),
+          new Big(0)
+        )
+        .round(2),
+      totalPrice: rows
+        .reduce(
+          (sum, row) => sum.plus(row.getValue("offered_total_price") as number),
+          new Big(0)
+        )
+        .round(2),
+    };
+  }, [rows]);
+
   return (
-    <div className="p-3">
-      <CustomTable
-        table={table}
-        trClassName="border-b"
-        trhClassName="border-b"
-      />
+    <div className="p-3 flex flex-col space-y-3">
+      <div>
+        <CustomTable
+          table={table}
+          trClassName="border-b"
+          trhClassName="border-b"
+        />
+      </div>
+      <div className="font-bold">{t("summary")}</div>
+      <div>
+        <CustomTable
+          table={tableGrouped}
+          trClassName="border-b"
+          trhClassName="border-b"
+        />
+      </div>
+      <div>
+        <table className="mt-5">
+          <tr className="border-b">
+            <td className="px-2">{t("totalVolume")}</td>
+            <td className="px-2">{totalVolume.toFixed()} m3</td>
+          </tr>
+          <tr className="border-b">
+            <td className="px-2 font-bold">{t("totalGross")}</td>
+            <td className="px-2">{totalPrice.toFixed()} EUR</td>
+          </tr>
+        </table>
+      </div>
     </div>
   );
 }

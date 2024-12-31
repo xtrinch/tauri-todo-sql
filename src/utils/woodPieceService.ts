@@ -33,11 +33,13 @@ interface ListOptions {
   buyer_id?: number;
   offered_price__isnull?: boolean;
   offered_price__isnotnull?: boolean;
+  groupBy_tree_species?: boolean;
   filterBy?: string;
   sortBy?: "id" | "sequence_no";
   relations?: string[];
   sortDirection?: "DESC" | "ASC";
   language?: "en" | "sl";
+  min_price_used?: boolean;
 }
 
 const ensureWoodPieces = async (opts: ListOptions) => {
@@ -49,13 +51,17 @@ const ensureWoodPieces = async (opts: ListOptions) => {
     opts.tree_species_id ? `"tree_species_id" = $2` : "",
     opts.offered_price__isnull ? `"offered_price" IS NULL` : "",
     opts.offered_price__isnotnull ? `"offered_price" IS NOT NULL` : "",
+    opts.min_price_used
+      ? `("min_price" <= "offered_price" OR "min_price" IS NULL)`
+      : "",
   ]);
 
   let sql = `
     SELECT 
       *, 
-      "wood_pieces".id as id,
-      "offered_price" * "volume" as "offered_total_price",
+      "wood_pieces"."id" as "id",
+      "tree_species"."id" as "tree_species_id",
+      round("offered_price" * "volume", 2) as "offered_total_price",
       MAX("wood_piece_offers"."offered_price") as "offered_price",
       ${opts.language === "sl" ? "tree_species_name_slo" : "tree_species_name"} as "tree_species_name"
     FROM "wood_pieces"
@@ -69,6 +75,16 @@ const ensureWoodPieces = async (opts: ListOptions) => {
 
   if (opts.buyer_id) {
     sql = `SELECT * FROM (${sql}) WHERE "buyer_id" = $3`;
+  }
+  if (opts.groupBy_tree_species) {
+    sql = `
+      SELECT 
+        *,
+        SUM("volume") as "volume",
+        SUM("offered_total_price") as "offered_total_price"
+      FROM (${sql}) 
+      GROUP BY "tree_species_id"
+    `;
   }
   let result: WoodPiece[] = [];
   try {

@@ -48,7 +48,7 @@ function BuyersComponent() {
 
   const navigate = useNavigate({ from: Route.fullPath });
   const { buyersView } = Route.useSearch();
-  const sortBy = buyersView?.sortBy ?? "buyer_name";
+  const sortBy = buyersView?.sortBy ?? "id";
   const filterBy = buyersView?.filterBy;
   const sortDirection = sortDirections[sortBy];
 

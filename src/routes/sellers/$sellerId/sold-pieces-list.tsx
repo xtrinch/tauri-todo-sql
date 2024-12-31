@@ -34,6 +34,7 @@ function SoldPiecesList() {
       ...Route.useLoaderDeps(),
       seller_id: params.sellerId,
       offered_price__isnotnull: true,
+      min_price_used: true,
       relations: [],
       language: i18n.language as "sl" | "en",
     })

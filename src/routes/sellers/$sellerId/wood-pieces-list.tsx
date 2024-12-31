@@ -98,6 +98,16 @@ function SoldPiecesList() {
         footer: (info) => <SumFooter info={info} measure="m3" />,
       },
       {
+        accessorKey: "min_price",
+        header: () => t("minPriceM3"),
+        size: 80,
+        meta: {
+          type: "float",
+          readonly: true,
+        },
+        cell: TableCellReadonly,
+      },
+      {
         accessorKey: "offered_price",
         header: () => t("maxPriceM3"),
         size: 80,
