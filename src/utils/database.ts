@@ -18,3 +18,7 @@ export async function getDatabaseForModify(): Promise<Database> {
   }
   return dbInstance;
 }
+
+export function unsetDatabase(): void {
+  dbInstance = null;
+}

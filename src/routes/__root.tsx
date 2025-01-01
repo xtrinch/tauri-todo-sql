@@ -9,6 +9,7 @@ import {
 // import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
+import { info } from "@tauri-apps/plugin-log";
 import { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -17,6 +18,7 @@ import { Spinner } from "../components/Spinner";
 import { queryClient } from "../main";
 import type { Auth } from "../utils/auth";
 import { buyersQueryOptions } from "../utils/buyerService";
+import { unsetDatabase } from "../utils/database";
 import { sellersQueryOptions } from "../utils/sellerService";
 import { treeSpeciesQueryOptions } from "../utils/treeSpeciesService";
 import { useUndo } from "../utils/undo";
@@ -70,9 +72,16 @@ function RootComponent() {
   };
 
   const loadOnly = async (path?: string) => {
-    await invoke("load_sqlite_db", { filePath: path || filePath });
+    info("INVOKING...");
+    try {
+      await invoke("read_json", { filePath: path || filePath });
+    } catch (e) {
+      info(JSON.stringify(e));
+      throw e;
+    }
     localStorage.setItem("unsaved_changes", "false");
     window.dispatchEvent(new Event("storage"));
+    unsetDatabase();
     await queryClient.invalidateQueries();
   };
 
@@ -81,7 +90,12 @@ function RootComponent() {
   };
 
   const savePath = async (path: string) => {
-    await invoke("dump_sqlite_db", { filePath: path });
+    try {
+      await invoke("write_json", { filePath: path });
+    } catch (e) {
+      info(JSON.stringify(e));
+      throw e;
+    }
     localStorage.setItem("unsaved_changes", "false");
   };
 

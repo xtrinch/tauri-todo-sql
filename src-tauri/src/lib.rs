@@ -2,6 +2,8 @@
 use std::error::Error;
 use tauri_plugin_sql::{Migration, MigrationKind};
 mod commands;
+mod export;
+mod import;
 use std::fs;
 use tauri::Manager;
 use tauri::{Window, WindowEvent};
@@ -202,7 +204,9 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         .invoke_handler(tauri::generate_handler![
             commands::dump_sqlite_db,
             commands::load_sqlite_db,
-            commands::clear_db
+            commands::clear_db,
+            export::write_json,
+            import::read_json
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
