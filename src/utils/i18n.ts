@@ -90,6 +90,7 @@ const resources = {
       isLowerThanMin: "Is lower than min",
       usedLogging: "Used logging",
       bypassMinPrice: "Bypass min price",
+      export: "Export",
     },
   },
   sl: {
@@ -178,6 +179,7 @@ const resources = {
       loggingCostsVAT: "Posek gozdni VAT (9.5%)",
       usedLogging: "Posek gozdni",
       bypassMinPrice: "Dovoli nizjo ceno",
+      export: "Izvozi",
     },
   },
 };

@@ -133,10 +133,7 @@ function CatalogueComponent() {
       info(path);
 
       const blob = await pdf(
-        <CatalogueExport
-          woodPiecesData={woodPieces}
-          treeSpeciesData={treeSpeciesData}
-        />
+        <CatalogueExport woodPiecesData={woodPieces} />
       ).toBlob();
       // Convert Blob to ArrayBuffer
       const arrayBuffer = await blob.arrayBuffer();
@@ -153,7 +150,7 @@ function CatalogueComponent() {
         className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
         onClick={exportToFile}
       >
-        Export
+        {t("export")}
       </button>
       <CustomTable
         table={table}

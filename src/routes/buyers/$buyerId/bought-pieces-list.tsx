@@ -9,7 +9,6 @@ import Big from "big.js";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
-import { DropdownCellReadonly } from "../../../components/DropdownCellReadonly";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
@@ -82,14 +81,9 @@ function SoldPiecesList() {
         size: 100,
       },
       {
-        accessorKey: "tree_species_id",
+        accessorKey: "tree_species_name",
         header: () => t("treeSpecies"),
         size: 200,
-        cell: (data) =>
-          DropdownCellReadonly({
-            ...data,
-            choices: treeSpeciesOptions,
-          }),
       },
       {
         accessorKey: "width",
@@ -110,7 +104,6 @@ function SoldPiecesList() {
       {
         accessorKey: "volume",
         header: () => t("volumeM3"),
-        // footer: (info) => <SumFooter info={info} measure="m3" />,
         size: 80,
         meta: {
           type: "float",
@@ -135,12 +128,9 @@ function SoldPiecesList() {
           readonly: true,
         },
         cell: TableCellReadonly,
-        // footer: (info) => (
-        //   <SumFooter info={info} measure="EUR" label={t("totalGross")} />
-        // ),
       },
     ],
-    [treeSpeciesOptions]
+    []
   );
 
   const table = useReactTable({
@@ -156,14 +146,9 @@ function SoldPiecesList() {
   const columnsGrouped = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
       {
-        accessorKey: "tree_species_id",
+        accessorKey: "tree_species_name",
         header: () => t("treeSpecies"),
         size: 200,
-        cell: (data) =>
-          DropdownCellReadonly({
-            ...data,
-            choices: treeSpeciesOptions,
-          }),
       },
       {
         accessorKey: "volume",

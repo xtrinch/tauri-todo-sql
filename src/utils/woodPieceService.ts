@@ -26,6 +26,7 @@ export type WoodPiece = {
   tree_species_name: string;
   offered_price: number;
   buyer_name: string;
+  ident: string;
 };
 
 interface ListOptions {
@@ -77,14 +78,21 @@ const ensureWoodPieces = async (opts: ListOptions) => {
     ORDER BY ${opts.sortBy || "sequence_no"} ${opts.sortDirection || "ASC"}`;
 
   if (opts.buyer_id) {
-    sql = `SELECT * FROM (${sql}) WHERE "buyer_id" = $3`;
+    sql = `
+      SELECT 
+        *,
+        ${opts.language === "sl" ? "tree_species_name_slo" : "tree_species_name"} as "tree_species_name"
+      FROM (${sql}) 
+      WHERE "buyer_id" = $3
+    `;
   }
   if (opts.groupBy_tree_species) {
     sql = `
       SELECT 
         *,
         SUM("volume") as "volume",
-        SUM("offered_total_price") as "offered_total_price"
+        SUM("offered_total_price") as "offered_total_price",
+        ${opts.language === "sl" ? "tree_species_name_slo" : "tree_species_name"} as "tree_species_name"
       FROM (${sql}) 
       GROUP BY "tree_species_id"
     `;
