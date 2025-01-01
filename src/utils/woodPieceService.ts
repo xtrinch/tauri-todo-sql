@@ -7,7 +7,7 @@ import { getDatabase, getDatabaseForModify } from "./database";
 type PickAsRequired<TValue, TKey extends keyof TValue> = Omit<TValue, TKey> &
   Required<Pick<TValue, TKey>>;
 
-export type WoodPiece = {
+export interface WoodPiece {
   id: number;
   wood_piece_name: string;
   seller_id: number;
@@ -27,7 +27,7 @@ export type WoodPiece = {
   offered_price: number;
   buyer_name: string;
   ident: string;
-};
+}
 
 interface ListOptions {
   tree_species_id?: number;
@@ -43,6 +43,7 @@ interface ListOptions {
   sortDirection?: "DESC" | "ASC";
   language?: "en" | "sl";
   min_price_used?: boolean;
+  enabled?: boolean;
 }
 
 const ensureWoodPieces = async (opts: ListOptions) => {
@@ -104,6 +105,7 @@ const ensureWoodPieces = async (opts: ListOptions) => {
     info(JSON.stringify(e));
     throw e;
   }
+  info("OVER");
   const woodPieces = result as WoodPiece[];
   return woodPieces;
 };
@@ -263,4 +265,5 @@ export const woodPiecesQueryOptions = (opts: ListOptions) =>
     queryKey: ["wood_pieces", opts],
     queryFn: () => ensureWoodPieces(opts),
     staleTime: Infinity,
+    enabled: opts.enabled,
   });

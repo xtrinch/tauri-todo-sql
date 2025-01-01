@@ -19,7 +19,6 @@ fn export_to_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn Erro
     for table in table_names {
         let columns = get_column_names(table);
         let query = format!("SELECT {} FROM {}", columns, table);
-        println!("{}",query);
         let mut table_stmt = conn.prepare(&query)?;
 
         let column_names: Vec<String> = table_stmt

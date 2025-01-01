@@ -20,7 +20,6 @@ fn import_from_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn st
     // Truncate all tables in the import sequence
     for table in import_sequence.iter().rev() {
         let truncate_query = format!("DELETE FROM {};", table);
-        println!("{}",truncate_query);
         conn.execute(&truncate_query, [])?;
     }
     
@@ -39,7 +38,6 @@ fn import_from_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn st
                         col_names.join(", "),
                         placeholders.join(", ")
                     );
-                    println!("{}",query);
 
                     // Collect values into a Vec<Option<_>> to extend their lifetimes
                     let temp_values: Vec<Option<Box<dyn ToSql>>> = columns

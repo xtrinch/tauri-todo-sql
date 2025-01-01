@@ -108,14 +108,6 @@ function RouteComponent() {
           type: "float",
         },
       },
-      // {
-      //   accessorKey: "volume",
-      //   header: () => t("volumeM3"),
-      //   size: 80,
-      //   meta: {
-      //     type: "float",
-      //   },
-      // },
       {
         accessorKey: "seller_id",
         header: () => t("seller"),
