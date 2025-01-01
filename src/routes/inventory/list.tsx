@@ -9,7 +9,6 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
 import { CustomTable } from "../../components/CustomTable";
-import { DropdownCellReadonly } from "../../components/DropdownCellReadonly";
 import { TableCellReadonly } from "../../components/TableCellReadonly";
 import { buyersQueryOptions } from "../../utils/buyerService";
 import { sellersQueryOptions } from "../../utils/sellerService";
@@ -100,14 +99,9 @@ function ListInventoryComponent() {
         size: 100,
       },
       {
-        accessorKey: "tree_species_id",
+        accessorKey: "tree_species_name",
         header: () => t("treeSpecies"),
         size: 200,
-        cell: (data) =>
-          DropdownCellReadonly({
-            ...data,
-            choices: treeSpeciesOptions,
-          }),
       },
       {
         accessorKey: "width",
@@ -134,17 +128,9 @@ function ListInventoryComponent() {
         },
       },
       {
-        accessorKey: "seller_id",
+        accessorKey: "seller_name",
         header: () => t("seller"),
         size: 200,
-        cell: (data) =>
-          DropdownCellReadonly({
-            ...data,
-            choices: sellers.map((ts) => ({
-              value: ts.id,
-              label: ts.seller_name,
-            })),
-          }),
       },
       {
         accessorKey: "min_price",

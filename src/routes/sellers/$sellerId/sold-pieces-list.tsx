@@ -9,7 +9,6 @@ import Big from "big.js";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
-import { DropdownCellReadonly } from "../../../components/DropdownCellReadonly";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { sellerQueryOptions } from "../../../utils/sellerService";
 import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
@@ -62,17 +61,9 @@ function SoldPiecesList() {
         size: 100,
       },
       {
-        accessorKey: "tree_species_id",
+        accessorKey: "tree_species_name",
         header: () => t("treeSpecies"),
         size: 200,
-        cell: (data) =>
-          DropdownCellReadonly({
-            ...data,
-            choices: treeSpeciesData.map((ts) => ({
-              value: ts.id,
-              label: ts.tree_species_name,
-            })),
-          }),
       },
       {
         accessorKey: "width",

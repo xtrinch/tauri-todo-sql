@@ -13,7 +13,6 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CatalogueExport } from "../../components/CatalogueExport";
 import { CustomTable } from "../../components/CustomTable";
-import { DropdownCellReadonly } from "../../components/DropdownCellReadonly";
 import { TableCellReadonly } from "../../components/TableCellReadonly";
 import { treeSpeciesQueryOptions } from "../../utils/treeSpeciesService";
 import {
@@ -67,14 +66,9 @@ function CatalogueComponent() {
         size: 100,
       },
       {
-        accessorKey: "tree_species_id",
+        accessorKey: "tree_species_name",
         header: () => t("treeSpecies"),
         size: 200,
-        cell: (data) =>
-          DropdownCellReadonly({
-            ...data,
-            choices: treeSpeciesOptions,
-          }),
       },
       {
         accessorKey: "width",
