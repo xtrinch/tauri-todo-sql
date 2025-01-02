@@ -14,7 +14,8 @@
       {
         "title": "licitacija",
         "width": 1400,
-        "height": 700
+        "height": 700,
+        "maximized": true
       }
     ],
     "security": {

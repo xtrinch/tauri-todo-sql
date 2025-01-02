@@ -1,9 +1,5 @@
 import { flexRender, Row, Table } from "@tanstack/react-table";
-import {
-  elementScroll,
-  useVirtualizer,
-  VirtualizerOptions,
-} from "@tanstack/react-virtual";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { memo, useCallback, useRef } from "react";
 import { CustomTableMeta } from "./TableCell";
 
@@ -31,31 +27,31 @@ export function CustomTable<TableItem>({
   }, []);
   const scrollingRef = useRef<number>();
 
-  const scrollToFn: VirtualizerOptions<any, any>["scrollToFn"] = useCallback(
-    (offset, canSmooth, instance) => {
-      const duration = 1000;
-      const start = parentRef.current?.scrollTop || 0;
-      const startTime = (scrollingRef.current = Date.now());
+  // const scrollToFn: VirtualizerOptions<any, any>["scrollToFn"] = useCallback(
+  //   (offset, canSmooth, instance) => {
+  //     const duration = 1000;
+  //     const start = parentRef.current?.scrollTop || 0;
+  //     const startTime = (scrollingRef.current = Date.now());
 
-      const run = () => {
-        if (scrollingRef.current !== startTime) return;
-        const now = Date.now();
-        const elapsed = now - startTime;
-        const progress = easeInOutQuint(Math.min(elapsed / duration, 1));
-        const interpolated = start + (offset - start) * progress;
+  //     const run = () => {
+  //       if (scrollingRef.current !== startTime) return;
+  //       const now = Date.now();
+  //       const elapsed = now - startTime;
+  //       const progress = easeInOutQuint(Math.min(elapsed / duration, 1));
+  //       const interpolated = start + (offset - start) * progress;
 
-        if (elapsed < duration) {
-          elementScroll(interpolated, canSmooth, instance);
-          requestAnimationFrame(run);
-        } else {
-          elementScroll(interpolated, canSmooth, instance);
-        }
-      };
+  //       if (elapsed < duration) {
+  //         elementScroll(interpolated, canSmooth, instance);
+  //         requestAnimationFrame(run);
+  //       } else {
+  //         elementScroll(interpolated, canSmooth, instance);
+  //       }
+  //     };
 
-      requestAnimationFrame(run);
-    },
-    []
-  );
+  //     requestAnimationFrame(run);
+  //   },
+  //   []
+  // );
 
   const virtualizer = useVirtualizer({
     count:
@@ -64,7 +60,7 @@ export function CustomTable<TableItem>({
     estimateSize: () => 45,
     overscan: 20,
     getItemKey: getItemKey,
-    scrollToFn: scrollToFn,
+    // scrollToFn: scrollToFn,
   });
   const items = virtualizer.getVirtualItems();
 
