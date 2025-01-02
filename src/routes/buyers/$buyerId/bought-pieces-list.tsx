@@ -5,12 +5,16 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { save } from "@tauri-apps/plugin-dialog";
 import Big from "big.js";
+import { compact } from "lodash";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { BoughtPiecesExport } from "../../../components/BoughtPiecesExport";
 import { CustomTable } from "../../../components/CustomTable";
+import { PdfTableCol } from "../../../components/PdfTable";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
-import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
+import { saveToPDF } from "../../../utils/pdf";
 import {
   WoodPiece,
   woodPiecesQueryOptions,
@@ -50,21 +54,6 @@ function SoldPiecesList() {
     })
   );
   const woodPiecesGrouped = woodPiecesQueryGrouped.data;
-
-  const treeSpeciesQuery = useSuspenseQuery(
-    treeSpeciesQueryOptions({
-      language: i18n.language as "sl" | "en",
-    })
-  );
-  const treeSpeciesData = treeSpeciesQuery.data;
-  const treeSpeciesOptions = useMemo(
-    () =>
-      treeSpeciesData.map((ts) => ({
-        value: ts.id,
-        label: ts.tree_species_name,
-      })),
-    [treeSpeciesData]
-  );
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
@@ -165,12 +154,10 @@ function SoldPiecesList() {
         size: 80,
         meta: {
           type: "float",
-          readonly: true,
         },
-        cell: TableCellReadonly,
       },
     ],
-    [treeSpeciesOptions]
+    []
   );
 
   const tableGrouped = useReactTable({
@@ -202,8 +189,63 @@ function SoldPiecesList() {
     };
   }, [rows]);
 
+  const columns_summary = useMemo<PdfTableCol[]>(
+    () => [
+      {
+        accessorKey: "label",
+        size: 260,
+      },
+      {
+        accessorKey: "value",
+        size: 100,
+      },
+    ],
+    []
+  );
+
+  const rows_summary: { label: string; value: string; bold?: boolean }[] =
+    useMemo(
+      () =>
+        compact([
+          { label: t("totalVolume"), value: `${totalVolume.toFixed(2)} m3` },
+          { label: t("totalGross"), value: `${totalPrice.toFixed(2)} EUR` },
+        ]),
+      [i18n.language, totalVolume, totalPrice]
+    );
+
+  const exportToFile = async () => {
+    const path = await save({
+      filters: [
+        {
+          name: "Bought pieces Filter",
+          extensions: ["pdf"],
+        },
+      ],
+      defaultPath: t("boughtPiecesPDFName"),
+    });
+    if (path) {
+      saveToPDF(
+        path,
+        <BoughtPiecesExport
+          woodPiecesData={woodPieces}
+          woodPiecesGroupedData={woodPiecesGrouped}
+          rowsSummary={rows_summary}
+          colsSummary={columns_summary}
+        />
+      );
+    }
+  };
+
   return (
     <div className="p-3 flex flex-col space-y-3 h-[calc(100vh-209px)] overflow-auto">
+      <div>
+        <button
+          className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+          onClick={exportToFile}
+        >
+          {t("export")}
+        </button>
+      </div>
       <div>
         <CustomTable
           table={table}

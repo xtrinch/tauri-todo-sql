@@ -92,6 +92,7 @@ const resources = {
       bypassMinPrice: "Bypass min price",
       export: "Export",
       soldPiecesPDFName: "sold-pieces",
+      boughtPiecesPDFName: "bought-pieces",
     },
   },
   sl: {
@@ -182,6 +183,7 @@ const resources = {
       bypassMinPrice: "Dovoli nizjo ceno",
       export: "Izvozi",
       soldPiecesPDFName: "prodani-kosi",
+      boughtPiecesPDFName: "kupljeni-kosi",
     },
   },
 };
