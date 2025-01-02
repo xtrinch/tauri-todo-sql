@@ -203,7 +203,7 @@ function SoldPiecesList() {
   }, [rows]);
 
   return (
-    <div className="p-3 flex flex-col space-y-3 h-[calc(100vh-244px)] overflow-auto">
+    <div className="p-3 flex flex-col space-y-3 h-[calc(100vh-209px)] overflow-auto">
       <div>
         <CustomTable
           table={table}

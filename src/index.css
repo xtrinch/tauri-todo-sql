@@ -15,8 +15,11 @@ html {
 }
 
 body {
-@apply bg-gray-200 text-gray-600;
-overflow: hidden;
+    @apply bg-gray-200 text-gray-600;
+    overflow: hidden;
+    height: 100vh;
+    max-height:100vh;
+    min-height: 100vh;
 }
 
 /*
