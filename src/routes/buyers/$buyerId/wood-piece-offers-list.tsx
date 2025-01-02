@@ -161,8 +161,11 @@ function WoodPiecesList() {
   });
 
   return (
-    <div className="p-3">
-      <CustomTable table={table} />
+    <div className="">
+      <CustomTable
+        table={table}
+        containerClassName="p-3 h-[calc(100vh-244px)]"
+      />
     </div>
   );
 }

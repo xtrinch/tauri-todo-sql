@@ -75,7 +75,7 @@ export function CustomTable<TableItem>({
   return (
     <div
       ref={parentRef}
-      className={`${containerClassName} will-change-transform contain-paint`}
+      className={`${containerClassName || ""} overflow-auto max-h-full will-change-transform contain-paint`}
     >
       <div
         style={{

@@ -127,7 +127,7 @@ function BuyerComponent() {
   });
 
   return (
-    <div className="flex flex-col space-y-3">
+    <div className="flex flex-col">
       <div className="flex flex-col space-y-3 p-3">
         <h3>{t("buyer")}</h3>
         <CustomTable table={table} />

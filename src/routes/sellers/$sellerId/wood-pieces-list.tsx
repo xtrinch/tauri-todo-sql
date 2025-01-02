@@ -159,11 +159,12 @@ function SoldPiecesList() {
   });
 
   return (
-    <div className="p-3">
+    <div className="">
       <CustomTable
         table={table}
         trClassName="border-b"
         trhClassName="border-b"
+        containerClassName="p-3 h-[calc(100vh-297px)]"
       />
     </div>
   );

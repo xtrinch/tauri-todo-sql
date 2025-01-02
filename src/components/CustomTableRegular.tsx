@@ -1,6 +1,6 @@
 import { flexRender, Table } from "@tanstack/react-table";
 
-export function CustomTable<TableItem>({
+export function CustomTableRegular<TableItem>({
   table,
   trClassName,
   trhClassName,

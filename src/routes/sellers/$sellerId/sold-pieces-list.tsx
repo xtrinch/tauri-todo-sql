@@ -238,7 +238,7 @@ function SoldPiecesList() {
   };
 
   return (
-    <div className="p-3">
+    <div className="p-3 h-[calc(100vh-297px)] overflow-auto">
       <button
         className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
         onClick={exportToFile}
@@ -247,6 +247,7 @@ function SoldPiecesList() {
       </button>
       <CustomTable
         table={table}
+        containerClassName="overflow-hidden"
         trClassName="border-b"
         trhClassName="border-b"
       />

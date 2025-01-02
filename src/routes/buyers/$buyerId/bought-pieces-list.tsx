@@ -30,6 +30,7 @@ function SoldPiecesList() {
       ...Route.useLoaderDeps(),
       buyer_id: params.buyerId,
       offered_price__isnotnull: true,
+      offered_price__isnotzero: true,
       min_price_used: true,
       relations: [],
       language: i18n.language as "sl" | "en",
@@ -202,7 +203,7 @@ function SoldPiecesList() {
   }, [rows]);
 
   return (
-    <div className="p-3 flex flex-col space-y-3">
+    <div className="p-3 flex flex-col space-y-3 h-[calc(100vh-244px)] overflow-auto">
       <div>
         <CustomTable
           table={table}
