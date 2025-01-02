@@ -16,6 +16,7 @@ html {
 
 body {
 @apply bg-gray-200 text-gray-600;
+overflow: hidden;
 }
 
 /*
