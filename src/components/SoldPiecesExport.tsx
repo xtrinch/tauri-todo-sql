@@ -1,4 +1,4 @@
-import { Document, Font, Page, StyleSheet } from "@react-pdf/renderer";
+import { Document, Font, Page, StyleSheet, View } from "@react-pdf/renderer";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import font from "../assets/fonts/Roboto-Regular.ttf";
@@ -10,14 +10,18 @@ Font.register({ family: "Roboto", src: font });
 const styles = StyleSheet.create({
   page: {
     fontFamily: "Roboto",
-    flexDirection: "row",
+    flexDirection: "column",
     backgroundColor: "#E4E4E4",
     padding: 10,
     fontSize: 12,
   },
 });
 
-export const SoldPiecesExport = (params: { woodPiecesData: WoodPiece[] }) => {
+export const SoldPiecesExport = (params: {
+  woodPiecesData: WoodPiece[];
+  rowsSummary: { label: string; value: string; bold?: boolean }[];
+  colsSummary: PdfTableCol[];
+}) => {
   const { t } = useTranslation();
 
   const columns = useMemo<PdfTableCol[]>(
@@ -73,7 +77,12 @@ export const SoldPiecesExport = (params: { woodPiecesData: WoodPiece[] }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <PdfTable data={params.woodPiecesData} columns={columns} />
+        <View>
+          <PdfTable data={params.woodPiecesData} columns={columns} />
+        </View>
+        <View>
+          <PdfTable data={params.rowsSummary} columns={params.colsSummary} />
+        </View>
       </Page>
     </Document>
   );

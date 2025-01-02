@@ -7,9 +7,11 @@ import {
 } from "@tanstack/react-table";
 import { save } from "@tauri-apps/plugin-dialog";
 import Big from "big.js";
+import { compact } from "lodash";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
+import { PdfTableCol } from "../../../components/PdfTable";
 import { SoldPiecesExport } from "../../../components/SoldPiecesExport";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { saveToPDF } from "../../../utils/pdf";
@@ -222,6 +224,88 @@ function SoldPiecesList() {
     loggingCostsVAT,
   ]);
 
+  const columns_summary = useMemo<PdfTableCol[]>(
+    () => [
+      {
+        accessorKey: "label",
+        size: 260,
+      },
+      {
+        accessorKey: "value",
+        size: 100,
+      },
+    ],
+    []
+  );
+
+  const rows_summary: { label: string; value: string; bold?: boolean }[] =
+    useMemo(
+      () =>
+        compact([
+          { label: t("totalVolume"), value: `${totalVolume.toFixed(2)} m3` },
+          { label: t("totalGross"), value: `${totalPrice.toFixed(2)} EUR` },
+          {
+            label: t("costsTo350"),
+            value: `${costsBelow350.toFixed(2)} EUR`,
+          },
+          {
+            label: t("costsAbove350"),
+            value: `${costsAbove350.toFixed(2)} EUR`,
+          },
+          {
+            label: t("sellerIncome"),
+            value: `${sellerIncomeGross.toFixed(2)} EUR`,
+          },
+          seller.is_flat_rate > 0 && {
+            label: t("flatRate"),
+            value: `${sellerIncomeTaxFlat.toFixed(2)} EUR`,
+          },
+          seller.is_vat_liable > 0 && {
+            label: t("vat"),
+            value: `${sellerIncomeTaxVat.toFixed(2)} EUR`,
+          },
+          {
+            label: t("sellerIncomeGross"),
+            value: `${sellerIncomeGrossAfterTax.toFixed(2)} EUR`,
+            bold: true,
+          },
+          seller.used_transport > 0 && {
+            label: t("transportCosts"),
+            value: `${transportCosts.toFixed(2)} EUR`,
+          },
+          seller.used_transport > 0 && {
+            label: t("transportVAT"),
+            value: `${transportVAT.toFixed(2)} EUR`,
+          },
+          seller.used_logging > 0 && {
+            label: t("loggingCosts"),
+            value: `${loggingCosts.toFixed(2)} EUR`,
+          },
+          seller.used_logging > 0 && {
+            label: t("loggingCostsVAT"),
+            value: `${loggingCostsVAT.toFixed(2)} EUR`,
+          },
+          { label: t("payout"), value: `${payout.toFixed(2)} EUR`, bold: true },
+        ]),
+      [
+        i18n.language,
+        totalVolume,
+        totalPrice,
+        costsBelow350,
+        costsAbove350,
+        sellerIncomeGross,
+        sellerIncomeTaxFlat,
+        sellerIncomeTaxVat,
+        sellerIncomeGrossAfterTax,
+        transportCosts,
+        transportVAT,
+        loggingCosts,
+        loggingCostsVAT,
+        payout,
+        seller,
+      ]
+    );
+
   const exportToFile = async () => {
     const path = await save({
       filters: [
@@ -233,7 +317,14 @@ function SoldPiecesList() {
       defaultPath: t("soldPiecesPDFName"),
     });
     if (path) {
-      saveToPDF(path, <SoldPiecesExport woodPiecesData={woodPieces} />);
+      saveToPDF(
+        path,
+        <SoldPiecesExport
+          woodPiecesData={woodPieces}
+          rowsSummary={rows_summary}
+          colsSummary={columns_summary}
+        />
+      );
     }
   };
 
@@ -252,72 +343,17 @@ function SoldPiecesList() {
         trhClassName="border-b"
       />
       <table className="mt-5">
-        <tr className="border-b">
-          <td className="px-2 py-2">{t("totalVolume")}</td>
-          <td className="px-2 py-2">{totalVolume.toFixed(2)} m3</td>
-        </tr>
-        <tr className="border-b">
-          <td className="px-2 py-2">{t("totalGross")}</td>
-          <td className="px-2 py-2">{totalPrice.toFixed(2)} EUR</td>
-        </tr>
-        <tr className="border-b">
-          <td className="px-2 py-2">{t("costsTo350")}</td>
-          <td className="px-2 py-2">{costsBelow350.toFixed(2)} EUR</td>
-        </tr>
-        <tr className="border-b">
-          <td className="px-2 py-2">{t("costsAbove350")}</td>
-          <td className="px-2 py-2">{costsAbove350.toFixed(2)} EUR</td>
-        </tr>
-        <tr className="border-b">
-          <td className="px-2 py-2">{t("sellerIncome")}</td>
-          <td className="px-2 py-2">{sellerIncomeGross.toFixed(2)} EUR</td>
-        </tr>
-        {seller.is_flat_rate > 0 && (
-          <tr className="border-b">
-            <td className="px-2 py-2">{t("flatRate")}</td>
-            <td className="px-2 py-2">{sellerIncomeTaxFlat.toFixed(2)} EUR</td>
-          </tr>
-        )}
-        {seller.is_vat_liable > 0 && (
-          <tr className="border-b">
-            <td className="px-2 py-2">{t("vat")}</td>
-            <td className="px-2 py-2">{sellerIncomeTaxVat.toFixed(2)} EUR</td>
-          </tr>
-        )}
-        <tr className="border-b">
-          <td className="px-2 py-2 font-bold">{t("sellerIncomeGross")}</td>
-          <td className="px-2 py-2">
-            {sellerIncomeGrossAfterTax.toFixed(2)} EUR
-          </td>
-        </tr>
-        {seller.used_transport > 0 && (
-          <>
+        {rows_summary.map((row) => {
+          return (
             <tr className="border-b">
-              <td className="px-2 py-2">{t("transportCosts")}</td>
-              <td className="px-2 py-2">{transportCosts.toFixed(2)} EUR</td>
+              {columns_summary.map((col) => (
+                <td className={`px-2 py-2 ${row.bold ? "font-bold" : ""}`}>
+                  {(row as any)[col.accessorKey]}
+                </td>
+              ))}
             </tr>
-            <tr className="border-b">
-              <td className="px-2 py-2">{t("transportVAT")}</td>
-              <td className="px-2 py-2">{transportVAT.toFixed(2)} EUR</td>
-            </tr>
-          </>
-        )}
-        {seller.used_logging > 0 && (
-          <>
-            <tr className="border-b">
-              <td className="px-2 py-2">{t("loggingCosts")}</td>
-              <td className="px-2 py-2">{loggingCosts.toFixed(2)} EUR</td>
-            </tr>
-            <tr className="border-b">
-              <td className="px-2 py-2">{t("loggingCostsVAT")}</td>
-              <td className="px-2 py-2">{loggingCostsVAT.toFixed(2)} EUR</td>
-            </tr>
-          </>
-        )}
-        <tr className="border-b">
-          <td className="px-2 py-2 font-bold">{t("payout")}</td>
-          <td className="px-2 py-2">{payout.toFixed(2)} EUR</td>
-        </tr>
+          );
+        })}
       </table>
     </div>
   );

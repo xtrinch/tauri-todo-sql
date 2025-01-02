@@ -50,9 +50,10 @@ const styles = StyleSheet.create({
 
 export interface PdfTableCol {
   accessorKey: string;
-  header: () => string;
+  header?: () => string;
   size: number;
   meta?: { type?: string };
+  bold?: boolean;
 }
 
 export const PdfTable = (params: { columns: PdfTableCol[]; data: any[] }) => {
@@ -65,10 +66,13 @@ export const PdfTable = (params: { columns: PdfTableCol[]; data: any[] }) => {
             style={compact([
               styles.tableColHeaderStyle,
               idx == 0 ? styles.firstTableColHeaderStyle : null,
-              { width: `${col.size}%` },
+              {
+                width: `${col.size}%`,
+                fontWeight: col.bold ? "bold" : undefined,
+              },
             ])}
           >
-            <Text>{col.header()}</Text>
+            {col.header && <Text>{col.header()}</Text>}
           </View>
         ))}
       </View>
