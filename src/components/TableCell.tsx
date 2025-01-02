@@ -6,7 +6,6 @@ import {
   Table,
   TableMeta,
 } from "@tanstack/react-table";
-import { info } from "@tauri-apps/plugin-log";
 import { debounce } from "lodash";
 import { useEffect, useRef, useState } from "react";
 
@@ -35,6 +34,7 @@ export const TableCell = <TableItem,>({
   const rowId = (row.original as { id: number }).id;
   const columnMeta = column.columnDef.meta as CustomColumnMeta;
   const isReadonly = columnMeta?.readonly;
+  const input = useRef(null);
 
   const getFormattedVal = (val: any) => {
     if (columnMeta?.type === "float") {
@@ -61,8 +61,7 @@ export const TableCell = <TableItem,>({
 
   const debouncedSave = useRef(
     debounce((val) => {
-      info("Blursss");
-      onBlur(val);
+      save(val);
     }, 2000)
   );
 
@@ -73,16 +72,14 @@ export const TableCell = <TableItem,>({
   };
 
   // When the input is blurred, we'll call our table meta's updateData function
-  const onBlur = (newVal: string) => {
-    info("ON BLUR");
+  const save = (newVal: string) => {
+    debouncedSave.current.cancel();
 
     if (isReadonly) {
       return;
     }
 
-    info(newVal);
     const val = getFormattedVal(newVal);
-    info(val);
     // only call on edit if there's changes
     if (newVal !== valueOnFocus) {
       (meta as CustomTableMeta)?.onEdit({
@@ -93,6 +90,24 @@ export const TableCell = <TableItem,>({
     setValue(newVal);
   };
 
+  const onBlur = () => {
+    debouncedSave.current.cancel();
+
+    if (isReadonly) {
+      return;
+    }
+
+    const val = getFormattedVal(value);
+    // only call on edit if there's changes
+    if (value !== valueOnFocus) {
+      (meta as CustomTableMeta)?.onEdit({
+        id: (row.original as { id: number }).id,
+        [column.id]: val,
+      });
+    }
+    setValue(val);
+  };
+
   const onChange = (e: any) => {
     setValue(e.target.value);
     debouncedSave.current.cancel();
@@ -101,17 +116,21 @@ export const TableCell = <TableItem,>({
 
   // If the initialValue is changed external, sync it up with our state
   useEffect(() => {
-    setValue(getFormattedVal(initialValue || ""));
+    const newVal = getFormattedVal(initialValue || "");
+    if (newVal !== value && document.activeElement !== input.current) {
+      setValue(getFormattedVal(initialValue || ""));
+    }
   }, [initialValue, rowId]);
 
   return (
     <>
       <input
+        ref={input}
         value={value as string}
         className="bg-green h-10 min-w-[100%] max-w-[100%] border p-1 px-2 rounded"
-        // style={{ borderColor: value === 0 ? "red" : undefined }}
         onChange={onChange}
-        // onBlur={onBlur} // TODO: save after some time of inactivity
+        onBlur={onBlur}
+        // save={() => setValue(getFormattedVal(value))}
         readOnly={columnMeta?.readonly}
         tabIndex={columnMeta?.readonly ? -1 : undefined}
         onFocus={onFocus}

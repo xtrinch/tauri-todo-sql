@@ -171,7 +171,6 @@ export async function postWoodPiece(
     )`,
     [0.0, 0.0, "", partialWoodPiece.seller_id, 0.0, 0]
   );
-
   return {
     ...woodPiece,
     id: result.lastInsertId,

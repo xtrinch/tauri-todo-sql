@@ -72,7 +72,6 @@ function RootComponent() {
   };
 
   const loadOnly = async (path?: string) => {
-    info("INVOKING...");
     try {
       await invoke("read_json", { filePath: path || filePath });
     } catch (e) {

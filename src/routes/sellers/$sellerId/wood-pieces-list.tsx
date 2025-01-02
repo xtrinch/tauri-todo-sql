@@ -84,7 +84,7 @@ function SoldPiecesList() {
         meta: {
           type: "float",
         },
-        footer: (info) => <SumFooter info={info} measure="m^3" />,
+        footer: (info) => <SumFooter info={info} measure="㎥" />,
       },
       {
         accessorKey: "min_price",

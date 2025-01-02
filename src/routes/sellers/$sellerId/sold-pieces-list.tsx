@@ -88,7 +88,7 @@ function SoldPiecesList() {
         meta: {
           type: "float",
         },
-        // footer: (info) => <SumFooter info={info} measure="m^3" />,
+        // footer: (info) => <SumFooter info={info} measure="㎥" />,
       },
       {
         accessorKey: "offered_price",
@@ -240,7 +240,7 @@ function SoldPiecesList() {
       <table className="mt-5">
         <tr className="border-b">
           <td className="px-2 py-2">{t("totalVolume")}</td>
-          <td className="px-2 py-2">{totalVolume.toFixed(2)} m^3</td>
+          <td className="px-2 py-2">{totalVolume.toFixed(2)} ㎥</td>
         </tr>
         <tr className="border-b">
           <td className="px-2 py-2">{t("totalGross")}</td>
