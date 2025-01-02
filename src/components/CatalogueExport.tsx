@@ -1,7 +1,21 @@
+import { Document, Font, Page, StyleSheet } from "@react-pdf/renderer";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import font from "../assets/fonts/Roboto-Regular.ttf";
 import { WoodPiece } from "../utils/woodPieceService";
 import { PdfTable } from "./PdfTable";
+
+Font.register({ family: "Roboto", src: font });
+
+const styles = StyleSheet.create({
+  page: {
+    fontFamily: "Roboto",
+    flexDirection: "row",
+    backgroundColor: "#E4E4E4",
+    padding: 10,
+    fontSize: 12,
+  },
+});
 
 export const CatalogueExport = (params: { woodPiecesData: WoodPiece[] }) => {
   const { t } = useTranslation();
@@ -63,5 +77,11 @@ export const CatalogueExport = (params: { woodPiecesData: WoodPiece[] }) => {
     []
   );
 
-  return <PdfTable data={params.woodPiecesData} columns={columns} />;
+  return (
+    <Document>
+      <Page size="A4" style={styles.page}>
+        <PdfTable data={params.woodPiecesData} columns={columns} />
+      </Page>
+    </Document>
+  );
 };

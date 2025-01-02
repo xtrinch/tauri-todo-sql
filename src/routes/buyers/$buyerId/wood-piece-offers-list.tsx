@@ -54,7 +54,7 @@ function WoodPiecesList() {
             ...data,
             choices: woodPiecesData.map((ts) => ({
               value: ts.id,
-              label: `${ts.sequence_no} - ${ts.seller_name} - ${ts.tree_species_name || "Not set"} - ${ts.volume} m3`,
+              label: `${ts.sequence_no} - ${ts.seller_name} - ${ts.tree_species_name || "Not set"} - ${ts.volume} m^3`,
             })),
           }),
       },
@@ -68,7 +68,7 @@ function WoodPiecesList() {
       },
       // {
       //   accessorKey: "offered_max_price",
-      //   header: () => "Max offered price / m3 (EUR)",
+      //   header: () => "Max offered price / m^3 (EUR)",
       //   size: 80,
       //   meta: {
       //     type: "float",
