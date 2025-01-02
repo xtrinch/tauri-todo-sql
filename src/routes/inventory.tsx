@@ -45,7 +45,7 @@ function WoodPiecesList() {
           );
         })}
       </div>
-      <div className="h-[calc(100vh-94px)] overflow-auto">
+      <div className="h-[calc(100vh-94px)] overflow-hidden">
         <Outlet />
       </div>
     </div>
