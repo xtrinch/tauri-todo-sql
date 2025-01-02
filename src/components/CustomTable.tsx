@@ -3,9 +3,9 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { memo, useCallback, useRef } from "react";
 import { CustomTableMeta } from "./TableCell";
 
-function easeInOutQuint(t: number) {
-  return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
-}
+// function easeInOutQuint(t: number) {
+//   return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+// }
 
 export function CustomTable<TableItem>({
   table,
@@ -25,7 +25,7 @@ export function CustomTable<TableItem>({
   const getItemKey = useCallback((index: number) => {
     return rows[index]?.id;
   }, []);
-  const scrollingRef = useRef<number>();
+  // const scrollingRef = useRef<number>();
 
   // const scrollToFn: VirtualizerOptions<any, any>["scrollToFn"] = useCallback(
   //   (offset, canSmooth, instance) => {

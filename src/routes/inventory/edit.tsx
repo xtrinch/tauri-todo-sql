@@ -170,7 +170,7 @@ function RouteComponent() {
     <div className="">
       <CustomTable
         table={table}
-        containerClassName="p-3 max-h-[calc(100vh-93px)] overflow-auto"
+        containerClassName="p-3 h-[calc(100vh-94px)] max-h-full overflow-auto"
       />
     </div>
   );
