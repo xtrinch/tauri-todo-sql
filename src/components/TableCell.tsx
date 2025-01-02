@@ -6,7 +6,9 @@ import {
   Table,
   TableMeta,
 } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { info } from "@tauri-apps/plugin-log";
+import { debounce } from "lodash";
+import { useEffect, useRef, useState } from "react";
 
 export interface CustomColumnMeta extends ColumnMeta<{}, undefined> {
   type?: string;
@@ -57,6 +59,13 @@ export const TableCell = <TableItem,>({
     getFormattedVal(initialValue)
   );
 
+  const debouncedSave = useRef(
+    debounce((val) => {
+      info("Blursss");
+      onBlur(val);
+    }, 2000)
+  );
+
   const meta = table.options.meta;
 
   const onFocus = () => {
@@ -64,24 +73,30 @@ export const TableCell = <TableItem,>({
   };
 
   // When the input is blurred, we'll call our table meta's updateData function
-  const onBlur = () => {
+  const onBlur = (newVal: string) => {
+    info("ON BLUR");
+
     if (isReadonly) {
       return;
     }
 
-    const val = getFormattedVal(value);
+    info(newVal);
+    const val = getFormattedVal(newVal);
+    info(val);
     // only call on edit if there's changes
-    if (value !== valueOnFocus) {
+    if (newVal !== valueOnFocus) {
       (meta as CustomTableMeta)?.onEdit({
         id: (row.original as { id: number }).id,
         [column.id]: val,
       });
     }
-    setValue(val);
+    setValue(newVal);
   };
 
   const onChange = (e: any) => {
     setValue(e.target.value);
+    debouncedSave.current.cancel();
+    debouncedSave.current(e.target.value);
   };
 
   // If the initialValue is changed external, sync it up with our state
@@ -96,7 +111,7 @@ export const TableCell = <TableItem,>({
         className="bg-green h-10 min-w-[100%] max-w-[100%] border p-1 px-2 rounded"
         // style={{ borderColor: value === 0 ? "red" : undefined }}
         onChange={onChange}
-        onBlur={onBlur} // TODO: save after some time of inactivity
+        // onBlur={onBlur} // TODO: save after some time of inactivity
         readOnly={columnMeta?.readonly}
         tabIndex={columnMeta?.readonly ? -1 : undefined}
         onFocus={onFocus}

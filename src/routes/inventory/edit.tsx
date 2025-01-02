@@ -41,8 +41,8 @@ function RouteComponent() {
     },
   });
   const updateWoodPieceMutation = useUpdateWoodPieceMutation({
-    onError: () => {
-      toast.error(t("couldNotUpdate"));
+    onError: (e) => {
+      toast.error(`${t("couldNotUpdate")} ${JSON.stringify(e)}`);
     },
   });
 
@@ -167,8 +167,11 @@ function RouteComponent() {
   });
 
   return (
-    <div>
-      <CustomTable table={table} />
+    <div className="">
+      <CustomTable
+        table={table}
+        containerClassName="p-3 max-h-[calc(100vh-93px)] overflow-auto"
+      />
     </div>
   );
 }

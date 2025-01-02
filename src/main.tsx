@@ -1,3 +1,4 @@
+import "@fontsource/roboto"; // Defaults to weight 400
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   ErrorComponent,

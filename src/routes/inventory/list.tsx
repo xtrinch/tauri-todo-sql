@@ -225,7 +225,7 @@ function ListInventoryComponent() {
   };
 
   return (
-    <div>
+    <div className="p-3">
       <div className="mb-3">{t("filters")}</div>
       <div className="flex flex-row space-x-3 mb-3">
         <div>

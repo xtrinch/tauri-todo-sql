@@ -22,7 +22,7 @@ import { unsetDatabase } from "../utils/database";
 import { sellersQueryOptions } from "../utils/sellerService";
 import { treeSpeciesQueryOptions } from "../utils/treeSpeciesService";
 import { useUndo } from "../utils/undo";
-import { woodPiecesQueryOptions } from "../utils/woodPieceService";
+import { woodPiecesCountQueryOptions } from "../utils/woodPieceService";
 
 function RouterSpinner() {
   const isLoading = useRouterState({ select: (s) => s.status === "pending" });
@@ -50,8 +50,8 @@ function RootComponent() {
     queryClient.invalidateQueries();
   });
 
-  const woodPiecesQuery = useSuspenseQuery(woodPiecesQueryOptions({}));
-  const woodPieces = woodPiecesQuery.data;
+  const woodPiecesQuery = useSuspenseQuery(woodPiecesCountQueryOptions());
+  const woodPiecesCount = woodPiecesQuery.data;
 
   const treeSpeciesQuery = useSuspenseQuery(
     treeSpeciesQueryOptions({ language: i18n.language as "en" | "sl" })
@@ -239,7 +239,7 @@ function RootComponent() {
               [
                 ["/sellers", `${t("sellers")} (${sellers.length})`],
                 ["/buyers", `${t("buyers")} (${buyers.length})`],
-                ["/inventory", `${t("inventory")} (${woodPieces.length})`],
+                ["/inventory", `${t("inventory")} (${woodPiecesCount})`],
                 [
                   "/treeSpecies/edit",
                   `${t("treeSpeciesPlural")} (${treeSpeciesData.length})`,

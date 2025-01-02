@@ -105,9 +105,26 @@ const ensureWoodPieces = async (opts: ListOptions) => {
     info(JSON.stringify(e));
     throw e;
   }
-  info("OVER");
   const woodPieces = result as WoodPiece[];
   return woodPieces;
+};
+
+const ensureWoodPiecesCount = async () => {
+  const db = await getDatabase();
+
+  let sql = `
+    SELECT 
+      COUNT(*) as "count"
+    FROM "wood_pieces"`;
+
+  let result: { count: number }[];
+  try {
+    result = (await db.select(sql)) as any;
+  } catch (e) {
+    info(JSON.stringify(e));
+    throw e;
+  }
+  return result[0].count;
 };
 
 export async function fetchWoodPieceById(id: number) {
@@ -266,4 +283,11 @@ export const woodPiecesQueryOptions = (opts: ListOptions) =>
     queryFn: () => ensureWoodPieces(opts),
     staleTime: Infinity,
     enabled: opts.enabled,
+  });
+
+export const woodPiecesCountQueryOptions = () =>
+  queryOptions({
+    queryKey: ["wood_pieces", "count"],
+    queryFn: () => ensureWoodPiecesCount(),
+    staleTime: Infinity,
   });

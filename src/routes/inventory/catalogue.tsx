@@ -126,20 +126,25 @@ function CatalogueComponent() {
     if (path) {
       info(path);
 
-      const blob = await pdf(
-        <CatalogueExport woodPiecesData={woodPieces} />
-      ).toBlob();
-      // Convert Blob to ArrayBuffer
-      const arrayBuffer = await blob.arrayBuffer();
-      const uint8Array = new Uint8Array(arrayBuffer);
+      try {
+        const blob = await pdf(
+          <CatalogueExport woodPiecesData={woodPieces} />
+        ).toBlob();
+        // Convert Blob to ArrayBuffer
+        const arrayBuffer = await blob.arrayBuffer();
+        const uint8Array = new Uint8Array(arrayBuffer);
 
-      // Write the PDF file to the file system
-      await writeFile(path, uint8Array);
+        // Write the PDF file to the file system
+        await writeFile(path, uint8Array);
+      } catch (e) {
+        info(JSON.stringify((e as Error).message));
+        throw e;
+      }
     }
   };
 
   return (
-    <div>
+    <div className="p-3">
       <button
         className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
         onClick={exportToFile}

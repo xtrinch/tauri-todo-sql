@@ -1,8 +1,9 @@
 import { Column, Getter, Row, Table } from "@tanstack/react-table";
 import "choices.js/public/assets/styles/choices.css";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Select from "react-select";
+import { FaAngleDown } from "react-icons/fa6";
+import Select, { SingleValue } from "react-select";
 import { CustomTableMeta } from "./TableCell";
 
 interface Option {
@@ -15,12 +16,14 @@ export const DropdownCell = <TableItem,>({
   column,
   table,
   choices: choiceData,
+  isScrolling,
 }: {
   getValue: Getter<unknown>;
   row: Row<TableItem>;
   column: Column<TableItem>;
   table: Table<TableItem>;
   choices: Option[];
+  isScrolling?: boolean;
 }) => {
   const initialValue: number = getValue() as number;
   const { t } = useTranslation();
@@ -38,37 +41,27 @@ export const DropdownCell = <TableItem,>({
         }
       : null
   );
-  const [valueOnFocus, setValueOnFocus] = useState<Option | null>(
-    initialValue
-      ? {
-          value: initialValue,
-          label: labelForValue(initialValue),
-        }
-      : null
-  );
 
   const meta = table.options.meta;
 
-  const onFocus = () => {
-    setValueOnFocus(value);
-  };
+  const choiceOptions = useMemo(
+    () =>
+      (choiceData || []).map((c) => ({
+        value: c.value,
+        label: `${c.label || "No label"}`,
+      })),
+    [choiceData]
+  );
 
-  // When the input is blurred, we'll call our table meta's updateData function
-  const onBlur = () => {
-    const data = {
-      id: (row.original as { id: number }).id,
-      [column.id]: value?.value,
-    };
-    // only call on edit if there's changes
-    if (value !== valueOnFocus) {
-      (meta as CustomTableMeta)?.onEdit(data);
+  const onChange = (newValue: SingleValue<Option>) => {
+    setValue({ label: newValue?.label!, value: newValue?.value! });
+    if (initialValue !== newValue?.value) {
+      (meta as CustomTableMeta)?.onEdit({
+        id: (row.original as { id: number }).id,
+        [column.id]: newValue?.value,
+      });
     }
   };
-
-  const choiceOptions = (choiceData || []).map((c) => ({
-    value: c.value,
-    label: `${c.label || "No label"}`,
-  }));
 
   // If the initialValue is changed external, sync it up with our state
   useEffect(() => {
@@ -83,18 +76,32 @@ export const DropdownCell = <TableItem,>({
   }, [initialValue]);
 
   return (
-    <div className="w-full">
-      <Select
-        options={choiceOptions}
-        isSearchable={true}
-        onChange={(newValue) =>
-          setValue({ label: newValue?.label!, value: newValue?.value! })
-        }
-        onBlur={onBlur}
-        value={value}
-        onFocus={onFocus}
-        placeholder={t("select")}
-      />
+    <div className="w-full relative">
+      {isScrolling && false ? (
+        <div className="bg-white w-full h-[38px] border rounded-md items-center pl-[10px] flex flex-row">
+          <div className="flex-1">
+            {value ? (
+              <div className="text-[hsl(0,0%,20%)]">{value?.label}</div>
+            ) : (
+              <div className="text-[rgb(128,128,128)]">{t("select")}</div>
+            )}
+          </div>
+          <div className="w-[37px] h-full py-[8px] flex flex-row">
+            <div className="bg-[hsl(0,0%,80%)] h-full w-[1px]" />
+            <div className="flex items-center justify-center text-[hsl(0,0%,80%)] w-full">
+              <FaAngleDown />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <Select
+          options={choiceOptions}
+          isSearchable={true}
+          onChange={onChange}
+          value={value}
+          placeholder={t("select")}
+        />
+      )}
     </div>
   );
 };

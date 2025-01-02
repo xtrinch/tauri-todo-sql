@@ -10,11 +10,13 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@fontsource/roboto": "^5.1.1",
     "@react-pdf/renderer": "^4.1.6",
     "@tanstack/react-query": "^5.62.3",
     "@tanstack/react-query-devtools": "^5.62.3",
     "@tanstack/react-router": "^1.91.2",
     "@tanstack/react-table": "^8.20.6",
+    "@tanstack/react-virtual": "^3.11.2",
     "@tanstack/router-devtools": "^1.91.2",
     "@tanstack/router-plugin": "^1.91.1",
     "@tauri-apps/api": "^2.1.1",

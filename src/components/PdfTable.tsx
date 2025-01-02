@@ -1,9 +1,20 @@
-import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import {
+  Document,
+  Font,
+  Page,
+  StyleSheet,
+  Text,
+  View,
+} from "@react-pdf/renderer";
 import { compact } from "lodash";
+import font from "./Roboto-Regular.ttf";
+
+Font.register({ family: "Roboto", src: font });
 
 // Create styles
 const styles = StyleSheet.create({
   page: {
+    fontFamily: "Roboto",
     flexDirection: "row",
     backgroundColor: "#E4E4E4",
     padding: 10,
