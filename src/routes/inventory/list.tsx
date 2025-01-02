@@ -172,7 +172,7 @@ function ListInventoryComponent() {
         cell: TableCellReadonly,
       },
     ],
-    [treeSpeciesOptions]
+    []
   );
 
   const table = useReactTable({
