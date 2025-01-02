@@ -17,10 +17,60 @@ const styles = StyleSheet.create({
   },
 });
 
-export const CatalogueExport = (params: { woodPiecesData: WoodPiece[] }) => {
+export const SoldPiecesExport = (params: { woodPiecesData: WoodPiece[] }) => {
   const { t } = useTranslation();
 
   const columns = useMemo<PdfTableCol[]>(
+    () => [
+      {
+        accessorKey: "sequence_no",
+        header: () => t("seqNo"),
+        size: 10,
+      },
+      {
+        accessorKey: "plate_no",
+        header: () => t("plateNo"),
+        size: 15,
+      },
+      {
+        accessorKey: "tree_species_name",
+        header: () => t("treeSpecies"),
+        size: 30,
+      },
+      {
+        accessorKey: "width",
+        header: () => t("widthCm"),
+        size: 15,
+        meta: {
+          type: "float",
+        },
+      },
+      {
+        accessorKey: "length",
+        header: () => t("lengthM"),
+        size: 15,
+        meta: {
+          type: "float",
+        },
+      },
+      {
+        accessorKey: "volume",
+        header: () => t("volumeM3"),
+        size: 15,
+        meta: {
+          type: "float",
+        },
+      },
+      {
+        accessorKey: "ident",
+        header: () => t("sellerIdent"),
+        size: 15,
+      },
+    ],
+    []
+  );
+
+  const columns2 = useMemo<PdfTableCol[]>(
     () => [
       {
         accessorKey: "sequence_no",

@@ -1,4 +1,3 @@
-import { pdf } from "@react-pdf/renderer";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -7,13 +6,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { save } from "@tauri-apps/plugin-dialog";
-import { writeFile } from "@tauri-apps/plugin-fs";
-import { info } from "@tauri-apps/plugin-log";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CatalogueExport } from "../../components/CatalogueExport";
 import { CustomTable } from "../../components/CustomTable";
 import { TableCellReadonly } from "../../components/TableCellReadonly";
+import { saveToPDF } from "../../utils/pdf";
 import { treeSpeciesQueryOptions } from "../../utils/treeSpeciesService";
 import {
   WoodPiece,
@@ -124,22 +122,7 @@ function CatalogueComponent() {
       defaultPath: "catalog",
     });
     if (path) {
-      info(path);
-
-      try {
-        const blob = await pdf(
-          <CatalogueExport woodPiecesData={woodPieces} />
-        ).toBlob();
-        // Convert Blob to ArrayBuffer
-        const arrayBuffer = await blob.arrayBuffer();
-        const uint8Array = new Uint8Array(arrayBuffer);
-
-        // Write the PDF file to the file system
-        await writeFile(path, uint8Array);
-      } catch (e) {
-        info(JSON.stringify((e as Error).message));
-        throw e;
-      }
+      saveToPDF(path, <CatalogueExport woodPiecesData={woodPieces} />);
     }
   };
 

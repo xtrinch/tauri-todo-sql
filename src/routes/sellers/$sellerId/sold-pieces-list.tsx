@@ -5,13 +5,15 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { save } from "@tauri-apps/plugin-dialog";
 import Big from "big.js";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
+import { SoldPiecesExport } from "../../../components/SoldPiecesExport";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
+import { saveToPDF } from "../../../utils/pdf";
 import { sellerQueryOptions } from "../../../utils/sellerService";
-import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
   WoodPiece,
   woodPiecesQueryOptions,
@@ -39,11 +41,6 @@ function SoldPiecesList() {
     })
   );
   const woodPieces = woodPiecesQuery.data;
-
-  const treeSpeciesQuery = useSuspenseQuery(
-    treeSpeciesQueryOptions({ language: i18n.language as "en" | "sl" })
-  );
-  const treeSpeciesData = treeSpeciesQuery.data;
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
@@ -88,7 +85,6 @@ function SoldPiecesList() {
         meta: {
           type: "float",
         },
-        // footer: (info) => <SumFooter info={info} measure="m3" />,
       },
       {
         accessorKey: "offered_price",
@@ -98,7 +94,6 @@ function SoldPiecesList() {
           type: "float",
           readonly: true,
         },
-        cell: TableCellReadonly,
       },
       {
         accessorKey: "offered_total_price",
@@ -108,8 +103,6 @@ function SoldPiecesList() {
           type: "float",
           readonly: true,
         },
-        cell: TableCellReadonly,
-        // footer: (info) => <SumFooter info={info} measure="EUR" />,
       },
       {
         accessorKey: "buyer_name",
@@ -118,10 +111,9 @@ function SoldPiecesList() {
         meta: {
           readonly: true,
         },
-        cell: TableCellReadonly,
       },
     ],
-    [treeSpeciesData]
+    []
   );
 
   const table = useReactTable({
@@ -230,8 +222,29 @@ function SoldPiecesList() {
     loggingCostsVAT,
   ]);
 
+  const exportToFile = async () => {
+    const path = await save({
+      filters: [
+        {
+          name: "Sold pieces Filter",
+          extensions: ["pdf"],
+        },
+      ],
+      defaultPath: t("soldPiecesPDFName"),
+    });
+    if (path) {
+      saveToPDF(path, <SoldPiecesExport woodPiecesData={woodPieces} />);
+    }
+  };
+
   return (
     <div className="p-3">
+      <button
+        className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+        onClick={exportToFile}
+      >
+        {t("export")}
+      </button>
       <CustomTable
         table={table}
         trClassName="border-b"

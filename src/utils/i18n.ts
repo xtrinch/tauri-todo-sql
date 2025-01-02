@@ -91,6 +91,7 @@ const resources = {
       usedLogging: "Used logging",
       bypassMinPrice: "Bypass min price",
       export: "Export",
+      soldPiecesPDFName: "sold-pieces",
     },
   },
   sl: {
@@ -180,6 +181,7 @@ const resources = {
       usedLogging: "Posek gozdni",
       bypassMinPrice: "Dovoli nizjo ceno",
       export: "Izvozi",
+      soldPiecesPDFName: "prodani-kosi",
     },
   },
 };
