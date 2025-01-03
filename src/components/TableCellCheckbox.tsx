@@ -51,13 +51,13 @@ export const TableCellCheckbox = <TableItem,>({
   }, [initialValue, rowId]);
 
   return (
-    <>
+    <div className="w-full flex justify-center items-center">
       <input
         type="checkbox"
         checked={value as boolean}
         onChange={onChange}
         className="scale-150"
       />
-    </>
+    </div>
   );
 };

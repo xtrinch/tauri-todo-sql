@@ -22,10 +22,10 @@ import {
 import { WoodPiece } from "../../utils/woodPieceService";
 
 export const Route = createFileRoute("/treeSpecies/edit")({
-  component: RouteComponent,
+  component: TreeSpeciesEdit,
 });
 
-function RouteComponent() {
+function TreeSpeciesEdit() {
   const { t, i18n } = useTranslation();
 
   const createTreeSpeciesMutation = useCreateTreeSpeciesMutation({
@@ -107,8 +107,11 @@ function RouteComponent() {
   });
 
   return (
-    <div className="p-3 h-[calc(100vh-53px)] overflow-auto">
-      <CustomTable table={table} />
+    <div className="">
+      <CustomTable
+        table={table}
+        containerClassName="p-3 h-[calc(100vh-53px)] overflow-auto"
+      />
     </div>
   );
 }
