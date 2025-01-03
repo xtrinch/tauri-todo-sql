@@ -95,6 +95,7 @@ const resources = {
       soldPieces: "Sold pieces",
       boughtPiecesPDFName: "bought-pieces",
       boughtPieces: "Bought pieces",
+      noData: "No data",
     },
   },
   sl: {
@@ -188,6 +189,7 @@ const resources = {
       soldPieces: "Prodani kosi",
       boughtPiecesPDFName: "kupljeni-kosi",
       boughtPieces: "Kupljeni kosi",
+      noData: "Ni podatkov",
     },
   },
 };
