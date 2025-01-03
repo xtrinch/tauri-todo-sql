@@ -103,7 +103,7 @@ function RootComponent() {
       filters: [
         {
           name: "My Filter",
-          extensions: ["dump"],
+          extensions: ["bk"],
         },
       ],
       defaultPath: "db",
@@ -119,7 +119,7 @@ function RootComponent() {
     const path = await open({
       multiple: false,
       directory: false,
-      filters: [{ name: "My Filter", extensions: ["dump"] }],
+      filters: [{ name: "My Filter", extensions: ["bk"] }],
     });
 
     if (path) {
@@ -251,9 +251,8 @@ function RootComponent() {
                     to={to}
                     activeOptions={{}}
                     className={`block py-2 px-3 text-blue-600 bg-[#eee]`}
-                    // Make "active" links bold
                     activeProps={{
-                      className: `font-bold bg-gray-100 bg-gray-50!`,
+                      className: `font-bold bg-gray-100 !bg-gray-50`,
                     }}
                   >
                     {label}
