@@ -1,7 +1,15 @@
-import { Document, Font, Page, StyleSheet, View } from "@react-pdf/renderer";
+import {
+  Document,
+  Font,
+  Page,
+  StyleSheet,
+  Text,
+  View,
+} from "@react-pdf/renderer";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import font from "../assets/fonts/Roboto-Regular.ttf";
+import { Buyer } from "../utils/buyerService";
 import { WoodPiece } from "../utils/woodPieceService";
 import { PdfTable, PdfTableCol } from "./PdfTable";
 
@@ -15,9 +23,32 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 12,
   },
+  header: {
+    fontSize: 24,
+    marginBottom: 15,
+    fontWeight: "bold",
+  },
+  address: {
+    fontSize: 14,
+    marginBottom: 14,
+  },
+  addressName: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  topTable: {
+    marginBottom: 15,
+  },
+  middleTable: {
+    marginBottom: 15,
+  },
+  bottomTable: {
+    marginBottom: 15,
+  },
 });
 
 export const BoughtPiecesExport = (params: {
+  buyer: Buyer;
   woodPiecesData: WoodPiece[];
   woodPiecesGroupedData: WoodPiece[];
   rowsSummary: { label: string; value: string; bold?: boolean }[];
@@ -105,16 +136,25 @@ export const BoughtPiecesExport = (params: {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <View>
+        <View style={styles.header}>
+          <Text>{t("boughtPieces")}</Text>
+        </View>
+        <View style={styles.address}>
+          <Text style={styles.addressName}>{params.buyer.buyer_name}</Text>
+          <Text>
+            {params.buyer.address_line1}, {params.buyer.address_line2}
+          </Text>
+        </View>
+        <View style={styles.topTable}>
           <PdfTable data={params.woodPiecesData} columns={columns} />
         </View>
-        <View>
+        <View style={styles.middleTable}>
           <PdfTable
             data={params.woodPiecesGroupedData}
             columns={columnsGrouped}
           />
         </View>
-        <View>
+        <View style={styles.bottomTable}>
           <PdfTable data={params.rowsSummary} columns={params.colsSummary} />
         </View>
       </Page>

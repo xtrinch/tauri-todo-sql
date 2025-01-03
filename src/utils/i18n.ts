@@ -94,6 +94,7 @@ const resources = {
       soldPiecesPDFName: "sold-pieces",
       soldPieces: "Sold pieces",
       boughtPiecesPDFName: "bought-pieces",
+      boughtPieces: "Bought pieces",
     },
   },
   sl: {
@@ -186,6 +187,7 @@ const resources = {
       soldPiecesPDFName: "prodani-kosi",
       soldPieces: "Prodani kosi",
       boughtPiecesPDFName: "kupljeni-kosi",
+      boughtPieces: "Kupljeni kosi",
     },
   },
 };

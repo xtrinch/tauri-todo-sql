@@ -14,6 +14,7 @@ import { BoughtPiecesExport } from "../../../components/BoughtPiecesExport";
 import { CustomTable } from "../../../components/CustomTable";
 import { PdfTableCol } from "../../../components/PdfTable";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
+import { buyerQueryOptions } from "../../../utils/buyerService";
 import { saveToPDF } from "../../../utils/pdf";
 import {
   WoodPiece,
@@ -21,13 +22,16 @@ import {
 } from "../../../utils/woodPieceService";
 
 export const Route = createFileRoute("/buyers/$buyerId/bought-pieces-list")({
-  component: SoldPiecesList,
+  component: BoughtPiecesList,
 });
 
-function SoldPiecesList() {
+function BoughtPiecesList() {
   const { t, i18n } = useTranslation();
 
   const params = Route.useParams();
+
+  const buyerQuery = useSuspenseQuery(buyerQueryOptions(params.buyerId));
+  const buyer = buyerQuery.data;
 
   const woodPiecesQuery = useSuspenseQuery(
     woodPiecesQueryOptions({
@@ -189,11 +193,12 @@ function SoldPiecesList() {
     };
   }, [rows]);
 
-  const columns_summary = useMemo<PdfTableCol[]>(
+  const columnsSummary = useMemo<PdfTableCol[]>(
     () => [
       {
         accessorKey: "label",
         size: 260,
+        header: () => t("summary"),
       },
       {
         accessorKey: "value",
@@ -203,7 +208,7 @@ function SoldPiecesList() {
     []
   );
 
-  const rows_summary: { label: string; value: string; bold?: boolean }[] =
+  const rowsSummary: { label: string; value: string; bold?: boolean }[] =
     useMemo(
       () =>
         compact([
@@ -227,10 +232,11 @@ function SoldPiecesList() {
       saveToPDF(
         path,
         <BoughtPiecesExport
+          buyer={buyer}
           woodPiecesData={woodPieces}
           woodPiecesGroupedData={woodPiecesGrouped}
-          rowsSummary={rows_summary}
-          colsSummary={columns_summary}
+          rowsSummary={rowsSummary}
+          colsSummary={columnsSummary}
         />
       );
     }
