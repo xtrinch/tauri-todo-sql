@@ -161,7 +161,7 @@ function SellersComponent() {
         </button>
         {sellers?.map((seller) => {
           return (
-            <div key={seller.id}>
+            <div>
               <Link
                 to="/sellers/$sellerId"
                 params={{
@@ -171,7 +171,7 @@ function SellersComponent() {
                 activeProps={{ className: `font-bold bg-gray-100` }}
               >
                 <div className="text-m">
-                  {seller.seller_name || t("noName")}
+                  {seller.id}-{seller.seller_name || t("noName")}
                   <MatchRoute
                     to="/sellers/$sellerId"
                     search={{

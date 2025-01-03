@@ -6,8 +6,9 @@ import {
   Table,
   TableMeta,
 } from "@tanstack/react-table";
+import { info } from "@tauri-apps/plugin-log";
 import { debounce } from "lodash";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface CustomColumnMeta extends ColumnMeta<{}, undefined> {
   type?: string;
@@ -59,21 +60,9 @@ export const TableCell = <TableItem,>({
     getFormattedVal(initialValue)
   );
 
-  const debouncedSave = useRef(
-    debounce((val) => {
-      save(val);
-    }, 2000)
-  );
-
-  const meta = table.options.meta;
-
-  const onFocus = () => {
-    setValueOnFocus(value);
-  };
-
   // When the input is blurred, we'll call our table meta's updateData function
   const save = (newVal: string) => {
-    debouncedSave.current.cancel();
+    debouncedSave.cancel();
 
     if (isReadonly) {
       return;
@@ -82,16 +71,25 @@ export const TableCell = <TableItem,>({
     const val = getFormattedVal(newVal);
     // only call on edit if there's changes
     if (newVal !== valueOnFocus) {
+      info(`ID::::::::::::${rowId}`);
       (meta as CustomTableMeta)?.onEdit({
-        id: (row.original as { id: number }).id,
+        id: rowId,
         [column.id]: val,
       });
     }
     setValue(newVal);
   };
 
+  const debouncedSave = useCallback(debounce(save, 1000), [rowId]);
+
+  const meta = table.options.meta;
+
+  const onFocus = () => {
+    setValueOnFocus(value);
+  };
+
   const onBlur = () => {
-    debouncedSave.current.cancel();
+    debouncedSave.cancel();
 
     if (isReadonly) {
       return;
@@ -100,8 +98,10 @@ export const TableCell = <TableItem,>({
     const val = getFormattedVal(value);
     // only call on edit if there's changes
     if (value !== valueOnFocus) {
+      info(`IDBLUR::::::::::::${rowId}`);
+
       (meta as CustomTableMeta)?.onEdit({
-        id: (row.original as { id: number }).id,
+        id: rowId,
         [column.id]: val,
       });
     }
@@ -110,8 +110,8 @@ export const TableCell = <TableItem,>({
 
   const onChange = (e: any) => {
     setValue(e.target.value);
-    debouncedSave.current.cancel();
-    debouncedSave.current(e.target.value);
+    debouncedSave.cancel();
+    debouncedSave(e.target.value);
   };
 
   // If the initialValue is changed external, sync it up with our state
