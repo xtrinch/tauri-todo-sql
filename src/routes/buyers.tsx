@@ -160,36 +160,38 @@ function BuyersComponent() {
         >
           <FaPlus />
         </button>
-        {buyers?.map((buyer) => {
-          return (
-            <div key={buyer.id}>
-              <Link
-                to="/buyers/$buyerId"
-                params={{
-                  buyerId: buyer.id,
-                }}
-                className="block py-2 px-3 text-blue-600"
-                activeProps={{ className: `font-bold bg-gray-100` }}
-              >
-                <div className="text-m">
-                  {buyer.buyer_name || t("noName")}
-                  <MatchRoute
-                    to="/buyers/$buyerId"
-                    search={{
-                      buyerId: buyer.id,
-                    }}
-                    params={{
-                      buyerId: buyer.id,
-                    }}
-                    pending
-                  >
-                    {(match) => <Spinner show={!!match} wait="delay-50" />}
-                  </MatchRoute>
-                </div>
-              </Link>
-            </div>
-          );
-        })}
+        <div className="max-h-[calc(100vh-215px)] overflow-auto">
+          {buyers?.map((buyer) => {
+            return (
+              <div key={buyer.id}>
+                <Link
+                  to="/buyers/$buyerId"
+                  params={{
+                    buyerId: buyer.id,
+                  }}
+                  className="block py-2 px-3 text-blue-600"
+                  activeProps={{ className: `font-bold bg-gray-100` }}
+                >
+                  <div className="text-m">
+                    {buyer.buyer_name || t("noName")}
+                    <MatchRoute
+                      to="/buyers/$buyerId"
+                      search={{
+                        buyerId: buyer.id,
+                      }}
+                      params={{
+                        buyerId: buyer.id,
+                      }}
+                      pending
+                    >
+                      {(match) => <Spinner show={!!match} wait="delay-50" />}
+                    </MatchRoute>
+                  </div>
+                </Link>
+              </div>
+            );
+          })}
+        </div>
       </div>
       <div className="flex-initial border-l h-[calc(100vh-53px)] overflow-auto w-full">
         <Outlet />

@@ -127,7 +127,7 @@ function SellersComponent() {
 
   return (
     <div className="flex-1 flex">
-      <div className="divide-y h-[calc(100vh-53px)] overflow-auto min-w-[280px]">
+      <div className="divide-y h-[calc(100vh-53px)] min-w-[280px]">
         <div className="py-2 px-3 flex gap-2 items-center bg-gray-100">
           <div>{t("sort")}:</div>
           <Select
@@ -159,36 +159,38 @@ function SellersComponent() {
         >
           <FaPlus />
         </button>
-        {sellers?.map((seller) => {
-          return (
-            <div>
-              <Link
-                to="/sellers/$sellerId"
-                params={{
-                  sellerId: seller.id,
-                }}
-                className="block py-2 px-3 text-blue-600"
-                activeProps={{ className: `font-bold bg-gray-100` }}
-              >
-                <div className="text-m">
-                  {seller.id}-{seller.seller_name || t("noName")}
-                  <MatchRoute
-                    to="/sellers/$sellerId"
-                    search={{
-                      sellerId: seller.id,
-                    }}
-                    params={{
-                      sellerId: seller.id,
-                    }}
-                    pending
-                  >
-                    {(match) => <Spinner show={!!match} wait="delay-50" />}
-                  </MatchRoute>
-                </div>
-              </Link>
-            </div>
-          );
-        })}
+        <div className="max-h-[calc(100vh-215px)] overflow-auto">
+          {sellers?.map((seller) => {
+            return (
+              <div>
+                <Link
+                  to="/sellers/$sellerId"
+                  params={{
+                    sellerId: seller.id,
+                  }}
+                  className="block py-2 px-3 text-blue-600"
+                  activeProps={{ className: `font-bold bg-gray-100` }}
+                >
+                  <div className="text-m">
+                    {seller.id}-{seller.seller_name || t("noName")}
+                    <MatchRoute
+                      to="/sellers/$sellerId"
+                      search={{
+                        sellerId: seller.id,
+                      }}
+                      params={{
+                        sellerId: seller.id,
+                      }}
+                      pending
+                    >
+                      {(match) => <Spinner show={!!match} wait="delay-50" />}
+                    </MatchRoute>
+                  </div>
+                </Link>
+              </div>
+            );
+          })}
+        </div>
       </div>
       <div className="flex-initial border-l h-[calc(100vh-53px)] overflow-auto w-full">
         <Outlet />
