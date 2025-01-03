@@ -229,6 +229,7 @@ function SoldPiecesList() {
       {
         accessorKey: "label",
         size: 260,
+        header: () => t("summary"),
       },
       {
         accessorKey: "value",
@@ -323,6 +324,7 @@ function SoldPiecesList() {
           woodPiecesData={woodPieces}
           rowsSummary={rows_summary}
           colsSummary={columns_summary}
+          seller={seller}
         />
       );
     }

@@ -1,4 +1,5 @@
 import "@fontsource/roboto"; // Defaults to weight 400
+import { Font } from "@react-pdf/renderer";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   ErrorComponent,
@@ -6,10 +7,25 @@ import {
   createRouter,
 } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
+import { default as fontBold } from "./assets/fonts/Roboto-Bold.ttf";
+import { default as font } from "./assets/fonts/Roboto-Regular.ttf";
 import { Spinner } from "./components/Spinner";
 import "./index.css";
 import { routeTree } from "./routeTree.gen";
 import { auth } from "./utils/auth";
+
+Font.register({
+  family: "Roboto",
+  src: font,
+  fontWeight: "normal",
+  fontStyle: "normal",
+});
+Font.register({
+  family: "Roboto",
+  src: fontBold,
+  fontWeight: "bold",
+  fontStyle: "normal",
+});
 
 export const queryClient = new QueryClient();
 

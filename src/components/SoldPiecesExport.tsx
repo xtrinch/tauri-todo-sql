@@ -1,7 +1,15 @@
-import { Document, Font, Page, StyleSheet, View } from "@react-pdf/renderer";
+import {
+  Document,
+  Font,
+  Page,
+  StyleSheet,
+  Text,
+  View,
+} from "@react-pdf/renderer";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import font from "../assets/fonts/Roboto-Regular.ttf";
+import { Seller } from "../utils/sellerService";
 import { WoodPiece } from "../utils/woodPieceService";
 import { PdfTable, PdfTableCol } from "./PdfTable";
 
@@ -15,9 +23,26 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 12,
   },
+  topTable: {
+    marginBottom: 15,
+  },
+  header: {
+    fontSize: 24,
+    marginBottom: 15,
+    fontWeight: "bold",
+  },
+  address: {
+    fontSize: 14,
+    marginBottom: 14,
+  },
+  addressName: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
 
 export const SoldPiecesExport = (params: {
+  seller: Seller;
   woodPiecesData: WoodPiece[];
   rowsSummary: { label: string; value: string; bold?: boolean }[];
   colsSummary: PdfTableCol[];
@@ -77,7 +102,17 @@ export const SoldPiecesExport = (params: {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <View>
+        <View style={styles.header}>
+          <Text>{t("soldPieces")}</Text>
+        </View>
+        <View style={styles.address}>
+          <Text style={styles.addressName}>{params.seller.seller_name}</Text>
+          <Text>
+            {params.seller.address_line1}, {params.seller.address_line2}
+          </Text>
+          <Text>{params.seller.iban}</Text>
+        </View>
+        <View style={styles.topTable}>
           <PdfTable data={params.woodPiecesData} columns={columns} />
         </View>
         <View>

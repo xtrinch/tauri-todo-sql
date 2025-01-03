@@ -4,12 +4,12 @@ import { compact } from "lodash";
 const styles = StyleSheet.create({
   tableColStyle: {
     borderStyle: "solid",
-    borderColor: "#000",
+    borderColor: "#3f3f3f",
     borderWidth: 1,
     borderLeftWidth: 0,
     borderTopWidth: 0,
     paddingVertical: 4,
-    paddingHorizontal: 2,
+    paddingHorizontal: 3,
   },
   tableRowStyle: {
     flexDirection: "row",
@@ -19,32 +19,27 @@ const styles = StyleSheet.create({
   },
   firstTableColHeaderStyle: {
     borderStyle: "solid",
-    borderColor: "#000",
-    borderBottomColor: "#000",
+    borderColor: "#3f3f3f",
     borderWidth: 1,
     borderLeftWidth: 1,
     backgroundColor: "#bdbdbd",
   },
   firstTableColStyle: {
     borderStyle: "solid",
-    borderColor: "#000",
+    borderColor: "#3f3f3f",
     borderWidth: 1,
     borderLeftWidth: 1,
     borderTopWidth: 0,
   },
   tableColHeaderStyle: {
     borderStyle: "solid",
-    borderColor: "#000",
-    borderBottomColor: "#000",
+    borderColor: "#3f3f3f",
     borderWidth: 1,
     borderLeftWidth: 0,
     backgroundColor: "#bdbdbd",
-  },
-  tableCellHeaderStyle: {
     paddingVertical: 4,
-    paddingHorizontal: 2,
+    paddingHorizontal: 3,
     fontSize: 11,
-    fontWeight: "bold",
   },
 });
 

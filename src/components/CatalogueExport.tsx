@@ -1,19 +1,25 @@
-import { Document, Font, Page, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import font from "../assets/fonts/Roboto-Regular.ttf";
 import { WoodPiece } from "../utils/woodPieceService";
 import { PdfTable, PdfTableCol } from "./PdfTable";
-
-Font.register({ family: "Roboto", src: font });
 
 const styles = StyleSheet.create({
   page: {
     fontFamily: "Roboto",
-    flexDirection: "row",
+    flexDirection: "column",
     backgroundColor: "#E4E4E4",
     padding: 10,
     fontSize: 12,
+  },
+  header: {
+    fontSize: 24,
+    marginBottom: 15,
+    fontWeight: "bold",
+  },
+  subheader: {
+    fontSize: 16,
+    marginBottom: 10,
   },
 });
 
@@ -25,7 +31,7 @@ export const CatalogueExport = (params: { woodPiecesData: WoodPiece[] }) => {
       {
         accessorKey: "sequence_no",
         header: () => t("seqNo"),
-        size: 10,
+        size: 9,
       },
       {
         accessorKey: "plate_no",
@@ -40,7 +46,7 @@ export const CatalogueExport = (params: { woodPiecesData: WoodPiece[] }) => {
       {
         accessorKey: "width",
         header: () => t("widthCm"),
-        size: 15,
+        size: 10,
         meta: {
           type: "float",
         },
@@ -48,7 +54,7 @@ export const CatalogueExport = (params: { woodPiecesData: WoodPiece[] }) => {
       {
         accessorKey: "length",
         header: () => t("lengthM"),
-        size: 15,
+        size: 10,
         meta: {
           type: "float",
         },
@@ -56,7 +62,7 @@ export const CatalogueExport = (params: { woodPiecesData: WoodPiece[] }) => {
       {
         accessorKey: "volume",
         header: () => t("volumeM3"),
-        size: 15,
+        size: 10,
         meta: {
           type: "float",
         },
@@ -64,7 +70,7 @@ export const CatalogueExport = (params: { woodPiecesData: WoodPiece[] }) => {
       {
         accessorKey: "ident",
         header: () => t("sellerIdent"),
-        size: 15,
+        size: 20,
       },
     ],
     []
@@ -73,7 +79,15 @@ export const CatalogueExport = (params: { woodPiecesData: WoodPiece[] }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <PdfTable data={params.woodPiecesData} columns={columns} />
+        <View style={styles.header}>
+          <Text>{t("catalogue")}</Text>
+        </View>
+        <View style={styles.subheader}>
+          <Text>2024</Text>
+        </View>
+        <View>
+          <PdfTable data={params.woodPiecesData} columns={columns} />
+        </View>
       </Page>
     </Document>
   );
