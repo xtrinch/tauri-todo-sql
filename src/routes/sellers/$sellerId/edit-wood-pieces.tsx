@@ -144,7 +144,7 @@ function WoodPiecesList() {
         },
       },
     ],
-    []
+    [treeSpeciesData]
   );
 
   const table = useReactTable({

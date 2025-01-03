@@ -172,7 +172,7 @@ function SellersComponent() {
                   activeProps={{ className: `font-bold bg-gray-100` }}
                 >
                   <div className="text-m">
-                    {seller.id}-{seller.seller_name || t("noName")}
+                    {seller.seller_name || t("noName")}
                     <MatchRoute
                       to="/sellers/$sellerId"
                       search={{
