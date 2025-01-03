@@ -168,8 +168,10 @@ function SellersComponent() {
                   params={{
                     sellerId: seller.id,
                   }}
-                  className="block py-2 px-3 text-blue-600"
-                  activeProps={{ className: `font-bold bg-gray-100` }}
+                  className="block py-2 px-3 text-blue-600 border-b bg-[#eee]"
+                  activeProps={{
+                    className: `font-bold bg-gray-100 bg-gray-50!`,
+                  }}
                 >
                   <div className="text-m">
                     {seller.seller_name || t("noName")}

@@ -250,9 +250,11 @@ function RootComponent() {
                   <Link
                     to={to}
                     activeOptions={{}}
-                    className={`block py-2 px-3 text-blue-600`}
+                    className={`block py-2 px-3 text-blue-600 bg-[#eee]`}
                     // Make "active" links bold
-                    activeProps={{ className: `font-bold bg-gray-100` }}
+                    activeProps={{
+                      className: `font-bold bg-gray-100 bg-gray-50!`,
+                    }}
                   >
                     {label}
                   </Link>
