@@ -9,7 +9,8 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     flexDirection: "column",
     backgroundColor: "#E4E4E4",
-    padding: 10,
+    padding: "30px",
+    paddingLeft: "95px",
     fontSize: 12,
   },
   header: {
@@ -23,7 +24,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export const CatalogueExport = (params: { woodPiecesData: WoodPiece[] }) => {
+export const CatalogueExportWithPrices = (params: {
+  woodPiecesData: WoodPiece[];
+}) => {
   const { t } = useTranslation();
 
   const columns = useMemo<PdfTableCol[]>(
@@ -68,9 +71,12 @@ export const CatalogueExport = (params: { woodPiecesData: WoodPiece[] }) => {
         },
       },
       {
-        accessorKey: "ident",
-        header: () => t("sellerIdent"),
+        accessorKey: "offered_price",
+        header: () => t("offeredPriceM3"),
         size: 20,
+        meta: {
+          type: "float",
+        },
       },
     ],
     []

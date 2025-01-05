@@ -6,7 +6,6 @@ import {
   Table,
   TableMeta,
 } from "@tanstack/react-table";
-import { info } from "@tauri-apps/plugin-log";
 import { debounce } from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -71,7 +70,6 @@ export const TableCell = <TableItem,>({
     const val = getFormattedVal(newVal);
     // only call on edit if there's changes
     if (newVal !== valueOnFocus) {
-      info(`ID::::::::::::${rowId}`);
       (meta as CustomTableMeta)?.onEdit({
         id: rowId,
         [column.id]: val,
@@ -98,8 +96,6 @@ export const TableCell = <TableItem,>({
     const val = getFormattedVal(value);
     // only call on edit if there's changes
     if (value !== valueOnFocus) {
-      info(`IDBLUR::::::::::::${rowId}`);
-
       (meta as CustomTableMeta)?.onEdit({
         id: rowId,
         [column.id]: val,

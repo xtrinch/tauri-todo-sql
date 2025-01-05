@@ -8,7 +8,8 @@ import {
 import { save } from "@tauri-apps/plugin-dialog";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { CatalogueExport } from "../../components/CatalogueExport";
+import { CatalogueExportForBuyers } from "../../components/CatalogueExportForBuyers";
+import { CatalogueExportWithPrices } from "../../components/CatalogueExportWithPrices";
 import { CustomTable } from "../../components/CustomTable";
 import { TableCellReadonly } from "../../components/TableCellReadonly";
 import { saveToPDF } from "../../utils/pdf";
@@ -111,7 +112,7 @@ function CatalogueComponent() {
     meta: {},
   });
 
-  const exportToFile = async () => {
+  const exportToFileForBuyers = async () => {
     const path = await save({
       filters: [
         {
@@ -122,18 +123,44 @@ function CatalogueComponent() {
       defaultPath: "catalog",
     });
     if (path) {
-      saveToPDF(path, <CatalogueExport woodPiecesData={woodPieces} />);
+      saveToPDF(path, <CatalogueExportForBuyers woodPiecesData={woodPieces} />);
+    }
+  };
+
+  const exportToFileWithPrices = async () => {
+    const path = await save({
+      filters: [
+        {
+          name: "Catalog Filter",
+          extensions: ["pdf"],
+        },
+      ],
+      defaultPath: "catalog",
+    });
+    if (path) {
+      saveToPDF(
+        path,
+        <CatalogueExportWithPrices woodPiecesData={woodPieces} />
+      );
     }
   };
 
   return (
     <div className="p-3">
-      <button
-        className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
-        onClick={exportToFile}
-      >
-        {t("export")}
-      </button>
+      <div className="flex flex-row space-x-3 mb-3">
+        <button
+          className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+          onClick={exportToFileForBuyers}
+        >
+          {t("exportForBuyers")}
+        </button>
+        <button
+          className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+          onClick={exportToFileWithPrices}
+        >
+          {t("exportWithPrices")}
+        </button>
+      </div>
       <CustomTable
         table={table}
         trClassName="border-b"

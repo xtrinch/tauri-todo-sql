@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "@react-pdf/renderer";
-import { compact } from "lodash";
+import { compact, isNaN } from "lodash";
 
 const styles = StyleSheet.create({
   tableColStyle: {
@@ -53,6 +53,22 @@ export interface PdfTableCol {
 
 export const PdfTable = (params: { columns: PdfTableCol[]; data: any[] }) => {
   const { columns } = params;
+
+  const getValue = (col: PdfTableCol, piece: any) => {
+    let val = (piece as any)[col.accessorKey];
+
+    if (col.meta?.type === "float") {
+      if (val) {
+        val = parseFloat(val).toFixed(2);
+        if (isNaN(val)) {
+          val = "";
+        }
+      }
+    }
+
+    return val;
+  };
+
   return (
     <View style={styles.tableStyle}>
       <View style={styles.tableRowStyle} fixed>
@@ -72,7 +88,7 @@ export const PdfTable = (params: { columns: PdfTableCol[]; data: any[] }) => {
         ))}
       </View>
       {params.data.map((piece) => (
-        <View style={styles.tableRowStyle}>
+        <View style={styles.tableRowStyle} wrap={false}>
           {columns.map((col, idx) => (
             <View
               style={compact([
@@ -81,11 +97,7 @@ export const PdfTable = (params: { columns: PdfTableCol[]; data: any[] }) => {
                 { width: `${col.size}%` },
               ])}
             >
-              <Text>
-                {col.meta?.type === "float"
-                  ? parseFloat((piece as any)[col.accessorKey]).toFixed(2)
-                  : (piece as any)[col.accessorKey]}
-              </Text>
+              <Text>{getValue(col, piece)}</Text>
             </View>
           ))}
         </View>

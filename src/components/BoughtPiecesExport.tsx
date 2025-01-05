@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     flexDirection: "column",
     backgroundColor: "#E4E4E4",
-    padding: 10,
+    padding: "30px",
     fontSize: 12,
   },
   header: {

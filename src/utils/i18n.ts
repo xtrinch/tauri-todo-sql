@@ -96,6 +96,8 @@ const resources = {
       boughtPiecesPDFName: "bought-pieces",
       boughtPieces: "Bought pieces",
       noData: "No data",
+      exportForBuyers: "Export for buyers",
+      exportWithPrices: "Export with max. prices",
     },
   },
   sl: {
@@ -170,7 +172,7 @@ const resources = {
       usedTransport: "Uporabljen prevoz",
       transportCosts: "Strošek prevoza (18 EUR / m3)",
       transportVAT: "DDV za prevoz (22%)",
-      payout: "Za izplacilo",
+      payout: "Za izplačilo",
       editWoodPieces: "Uredi hlode",
       saveSuccess: "Uspešno shranjeno",
       couldNotDelete:
@@ -190,6 +192,8 @@ const resources = {
       boughtPiecesPDFName: "kupljeni-kosi",
       boughtPieces: "Kupljeni kosi",
       noData: "Ni podatkov",
+      exportForBuyers: "Izvozi za kupce",
+      exportWithPrices: "Izvozi s ponujenimi cenami",
     },
   },
 };

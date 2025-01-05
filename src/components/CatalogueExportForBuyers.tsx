@@ -1,19 +1,8 @@
-import {
-  Document,
-  Font,
-  Page,
-  StyleSheet,
-  Text,
-  View,
-} from "@react-pdf/renderer";
+import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import font from "../assets/fonts/Roboto-Regular.ttf";
-import { Seller } from "../utils/sellerService";
 import { WoodPiece } from "../utils/woodPieceService";
 import { PdfTable, PdfTableCol } from "./PdfTable";
-
-Font.register({ family: "Roboto", src: font });
 
 const styles = StyleSheet.create({
   page: {
@@ -21,31 +10,22 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "#E4E4E4",
     padding: "30px",
+    paddingLeft: "95px",
     fontSize: 12,
-  },
-  topTable: {
-    marginBottom: 15,
   },
   header: {
     fontSize: 24,
     marginBottom: 15,
     fontWeight: "bold",
   },
-  address: {
-    fontSize: 14,
-    marginBottom: 14,
-  },
-  addressName: {
+  subheader: {
     fontSize: 16,
-    fontWeight: "bold",
+    marginBottom: 10,
   },
 });
 
-export const SoldPiecesExport = (params: {
-  seller: Seller;
+export const CatalogueExportForBuyers = (params: {
   woodPiecesData: WoodPiece[];
-  rowsSummary: { label: string; value: string; bold?: boolean }[];
-  colsSummary: PdfTableCol[];
 }) => {
   const { t } = useTranslation();
 
@@ -54,7 +34,7 @@ export const SoldPiecesExport = (params: {
       {
         accessorKey: "sequence_no",
         header: () => t("seqNo"),
-        size: 10,
+        size: 9,
       },
       {
         accessorKey: "plate_no",
@@ -69,7 +49,7 @@ export const SoldPiecesExport = (params: {
       {
         accessorKey: "width",
         header: () => t("widthCm"),
-        size: 15,
+        size: 10,
         meta: {
           type: "float",
         },
@@ -77,7 +57,7 @@ export const SoldPiecesExport = (params: {
       {
         accessorKey: "length",
         header: () => t("lengthM"),
-        size: 15,
+        size: 10,
         meta: {
           type: "float",
         },
@@ -85,15 +65,15 @@ export const SoldPiecesExport = (params: {
       {
         accessorKey: "volume",
         header: () => t("volumeM3"),
-        size: 15,
+        size: 10,
         meta: {
           type: "float",
         },
       },
       {
-        accessorKey: "ident",
-        header: () => t("sellerIdent"),
-        size: 15,
+        accessorKey: "no_key",
+        header: () => t("offeredPriceM3"),
+        size: 20,
       },
     ],
     []
@@ -103,20 +83,13 @@ export const SoldPiecesExport = (params: {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          <Text>{t("soldPieces")}</Text>
+          <Text>{t("catalogue")}</Text>
         </View>
-        <View style={styles.address}>
-          <Text style={styles.addressName}>{params.seller.seller_name}</Text>
-          <Text>
-            {params.seller.address_line1}, {params.seller.address_line2}
-          </Text>
-          <Text>{params.seller.iban}</Text>
-        </View>
-        <View style={styles.topTable}>
-          <PdfTable data={params.woodPiecesData} columns={columns} />
+        <View style={styles.subheader}>
+          <Text>2024</Text>
         </View>
         <View>
-          <PdfTable data={params.rowsSummary} columns={params.colsSummary} />
+          <PdfTable data={params.woodPiecesData} columns={columns} />
         </View>
       </Page>
     </Document>
