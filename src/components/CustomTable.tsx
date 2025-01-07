@@ -1,7 +1,6 @@
 import { flexRender, Row, Table } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { memo, useCallback, useRef } from "react";
-import { useTranslation } from "react-i18next";
 import { CustomTableMeta } from "./TableCell";
 
 export function CustomTable<TableItem>({
@@ -10,15 +9,15 @@ export function CustomTable<TableItem>({
   trhClassName,
   trfClassName,
   containerClassName,
+  sizeEstimate = 45,
 }: {
   table: Table<TableItem>;
   trClassName?: string;
   trhClassName?: string;
   trfClassName?: string;
   containerClassName?: string;
+  sizeEstimate?: number;
 }) {
-  const { t } = useTranslation();
-
   const parentRef = useRef<HTMLDivElement>(null);
   const { rows } = table.getRowModel();
   const getItemKey = useCallback((index: number) => {
@@ -29,10 +28,9 @@ export function CustomTable<TableItem>({
     count:
       rows.length + ((table.options?.meta as CustomTableMeta).onAdd ? 1 : 0),
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 45,
+    estimateSize: () => sizeEstimate,
     overscan: 20,
     getItemKey: getItemKey,
-    // scrollToFn: scrollToFn,
   });
   const items = virtualizer.getVirtualItems();
 
@@ -51,7 +49,7 @@ export function CustomTable<TableItem>({
     >
       <div
         style={{
-          height: `${virtualizer.getTotalSize() + 45}px`,
+          height: `${virtualizer.getTotalSize() + sizeEstimate}px`,
           paddingTop,
           paddingBottom,
         }}

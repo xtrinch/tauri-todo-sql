@@ -165,7 +165,7 @@ function ListInventoryComponent() {
       {
         accessorKey: "buyer_name",
         header: () => t("buyer"),
-        size: 80,
+        size: 200,
         meta: {
           readonly: true,
         },

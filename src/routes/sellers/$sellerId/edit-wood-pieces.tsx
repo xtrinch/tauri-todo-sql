@@ -107,14 +107,6 @@ function WoodPiecesList() {
           type: "float",
         },
       },
-      // {
-      //   accessorKey: "volume",
-      //   header: () => t("volumeM3"),
-      //   size: 80,
-      //   meta: {
-      //     type: "float",
-      //   },
-      // },
       {
         accessorKey: "min_price",
         header: () => t("minPrice"),
