@@ -109,7 +109,7 @@ function SoldPiecesList() {
       {
         accessorKey: "buyer_name",
         header: () => t("buyer"),
-        size: 80,
+        size: 180,
         meta: {
           readonly: true,
         },
