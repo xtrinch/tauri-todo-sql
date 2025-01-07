@@ -12,7 +12,6 @@ import { default as font } from "./assets/fonts/Roboto-Regular.ttf";
 import { Spinner } from "./components/Spinner";
 import "./index.css";
 import { routeTree } from "./routeTree.gen";
-import { auth } from "./utils/auth";
 
 Font.register({
   family: "Roboto",
@@ -38,7 +37,6 @@ const router = createRouter({
   ),
   defaultErrorComponent: ({ error }) => <ErrorComponent error={error} />,
   context: {
-    auth: undefined!, // We'll inject this when we render
     queryClient,
   },
   defaultPreload: "intent",
@@ -61,9 +59,6 @@ function App() {
         defaultPreload="intent"
         defaultPendingMs={0}
         defaultPendingMinMs={0}
-        context={{
-          auth,
-        }}
       />
     </>
   );

@@ -16,8 +16,8 @@ import { useTranslation } from "react-i18next";
 import { FaArrowRotateLeft, FaRegFloppyDisk } from "react-icons/fa6";
 import { Spinner } from "../components/Spinner";
 import { queryClient } from "../main";
-import type { Auth } from "../utils/auth";
 import { buyersQueryOptions } from "../utils/buyerService";
+import { confirm } from "../utils/confirm";
 import { unsetDatabase } from "../utils/database";
 import { sellersQueryOptions } from "../utils/sellerService";
 import { treeSpeciesQueryOptions } from "../utils/treeSpeciesService";
@@ -30,7 +30,6 @@ function RouterSpinner() {
 }
 
 export const Route = createRootRouteWithContext<{
-  auth: Auth;
   queryClient: QueryClient;
 }>()({
   component: RootComponent,
@@ -84,8 +83,10 @@ function RootComponent() {
     await queryClient.invalidateQueries();
   };
 
-  const resetToSaved = () => {
-    loadOnly();
+  const resetToSaved = async () => {
+    if (await confirm({ confirmation: t("areYouSure") })) {
+      loadOnly();
+    }
   };
 
   const savePath = async (path: string) => {

@@ -98,6 +98,9 @@ const resources = {
       noData: "No data",
       exportForBuyers: "Export for buyers",
       exportWithPrices: "Export with max. prices",
+      cancel: "Cancel",
+      ok: "Da",
+      areYouSure: "Are you sure?",
     },
   },
   sl: {
@@ -194,6 +197,9 @@ const resources = {
       noData: "Ni podatkov",
       exportForBuyers: "Izvozi za kupce",
       exportWithPrices: "Izvozi s ponujenimi cenami",
+      cancel: "Zavrni",
+      ok: "Ok",
+      areYouSure: "Ali ste prepričani?",
     },
   },
 };
