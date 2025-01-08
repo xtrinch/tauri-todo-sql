@@ -47,3 +47,9 @@ th {
 button:hover, a:hover {
     opacity: 0.8;
 }
+
+
+input:focus {
+    @apply border-blue-500;
+    @apply outline-none;
+}

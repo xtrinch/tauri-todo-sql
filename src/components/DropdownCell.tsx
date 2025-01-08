@@ -100,6 +100,14 @@ export const DropdownCell = <TableItem,>({
           onChange={onChange}
           value={value}
           placeholder={t("select")}
+          styles={{
+            // ...styles,
+            control: (base, state) => ({
+              ...base,
+              "&:hover": { borderWidth: 1 }, // border style on hover
+              boxShadow: "none", // no box-shadow
+            }),
+          }}
         />
       )}
     </div>
