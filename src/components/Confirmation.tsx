@@ -1,5 +1,6 @@
 import { confirmable, ConfirmDialog } from "react-confirm";
 import { useTranslation } from "react-i18next";
+import { FaX } from "react-icons/fa6";
 
 export interface Props {
   okLabel?: string;
@@ -21,15 +22,20 @@ const Confirmation: ConfirmDialog<Props, boolean> = (props) => {
       }}
     >
       <div
-        className="relative p-4 bg-gray-100 rounded-lg"
+        className="relative bg-gray-100 rounded-lg min-w-[250px]"
         onClick={(e) => {
           e.stopPropagation();
         }}
       >
         <div className="flex space-y-3 flex-col">
-          <div>{props.title}</div>
-          <div>{props.confirmation}</div>
-          <div className="flex flex-row space-x-3">
+          <div className="flex flex-row p-4 border-b bg-gray-200 rounded-t-lg">
+            <div className="flex-1">{props.title || t("confirmNeeded")}</div>
+            <button className="bg-red-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 w-10 h-10 flex justify-center items-center text-xl">
+              <FaX />
+            </button>
+          </div>
+          <div className="px-4 pt-4">{props.confirmation}</div>
+          <div className="flex flex-row space-x-3 p-4 justify-between">
             <button
               onClick={() => props.proceed(false)}
               className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"

@@ -99,8 +99,9 @@ const resources = {
       exportForBuyers: "Export for buyers",
       exportWithPrices: "Export with max. prices",
       cancel: "Cancel",
-      ok: "Da",
+      ok: "Yes",
       areYouSure: "Are you sure?",
+      confirmNeeded: "Confirmation needed",
     },
   },
   sl: {
@@ -198,8 +199,9 @@ const resources = {
       exportForBuyers: "Izvozi za kupce",
       exportWithPrices: "Izvozi s ponujenimi cenami",
       cancel: "Zavrni",
-      ok: "Ok",
+      ok: "Sprejmi",
       areYouSure: "Ali ste prepričani?",
+      confirmNeeded: "Potrebna potrditev",
     },
   },
 };
