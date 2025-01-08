@@ -6,6 +6,7 @@ import {
   createRootRouteWithContext,
   useRouterState,
 } from "@tanstack/react-router";
+import { useDetectClickOutside } from "react-detect-click-outside";
 // import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
@@ -129,6 +130,19 @@ function RootComponent() {
     }
   };
 
+  const [fileMenuOpen, setFileMenuOpen] = useState<boolean>(false);
+  const drodownRef = useDetectClickOutside({
+    onTriggered: () => {
+      info("CLICK OUTSIDE" + fileMenuOpen);
+      if (fileMenuOpen) {
+        setFileMenuOpen(false);
+      }
+    },
+  });
+  const toggleFileMenu = () => {
+    setFileMenuOpen(!fileMenuOpen);
+  };
+
   useEffect(() => {
     if (filePath) {
       localStorage.setItem("save_file_path", filePath);
@@ -193,7 +207,7 @@ function RootComponent() {
             </div>
             <div className="text-sm flex flex-col items-end">
               <div>{filePath || ""}</div>
-              {changes && <div>{t("unsavedChanges")}</div>}
+              {(changes || !filePath) && <div>{t("unsavedChanges")}</div>}
             </div>
             {filePath && (
               <>
@@ -204,26 +218,8 @@ function RootComponent() {
                 >
                   <FaRegFloppyDisk />
                 </button>
-                <button
-                  className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
-                  onClick={() => resetToSaved()}
-                >
-                  {t("resetToSaved")}
-                </button>
               </>
             )}
-            <button
-              className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
-              onClick={() => saveAs()}
-            >
-              {t("saveAs")}
-            </button>
-            <button
-              className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
-              onClick={() => loadFile()}
-            >
-              {t("open")}
-            </button>
             <button
               className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10 text-2xl"
               onClick={() => undo()}
@@ -231,6 +227,76 @@ function RootComponent() {
             >
               <FaArrowRotateLeft />
             </button>
+            <div className="relative inline-block text-left">
+              <div className="">
+                <button
+                  type="button"
+                  className="bg-blue-400 h-[40px] text-white inline-flex w-full justify-center items-center gap-x-1.5 rounded-md px-3 text-sm font-semibold "
+                  id="menu-button"
+                  aria-expanded="true"
+                  aria-haspopup="true"
+                  onMouseEnter={() => setFileMenuOpen(true)}
+                >
+                  {t("options")}
+                  <svg
+                    className="-mr-1 size-5 text-white"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    data-slot="icon"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              {fileMenuOpen && (
+                <div
+                  ref={drodownRef}
+                  className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none overflow-hidden"
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="menu-button"
+                  tabIndex={-1}
+                >
+                  <div role="none">
+                    {filePath && (
+                      <>
+                        <button
+                          className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
+                          onClick={() => saveOnly()}
+                          title={t("save")}
+                        >
+                          {t("save")}
+                        </button>
+                        <button
+                          className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
+                          onClick={() => resetToSaved()}
+                        >
+                          {t("resetToSaved")}
+                        </button>
+                      </>
+                    )}
+                    <button
+                      className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
+                      onClick={() => saveAs()}
+                    >
+                      {t("saveAs")}
+                    </button>
+                    <button
+                      className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
+                      onClick={() => loadFile()}
+                    >
+                      {t("open")}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className={`flex-1 flex`}>

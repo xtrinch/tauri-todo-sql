@@ -2150,6 +2150,11 @@ react-confirm@^0.3.0-7:
   resolved "https://registry.yarnpkg.com/react-confirm/-/react-confirm-0.3.0-7.tgz#d156a197240b7758a31f0d2dc074c1949cf9f1a7"
   integrity sha512-DxEoq9uKG2Ku4qs1HHcbygbIJervr73L3uULihwQsl7dr2Ca2ltBRoM0vh7G1FPV5YJAJSPmaIbEiGpmTubBKg==
 
+react-detect-click-outside@^1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/react-detect-click-outside/-/react-detect-click-outside-1.1.7.tgz#8dd5766544475ab0d55084b3e2a35165e9a47854"
+  integrity sha512-dMrBZD7JW0Eh/uYNmMLTNwFj6afGYxAnc80fDSGJdjXjxJddH8ZazyMg2emyb8CAx9Hilr+r1fY+tm7O7m9eJg==
+
 react-dom@^18.2.0:
   version "18.3.1"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.3.1.tgz#c2265d79511b57d479b3dd3fdfa51536494c5cb4"

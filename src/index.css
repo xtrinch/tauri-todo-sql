@@ -43,3 +43,7 @@ th {
     font-size: 13px;
     text-align: left;
 }
+
+button:hover {
+    opacity: 0.8;
+}

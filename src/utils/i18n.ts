@@ -102,6 +102,7 @@ const resources = {
       ok: "Yes",
       areYouSure: "Are you sure?",
       confirmNeeded: "Confirmation needed",
+      options: "Options",
     },
   },
   sl: {
@@ -202,6 +203,7 @@ const resources = {
       ok: "Sprejmi",
       areYouSure: "Ali ste prepričani?",
       confirmNeeded: "Potrebna potrditev",
+      options: "Možnosti",
     },
   },
 };
