@@ -44,6 +44,6 @@ th {
     text-align: left;
 }
 
-button:hover {
+button:hover, a:hover {
     opacity: 0.8;
 }

@@ -262,6 +262,7 @@ function RootComponent() {
                   aria-orientation="vertical"
                   aria-labelledby="menu-button"
                   tabIndex={-1}
+                  onMouseLeave={() => setFileMenuOpen(false)}
                 >
                   <div role="none">
                     {filePath && (
@@ -313,7 +314,7 @@ function RootComponent() {
               ] as const
             ).map(([to, label]) => {
               return (
-                <div key={to}>
+                <div key={to} className="">
                   <Link
                     to={to}
                     activeOptions={{}}
