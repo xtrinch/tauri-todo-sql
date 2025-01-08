@@ -164,7 +164,7 @@ function SoldPiecesList() {
         table={table}
         trClassName="border-b"
         trhClassName="border-b"
-        containerClassName="p-3 h-[calc(100vh-298px)]"
+        containerClassName="p-3 h-[calc(100vh-280px)]"
       />
     </div>
   );

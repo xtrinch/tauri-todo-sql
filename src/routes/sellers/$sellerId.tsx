@@ -124,21 +124,21 @@ function SellerComponent() {
         accessorKey: "is_vat_liable",
         header: () => t("isVatLiable"),
         meta: {},
-        size: 70,
+        size: 110,
         cell: TableCellCheckbox,
       },
       {
         accessorKey: "used_transport",
         header: () => t("usedTransport"),
         meta: {},
-        size: 70,
+        size: 120,
         cell: TableCellCheckbox,
       },
       {
         accessorKey: "used_logging",
         header: () => t("usedLogging"),
         meta: {},
-        size: 70,
+        size: 90,
         cell: TableCellCheckbox,
       },
     ],
@@ -192,8 +192,8 @@ function SellerComponent() {
     <div className="flex flex-col">
       <div className="flex flex-col space-y-3 p-3">
         <div>
-          <CustomTable table={table} />
-          <CustomTable table={table1} />
+          <CustomTable table={table} sizeEstimate={35} />
+          <CustomTable table={table1} sizeEstimate={35} />
         </div>
       </div>
       <div className="flex flex-wrap divide-x border-b">

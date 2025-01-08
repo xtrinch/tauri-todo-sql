@@ -331,7 +331,7 @@ function SoldPiecesList() {
   };
 
   return (
-    <div className="p-3 h-[calc(100vh-298px)] overflow-auto">
+    <div className="p-3 h-[calc(100vh-280px)] overflow-auto">
       <button
         className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
         onClick={exportToFile}

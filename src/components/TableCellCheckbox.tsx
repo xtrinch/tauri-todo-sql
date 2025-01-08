@@ -51,7 +51,7 @@ export const TableCellCheckbox = <TableItem,>({
   }, [initialValue, rowId]);
 
   return (
-    <div className="w-full flex justify-center items-center">
+    <div className="w-full flex px-1">
       <input
         type="checkbox"
         checked={value as boolean}
