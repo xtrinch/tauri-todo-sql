@@ -301,6 +301,7 @@ function RootComponent() {
           <div className={`divide-y w-[220px] min-w-[220px]`}>
             {(
               [
+                ["/statistics", `${t("statistics")}`],
                 ["/sellers", `${t("sellers")} (${sellers.length})`],
                 ["/buyers", `${t("buyers")} (${buyers.length})`],
                 ["/inventory", `${t("inventory")} (${woodPiecesCount})`],

@@ -1,6 +1,14 @@
-import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import {
+  Document,
+  Image,
+  Page,
+  StyleSheet,
+  Text,
+  View,
+} from "@react-pdf/renderer";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import headerImage from "../assets/images/header-image.png"; // Import the image
 import { WoodPiece } from "../utils/woodPieceService";
 import { PdfTable, PdfTableCol } from "./PdfTable";
 
@@ -8,19 +16,32 @@ const styles = StyleSheet.create({
   page: {
     fontFamily: "Roboto",
     flexDirection: "column",
-    backgroundColor: "#E4E4E4",
+    backgroundColor: "#fff",
     padding: "30px",
     paddingLeft: "95px",
     fontSize: 12,
   },
+  firstPage: {
+    textAlign: "center",
+  },
   header: {
     fontSize: 24,
-    marginBottom: 15,
+    marginBottom: 30,
     fontWeight: "bold",
   },
   subheader: {
     fontSize: 16,
-    marginBottom: 10,
+    marginTop: 250,
+  },
+  image: {
+    width: 300, // Set the width of the image
+    height: "auto", // Maintain aspect ratio
+    borderWidth: "2px",
+    borderColor: "black",
+    borderStyle: "solid",
+    marginBottom: 280,
+    marginLeft: "auto",
+    marginRight: "auto",
   },
 });
 
@@ -51,7 +72,7 @@ export const CatalogueExportForBuyers = (params: {
         header: () => t("widthCm"),
         size: 10,
         meta: {
-          type: "float",
+          type: "integer",
         },
       },
       {
@@ -60,6 +81,7 @@ export const CatalogueExportForBuyers = (params: {
         size: 10,
         meta: {
           type: "float",
+          decimalPlaces: 1,
         },
       },
       {
@@ -81,13 +103,21 @@ export const CatalogueExportForBuyers = (params: {
 
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" style={{ ...styles.page, ...styles.firstPage }}>
+        <View>
+          <Image src={headerImage} style={styles.image} />
+        </View>
+        <View style={styles.header}>
+          <Text>{t("catalogueTitle")}</Text>
+        </View>
         <View style={styles.header}>
           <Text>{t("catalogue")}</Text>
         </View>
         <View style={styles.subheader}>
-          <Text>2024</Text>
+          <Text>{t("catalogueSubtext")}</Text>
         </View>
+      </Page>
+      <Page size="A4" style={styles.page}>
         <View>
           <PdfTable data={params.woodPiecesData} columns={columns} />
         </View>

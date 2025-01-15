@@ -159,19 +159,19 @@ export async function postWoodPiece(
       "width", 
       "plate_no", 
       "seller_id",
-      "sequence_no",
       "min_price",
-      "bypass_min_price"
+      "bypass_min_price",
+      "sequence_no"
     ) values (
       $1, 
       $2, 
       $3, 
       $4, 
-      (SELECT COALESCE(MAX("sequence_no"),0)+1 FROM "wood_pieces"),
+      $5,
       $6,
       $7
     )`,
-    [0.0, 0.0, "", partialWoodPiece.seller_id, 0.0, 0]
+    ["", "", "", partialWoodPiece.seller_id, "", 0, ""]
   );
   return {
     ...woodPiece,

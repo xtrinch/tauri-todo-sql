@@ -54,6 +54,8 @@ function WoodPiecesList() {
       seller_id: params.sellerId,
       relations: [],
       language: i18n.language as "sl" | "en",
+      sortBy: "id",
+      sortDirection: "ASC",
     })
   );
   const woodPieces = woodPiecesQuery.data;
@@ -92,19 +94,20 @@ function WoodPiecesList() {
           }),
       },
       {
-        accessorKey: "width",
-        header: () => t("widthCm"),
-        size: 80,
-        meta: {
-          type: "float",
-        },
-      },
-      {
         accessorKey: "length",
         header: () => t("lengthM"),
         size: 80,
         meta: {
           type: "float",
+          decimalPlaces: 1,
+        },
+      },
+      {
+        accessorKey: "width",
+        header: () => t("widthCm"),
+        size: 80,
+        meta: {
+          type: "integer",
         },
       },
       {

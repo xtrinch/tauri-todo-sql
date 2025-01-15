@@ -84,7 +84,7 @@ function BoughtPiecesList() {
         header: () => t("widthCm"),
         size: 80,
         meta: {
-          type: "float",
+          type: "integer",
         },
       },
       {
@@ -93,6 +93,7 @@ function BoughtPiecesList() {
         size: 80,
         meta: {
           type: "float",
+          decimalPlaces: 1,
         },
       },
       {

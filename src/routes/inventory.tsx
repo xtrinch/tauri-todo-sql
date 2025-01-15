@@ -13,7 +13,8 @@ export const Route = createFileRoute("/inventory")({
 
     if (shouldRedirect) {
       redirect({
-        to: "/inventory/edit",
+        // to: "/inventory/edit",
+        to: "/inventory/list",
         throw: true,
       });
     }
@@ -28,7 +29,7 @@ function WoodPiecesList() {
       <div className="flex flex-wrap divide-x border-b">
         {(
           [
-            ["/inventory/edit", t("edit")],
+            // ["/inventory/edit", t("edit")],
             ["/inventory/list", t("list")],
             ["/inventory/catalogue", t("catalogue")],
           ] as const

@@ -12,6 +12,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export interface CustomColumnMeta extends ColumnMeta<{}, undefined> {
   type?: string;
   readonly?: boolean;
+  decimalPlaces?: number;
 }
 export interface CustomTableMeta extends TableMeta<{}> {
   onAdd?: () => void;
@@ -34,19 +35,19 @@ export const TableCell = <TableItem,>({
   const rowId = (row.original as { id: number }).id;
   const columnMeta = column.columnDef.meta as CustomColumnMeta;
   const isReadonly = columnMeta?.readonly;
-  const input = useRef(null);
+  const input = useRef<HTMLInputElement>(null);
 
   const getFormattedVal = (val: any) => {
     if (columnMeta?.type === "float") {
-      val = parseFloat(val as string).toFixed(2);
+      val = parseFloat(val as string).toFixed(columnMeta.decimalPlaces || 2);
       if (isNaN(val as number)) {
-        val = (0).toFixed(2);
+        val = "";
       }
     }
     if (columnMeta?.type === "integer") {
       val = parseInt(val as string);
       if (isNaN(val as number)) {
-        val = 0;
+        val = "";
       }
     }
 
@@ -118,6 +119,11 @@ export const TableCell = <TableItem,>({
     }
   }, [initialValue, rowId]);
 
+  useEffect(() => {
+    // TODO: this messes up the sequence number because it's ordered by it!!
+    input.current?.blur();
+  }, [rowId]);
+
   return (
     <>
       <input
@@ -126,7 +132,6 @@ export const TableCell = <TableItem,>({
         className="bg-green h-10 min-w-[100%] max-w-[100%] border p-1 px-2 rounded"
         onChange={onChange}
         onBlur={onBlur}
-        // save={() => setValue(getFormattedVal(value))}
         readOnly={columnMeta?.readonly}
         tabIndex={columnMeta?.readonly ? -1 : undefined}
         onFocus={onFocus}

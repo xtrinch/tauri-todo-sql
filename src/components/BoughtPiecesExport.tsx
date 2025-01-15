@@ -78,7 +78,7 @@ export const BoughtPiecesExport = (params: {
         header: () => t("widthCm"),
         size: 15,
         meta: {
-          type: "float",
+          type: "integer",
         },
       },
       {
@@ -87,6 +87,7 @@ export const BoughtPiecesExport = (params: {
         size: 15,
         meta: {
           type: "float",
+          decimalPlaces: 1,
         },
       },
       {

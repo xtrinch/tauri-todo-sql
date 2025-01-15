@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as StatisticsImport } from './routes/statistics'
 import { Route as SellersImport } from './routes/sellers'
 import { Route as InventoryImport } from './routes/inventory'
 import { Route as BuyersImport } from './routes/buyers'
@@ -28,6 +29,12 @@ import { Route as BuyersBuyerIdWoodPieceOffersListImport } from './routes/buyers
 import { Route as BuyersBuyerIdBoughtPiecesListImport } from './routes/buyers/$buyerId/bought-pieces-list'
 
 // Create/Update Routes
+
+const StatisticsRoute = StatisticsImport.update({
+  id: '/statistics',
+  path: '/statistics',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const SellersRoute = SellersImport.update({
   id: '/sellers',
@@ -154,6 +161,13 @@ declare module '@tanstack/react-router' {
       path: '/sellers'
       fullPath: '/sellers'
       preLoaderRoute: typeof SellersImport
+      parentRoute: typeof rootRoute
+    }
+    '/statistics': {
+      id: '/statistics'
+      path: '/statistics'
+      fullPath: '/statistics'
+      preLoaderRoute: typeof StatisticsImport
       parentRoute: typeof rootRoute
     }
     '/buyers/$buyerId': {
@@ -311,6 +325,7 @@ export interface FileRoutesByFullPath {
   '/buyers': typeof BuyersRouteWithChildren
   '/inventory': typeof InventoryRouteWithChildren
   '/sellers': typeof SellersRouteWithChildren
+  '/statistics': typeof StatisticsRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
   '/inventory/catalogue': typeof InventoryCatalogueRoute
   '/inventory/edit': typeof InventoryEditRoute
@@ -329,6 +344,7 @@ export interface FileRoutesByTo {
   '/buyers': typeof BuyersRouteWithChildren
   '/inventory': typeof InventoryRouteWithChildren
   '/sellers': typeof SellersRouteWithChildren
+  '/statistics': typeof StatisticsRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
   '/inventory/catalogue': typeof InventoryCatalogueRoute
   '/inventory/edit': typeof InventoryEditRoute
@@ -348,6 +364,7 @@ export interface FileRoutesById {
   '/buyers': typeof BuyersRouteWithChildren
   '/inventory': typeof InventoryRouteWithChildren
   '/sellers': typeof SellersRouteWithChildren
+  '/statistics': typeof StatisticsRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
   '/inventory/catalogue': typeof InventoryCatalogueRoute
   '/inventory/edit': typeof InventoryEditRoute
@@ -368,6 +385,7 @@ export interface FileRouteTypes {
     | '/buyers'
     | '/inventory'
     | '/sellers'
+    | '/statistics'
     | '/buyers/$buyerId'
     | '/inventory/catalogue'
     | '/inventory/edit'
@@ -385,6 +403,7 @@ export interface FileRouteTypes {
     | '/buyers'
     | '/inventory'
     | '/sellers'
+    | '/statistics'
     | '/buyers/$buyerId'
     | '/inventory/catalogue'
     | '/inventory/edit'
@@ -402,6 +421,7 @@ export interface FileRouteTypes {
     | '/buyers'
     | '/inventory'
     | '/sellers'
+    | '/statistics'
     | '/buyers/$buyerId'
     | '/inventory/catalogue'
     | '/inventory/edit'
@@ -421,6 +441,7 @@ export interface RootRouteChildren {
   BuyersRoute: typeof BuyersRouteWithChildren
   InventoryRoute: typeof InventoryRouteWithChildren
   SellersRoute: typeof SellersRouteWithChildren
+  StatisticsRoute: typeof StatisticsRoute
   TreeSpeciesEditRoute: typeof TreeSpeciesEditRoute
 }
 
@@ -429,6 +450,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuyersRoute: BuyersRouteWithChildren,
   InventoryRoute: InventoryRouteWithChildren,
   SellersRoute: SellersRouteWithChildren,
+  StatisticsRoute: StatisticsRoute,
   TreeSpeciesEditRoute: TreeSpeciesEditRoute,
 }
 
@@ -446,6 +468,7 @@ export const routeTree = rootRoute
         "/buyers",
         "/inventory",
         "/sellers",
+        "/statistics",
         "/treeSpecies/edit"
       ]
     },
@@ -471,6 +494,9 @@ export const routeTree = rootRoute
       "children": [
         "/sellers/$sellerId"
       ]
+    },
+    "/statistics": {
+      "filePath": "statistics.tsx"
     },
     "/buyers/$buyerId": {
       "filePath": "buyers/$buyerId.tsx",

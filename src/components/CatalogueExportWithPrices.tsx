@@ -51,7 +51,7 @@ export const CatalogueExportWithPrices = (params: {
         header: () => t("widthCm"),
         size: 10,
         meta: {
-          type: "float",
+          type: "integer",
         },
       },
       {
@@ -60,6 +60,7 @@ export const CatalogueExportWithPrices = (params: {
         size: 10,
         meta: {
           type: "float",
+          decimalPlaces: 1,
         },
       },
       {

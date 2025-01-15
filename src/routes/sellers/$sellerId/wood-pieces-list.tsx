@@ -62,19 +62,20 @@ function SoldPiecesList() {
         size: 200,
       },
       {
-        accessorKey: "width",
-        header: () => t("widthCm"),
-        size: 80,
-        meta: {
-          type: "float",
-        },
-      },
-      {
         accessorKey: "length",
         header: () => t("lengthM"),
         size: 80,
         meta: {
           type: "float",
+          decimalPlaces: 1,
+        },
+      },
+      {
+        accessorKey: "width",
+        header: () => t("widthCm"),
+        size: 80,
+        meta: {
+          type: "integer",
         },
       },
       {
