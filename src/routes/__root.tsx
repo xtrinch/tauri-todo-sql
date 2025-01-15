@@ -139,9 +139,6 @@ function RootComponent() {
       }
     },
   });
-  const toggleFileMenu = () => {
-    setFileMenuOpen(!fileMenuOpen);
-  };
 
   useEffect(() => {
     if (filePath) {

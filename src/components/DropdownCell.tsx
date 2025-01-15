@@ -102,7 +102,7 @@ export const DropdownCell = <TableItem,>({
           placeholder={t("select")}
           styles={{
             // ...styles,
-            control: (base, state) => ({
+            control: (base) => ({
               ...base,
               "&:hover": { borderWidth: 1 }, // border style on hover
               boxShadow: "none", // no box-shadow
