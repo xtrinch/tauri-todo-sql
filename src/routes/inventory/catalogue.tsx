@@ -13,6 +13,7 @@ import { CatalogueExportWithPrices } from "../../components/CatalogueExportWithP
 import { CustomTable } from "../../components/CustomTable";
 import { TableCellReadonly } from "../../components/TableCellReadonly";
 import { saveToPDF } from "../../utils/pdf";
+import { statsQueryOptions } from "../../utils/statsService";
 import { treeSpeciesQueryOptions } from "../../utils/treeSpeciesService";
 import {
   WoodPiece,
@@ -35,6 +36,13 @@ function CatalogueComponent() {
     })
   );
   const woodPieces = woodPiecesQuery.data;
+
+  const statisticsQuery = useSuspenseQuery(
+    statsQueryOptions({
+      ...Route.useLoaderDeps(),
+    })
+  );
+  const statistics = statisticsQuery.data;
 
   const treeSpeciesQuery = useSuspenseQuery(
     treeSpeciesQueryOptions({ language: i18n.language as "en" | "sl" })
@@ -124,7 +132,13 @@ function CatalogueComponent() {
       defaultPath: "catalog",
     });
     if (path) {
-      saveToPDF(path, <CatalogueExportForBuyers woodPiecesData={woodPieces} />);
+      saveToPDF(
+        path,
+        <CatalogueExportForBuyers
+          woodPiecesData={woodPieces}
+          statistics={statistics}
+        />
+      );
     }
   };
 
@@ -141,7 +155,10 @@ function CatalogueComponent() {
     if (path) {
       saveToPDF(
         path,
-        <CatalogueExportWithPrices woodPiecesData={woodPieces} />
+        <CatalogueExportWithPrices
+          woodPiecesData={woodPieces}
+          statistics={statistics}
+        />
       );
     }
   };

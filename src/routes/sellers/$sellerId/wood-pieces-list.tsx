@@ -166,6 +166,7 @@ function SoldPiecesList() {
         trClassName="border-b"
         trhClassName="border-b"
         containerClassName="p-3 h-[calc(100vh-280px)]"
+        hasFooter={true}
       />
     </div>
   );

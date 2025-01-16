@@ -41,5 +41,5 @@ const ensureStats = async (): Promise<Statistics> => {
 export const statsQueryOptions = (opts: ListOptions) =>
   queryOptions({
     queryKey: ["wood_pieces", opts],
-    queryFn: () => ensureStats(opts),
+    queryFn: () => ensureStats(),
   });

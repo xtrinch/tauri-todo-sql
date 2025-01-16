@@ -27,7 +27,7 @@ function RouteComponent() {
         {statisticsQuery.data.offered_max_price.toFixed(2)} EUR
       </div>
       <div>
-        {t("totalVolume")}: {statisticsQuery.data.total_volume} m3
+        {t("totalVolume")}: {statisticsQuery.data.total_volume.toFixed(2)} m3
       </div>
     </div>
   );

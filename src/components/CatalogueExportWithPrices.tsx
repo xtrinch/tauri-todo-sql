@@ -1,6 +1,7 @@
 import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { Statistics } from "../utils/statsService";
 import { WoodPiece } from "../utils/woodPieceService";
 import { PdfTable, PdfTableCol } from "./PdfTable";
 
@@ -26,6 +27,7 @@ const styles = StyleSheet.create({
 
 export const CatalogueExportWithPrices = (params: {
   woodPiecesData: WoodPiece[];
+  statistics: Statistics;
 }) => {
   const { t } = useTranslation();
 

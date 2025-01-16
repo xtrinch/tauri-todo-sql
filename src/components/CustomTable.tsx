@@ -10,6 +10,7 @@ export function CustomTable<TableItem>({
   trfClassName,
   containerClassName,
   sizeEstimate = 45,
+  hasFooter,
 }: {
   table: Table<TableItem>;
   trClassName?: string;
@@ -17,6 +18,7 @@ export function CustomTable<TableItem>({
   trfClassName?: string;
   containerClassName?: string;
   sizeEstimate?: number;
+  hasFooter?: boolean;
 }) {
   const parentRef = useRef<HTMLDivElement>(null);
   const { rows } = table.getRowModel();
@@ -49,7 +51,7 @@ export function CustomTable<TableItem>({
     >
       <div
         style={{
-          height: `${virtualizer.getTotalSize() + sizeEstimate}px`,
+          height: `${virtualizer.getTotalSize() + sizeEstimate + (hasFooter ? sizeEstimate : 0)}px`,
           paddingTop,
           paddingBottom,
         }}
@@ -82,41 +84,7 @@ export function CustomTable<TableItem>({
           <tbody>
             {virtualizer.getVirtualItems().map((virtualRow, index) => {
               const row = rows[virtualRow.index];
-              if (!row)
-                return (
-                  <>
-                    {table.getFooterGroups().map((footerGroup) => (
-                      <tr
-                        key={footerGroup.id}
-                        className={trfClassName}
-                        style={{
-                          height: `${virtualRow.size}px`,
-                        }}
-                        data-index={index}
-                        ref={virtualizer.measureElement}
-                      >
-                        {footerGroup.headers.map((footer) => (
-                          <th
-                            key={footer.id}
-                            style={{
-                              width: `${footer.getSize()}px`,
-                              minWidth: `${footer.getSize()}px`,
-                              maxWidth: `${footer.getSize()}px`,
-                            }}
-                            className="px-1 pb-1 align-bottom"
-                          >
-                            {footer.isPlaceholder
-                              ? null
-                              : flexRender(
-                                  footer.column.columnDef.footer,
-                                  footer.getContext()
-                                )}
-                          </th>
-                        ))}
-                      </tr>
-                    ))}
-                  </>
-                );
+              if (!row) return <></>;
               return (
                 <tr
                   key={row.id}
@@ -135,6 +103,41 @@ export function CustomTable<TableItem>({
               );
             })}
           </tbody>
+          {hasFooter && (
+            <tfoot>
+              <>
+                {table.getFooterGroups().map((footerGroup) => (
+                  <tr
+                    key={footerGroup.id}
+                    className={`${trfClassName}`}
+                    style={{
+                      height: `${sizeEstimate}px`,
+                    }}
+                    ref={virtualizer.measureElement}
+                  >
+                    {footerGroup.headers.map((footer) => (
+                      <th
+                        key={footer.id}
+                        style={{
+                          width: `${footer.getSize()}px`,
+                          minWidth: `${footer.getSize()}px`,
+                          maxWidth: `${footer.getSize()}px`,
+                        }}
+                        className="px-1 pb-1 align-bottom"
+                      >
+                        {footer.isPlaceholder
+                          ? null
+                          : flexRender(
+                              footer.column.columnDef.footer,
+                              footer.getContext()
+                            )}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </>
+            </tfoot>
+          )}
         </table>
       </div>
     </div>
