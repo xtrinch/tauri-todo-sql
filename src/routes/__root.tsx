@@ -40,10 +40,10 @@ function RootComponent() {
   const { t, i18n } = useTranslation();
 
   const [changes, setChanges] = useState<boolean | null>(
-    localStorage.getItem("unsaved_changes") === "true"
+    localStorage.getItem("unsaved_changes_v2") === "true"
   );
   const [filePath, setFilePath] = useState<string | null>(
-    localStorage.getItem("save_file_path")
+    localStorage.getItem("save_file_path_v2")
   );
 
   const { mutate: undo } = useUndo(() => {
@@ -66,7 +66,7 @@ function RootComponent() {
 
   const saveOnly = async (path?: string) => {
     await savePath(path || filePath!);
-    localStorage.setItem("unsaved_changes", "false");
+    localStorage.setItem("unsaved_changes_v2", "false");
     window.dispatchEvent(new Event("storage"));
     toast.success(t("saveSuccess"));
   };
@@ -78,7 +78,7 @@ function RootComponent() {
       info(JSON.stringify(e));
       throw e;
     }
-    localStorage.setItem("unsaved_changes", "false");
+    localStorage.setItem("unsaved_changes_v2", "false");
     window.dispatchEvent(new Event("storage"));
     unsetDatabase();
     await queryClient.invalidateQueries();
@@ -97,7 +97,7 @@ function RootComponent() {
       info(JSON.stringify(e));
       throw e;
     }
-    localStorage.setItem("unsaved_changes", "false");
+    localStorage.setItem("unsaved_changes_v2", "false");
   };
 
   const saveAs = async () => {
@@ -133,7 +133,6 @@ function RootComponent() {
   const [fileMenuOpen, setFileMenuOpen] = useState<boolean>(false);
   const drodownRef = useDetectClickOutside({
     onTriggered: () => {
-      info("CLICK OUTSIDE" + fileMenuOpen);
       if (fileMenuOpen) {
         setFileMenuOpen(false);
       }
@@ -142,16 +141,16 @@ function RootComponent() {
 
   useEffect(() => {
     if (filePath) {
-      localStorage.setItem("save_file_path", filePath);
+      localStorage.setItem("save_file_path_v2", filePath);
     } else {
-      localStorage.removeItem("save_file_path");
+      localStorage.removeItem("save_file_path_v2");
     }
   }, [filePath]);
 
   useEffect(() => {
     function checkUserData() {
       const localStorageChanges =
-        localStorage.getItem("unsaved_changes") === "true";
+        localStorage.getItem("unsaved_changes_v2") === "true";
       setChanges(localStorageChanges);
     }
 

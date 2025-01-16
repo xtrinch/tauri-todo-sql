@@ -24,10 +24,11 @@ function RouteComponent() {
       </div>
       <div>
         {t("offeredMaxPrice")}:{" "}
-        {statisticsQuery.data.offered_max_price.toFixed(2)} EUR
+        {(statisticsQuery.data.offered_max_price || 0).toFixed(2)} EUR
       </div>
       <div>
-        {t("totalVolume")}: {statisticsQuery.data.total_volume.toFixed(2)} m3
+        {t("totalVolume")}:{" "}
+        {(statisticsQuery.data.total_volume || 0).toFixed(2)} m3
       </div>
     </div>
   );

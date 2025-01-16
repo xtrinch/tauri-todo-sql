@@ -172,6 +172,7 @@ function RouteComponent() {
       <CustomTable
         table={table}
         containerClassName="p-3 h-[calc(100vh-94px)]"
+        hasFooter={true}
       />
     </div>
   );

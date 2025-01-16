@@ -21,11 +21,11 @@ export interface WoodPiece {
   bypass_min_price?: boolean; // whether we can bypass min price for final sale
 
   // from other tables
-  offered_total_price: number;
+  offered_total_price?: number;
   seller_name: string;
   tree_species_name: string;
-  offered_price: number;
-  buyer_name: string;
+  offered_price?: number;
+  buyer_name?: string;
   ident: string;
 }
 
@@ -45,6 +45,7 @@ interface ListOptions {
   min_price_used?: boolean;
   enabled?: boolean;
   offered_price__isnotzero?: boolean;
+  id__not_in?: number[];
 }
 
 const ensureWoodPieces = async (opts: ListOptions) => {
@@ -60,6 +61,9 @@ const ensureWoodPieces = async (opts: ListOptions) => {
     opts.offered_price__islowerthanmin ? `"offered_price" < "min_price"` : "",
     opts.min_price_used
       ? `("min_price" <= "offered_price" OR "min_price" IS NULL OR "bypass_min_price" = 1)`
+      : "",
+    opts.id__not_in
+      ? `"wood_pieces"."id" NOT IN (${opts.id__not_in.map((id) => `${id}`).join(", ")})`
       : "",
   ]);
 

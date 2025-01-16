@@ -87,7 +87,10 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 is_vat_liable INTEGER,
                 used_transport INTEGER,
                 used_logging INTEGER,
-                additional_costs REAL
+                used_logging_non_woods INTEGER,
+                additional_costs REAL,
+                transport_costs REAL,
+                logging_costs REAL
             );"
             }
             "tree_species" => {
@@ -198,7 +201,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(
             tauri_plugin_sql::Builder::default()
-                .add_migrations("sqlite:main_database.db", migrations)
+                .add_migrations("sqlite:main_database_v2.db", migrations)
                 .build(),
         )
         .invoke_handler(tauri::generate_handler![
@@ -227,7 +230,7 @@ fn event_handler(window: &Window, event: &WindowEvent) {
             match window.path().app_data_dir() {
                 Ok(app_data_dir) => {
                     // Construct the path to the SQLite database file
-                    let sqlite_file = app_data_dir.join("main_database.db");
+                    let sqlite_file = app_data_dir.join("main_database_v2.db");
 
                     // Attempt to remove the file
                     if sqlite_file.exists() {
@@ -261,7 +264,7 @@ fn on_setup(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
         .map_err(|e| format!("Failed to resolve app data directory: {}", e))?;
 
     // Construct the path to the SQLite database file
-    let sqlite_file = app_data_dir.join("main_database.db");
+    let sqlite_file = app_data_dir.join("main_database_v2.db");
 
     // Attempt to remove the file
     if sqlite_file.exists() {
@@ -278,7 +281,7 @@ fn on_setup(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
 fn get_column_names(table: &str) -> &str {
     match table {
         "buyers" => "buyer_name, address_line1, address_line2, additional_costs",
-        "sellers" => "seller_name, address_line1, address_line2, iban, ident, is_flat_rate, is_vat_liable, used_transport, used_logging, additional_costs",
+        "sellers" => "seller_name, address_line1, address_line2, iban, ident, is_flat_rate, is_vat_liable, used_transport, used_logging, used_logging_non_woods, additional_costs, transport_costs, logging_costs",
         "tree_species" => "tree_species_name, latin_name, tree_species_name_slo",
         "wood_pieces" => "length, sequence_no, width, volume, plate_no, seller_id, tree_species_id, min_price, bypass_min_price",
         "wood_piece_offers" => "offered_price, wood_piece_id, buyer_id",

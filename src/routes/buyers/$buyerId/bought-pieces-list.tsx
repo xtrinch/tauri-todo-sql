@@ -250,7 +250,7 @@ function BoughtPiecesList() {
           className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
           onClick={exportToFile}
         >
-          {t("export")}
+          {t("exportInvoice")}
         </button>
       </div>
       <div>

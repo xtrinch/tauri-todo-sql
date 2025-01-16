@@ -6,12 +6,16 @@ import {
   Row,
   useReactTable,
 } from "@tanstack/react-table";
+import { save } from "@tauri-apps/plugin-dialog";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
+import { SellerPiecesExport } from "../../../components/SellerPiecesExport";
 import { SumFooter } from "../../../components/SumFooter";
 import { TableCellCheckboxReadonly } from "../../../components/TableCellCheckboxReadonly";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
+import { saveToPDF } from "../../../utils/pdf";
+import { sellerQueryOptions } from "../../../utils/sellerService";
 import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
   WoodPiece,
@@ -35,6 +39,9 @@ function SoldPiecesList() {
     })
   );
   const woodPieces = woodPiecesQuery.data;
+
+  const sellerQuery = useSuspenseQuery(sellerQueryOptions(params.sellerId));
+  const seller = sellerQuery.data;
 
   const treeSpeciesQuery = useSuspenseQuery(
     treeSpeciesQueryOptions({ language: i18n.language as "en" | "sl" })
@@ -90,7 +97,7 @@ function SoldPiecesList() {
       {
         accessorKey: "min_price",
         header: () => t("minPriceM3"),
-        size: 80,
+        size: 120,
         meta: {
           type: "float",
           readonly: true,
@@ -100,7 +107,7 @@ function SoldPiecesList() {
       {
         accessorKey: "offered_price",
         header: () => t("maxPriceM3"),
-        size: 80,
+        size: 120,
         meta: {
           type: "float",
           readonly: true,
@@ -159,9 +166,35 @@ function SoldPiecesList() {
     meta: {},
   });
 
+  const exportToFile = async () => {
+    const path = await save({
+      filters: [
+        {
+          name: "Sold pieces Filter",
+          extensions: ["pdf"],
+        },
+      ],
+      defaultPath: t("soldPiecesPDFName"),
+    });
+    if (path) {
+      saveToPDF(
+        path,
+        <SellerPiecesExport woodPiecesData={woodPieces} seller={seller} />
+      );
+    }
+  };
+
   return (
     <div className="">
       <CustomTable
+        header={
+          <button
+            className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+            onClick={exportToFile}
+          >
+            {t("export")}
+          </button>
+        }
         table={table}
         trClassName="border-b"
         trhClassName="border-b"

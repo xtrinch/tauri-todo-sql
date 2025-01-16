@@ -15,7 +15,10 @@ export type Seller = {
   is_flat_rate: number; // whether to tax at a flat rate
   is_vat_liable: number; // whether seller is VAT liable
   used_transport: number; // whether seller used transport or not
-  used_logging: number;
+  used_logging: number; // woods logging
+  used_logging_non_woods: number; // logging outside woods
+  transport_costs: number;
+  logging_costs: number;
 };
 
 const ensureSellers = async (opts: {
@@ -63,7 +66,10 @@ export async function postSeller(
       "is_flat_rate",
       "is_vat_liable",
       "used_transport",
-      "used_logging"
+      "used_logging",
+      "transport_costs",
+      "used_logging_non_woods",
+      "logging_costs"
     ) values (
       $1, 
       $2, 
@@ -73,7 +79,10 @@ export async function postSeller(
       $6, 
       $7,
       $8,
-      $9
+      $9,
+      $10,
+      $11,
+      $12
     )`,
     [
       seller.seller_name || "",
@@ -85,6 +94,9 @@ export async function postSeller(
       seller.is_vat_liable || 0,
       seller.used_transport || 0,
       seller.used_logging || 0,
+      seller.transport_costs || 0,
+      seller.used_logging_non_woods || 0,
+      seller.logging_costs || 0,
     ]
   );
 
@@ -110,7 +122,10 @@ export async function patchSeller({
         "is_flat_rate" = COALESCE($7, "is_flat_rate"),
         "is_vat_liable" = COALESCE($8, "is_vat_liable"),
         "used_transport" = COALESCE($9, "used_transport"),
-        "used_logging" = COALESCE($10, "used_logging") 
+        "used_logging" = COALESCE($10, "used_logging"),
+        "transport_costs" = COALESCE($11, "transport_costs"),
+        "used_logging_non_woods" = COALESCE($12, "used_logging_non_woods"),
+        "logging_costs" = COALESCE($13, "logging_costs")
       WHERE id = $1`,
     [
       id,
@@ -123,6 +138,9 @@ export async function patchSeller({
       updatedSeller.is_vat_liable,
       updatedSeller.used_transport,
       updatedSeller.used_logging,
+      updatedSeller.transport_costs,
+      updatedSeller.used_logging_non_woods,
+      updatedSeller.logging_costs,
     ]
   );
 }

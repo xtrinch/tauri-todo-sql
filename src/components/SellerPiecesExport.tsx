@@ -41,11 +41,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export const SoldPiecesExport = (params: {
+export const SellerPiecesExport = (params: {
   seller: Seller;
   woodPiecesData: WoodPiece[];
-  rowsSummary: { label: string; value: string; bold?: boolean }[];
-  colsSummary: PdfTableCol[];
 }) => {
   const { t } = useTranslation();
 
@@ -91,22 +89,6 @@ export const SoldPiecesExport = (params: {
           type: "float",
         },
       },
-      {
-        accessorKey: "offered_price",
-        header: () => t("maxPriceM3"),
-        size: 15,
-        meta: {
-          type: "float",
-        },
-      },
-      {
-        accessorKey: "offered_total_price",
-        header: () => t("totalPriceM3"),
-        size: 15,
-        meta: {
-          type: "float",
-        },
-      },
     ],
     []
   );
@@ -115,7 +97,7 @@ export const SoldPiecesExport = (params: {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          <Text>{t("soldPieces")}</Text>
+          <Text>{t("woodPieces")}</Text>
         </View>
         <View style={styles.address}>
           <Text style={styles.addressName}>{params.seller.seller_name}</Text>
@@ -126,9 +108,6 @@ export const SoldPiecesExport = (params: {
         </View>
         <View style={styles.topTable}>
           <PdfTable data={params.woodPiecesData} columns={columns} />
-        </View>
-        <View>
-          <PdfTable data={params.rowsSummary} columns={params.colsSummary} />
         </View>
       </Page>
     </Document>

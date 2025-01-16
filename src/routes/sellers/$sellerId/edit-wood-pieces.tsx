@@ -167,6 +167,7 @@ function WoodPiecesList() {
       <CustomTable
         table={table}
         containerClassName="p-3 h-[calc(100vh-280px)]"
+        hasFooter={true}
       />
     </div>
   );

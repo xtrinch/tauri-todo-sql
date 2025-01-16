@@ -1,6 +1,6 @@
 import { flexRender, Row, Table } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { memo, useCallback, useRef } from "react";
+import { memo, ReactElement, useCallback, useRef } from "react";
 import { CustomTableMeta } from "./TableCell";
 
 export function CustomTable<TableItem>({
@@ -11,6 +11,7 @@ export function CustomTable<TableItem>({
   containerClassName,
   sizeEstimate = 45,
   hasFooter,
+  header,
 }: {
   table: Table<TableItem>;
   trClassName?: string;
@@ -19,6 +20,7 @@ export function CustomTable<TableItem>({
   containerClassName?: string;
   sizeEstimate?: number;
   hasFooter?: boolean;
+  header?: ReactElement;
 }) {
   const parentRef = useRef<HTMLDivElement>(null);
   const { rows } = table.getRowModel();
@@ -47,8 +49,9 @@ export function CustomTable<TableItem>({
   return (
     <div
       ref={parentRef}
-      className={`${containerClassName || ""} overflow-auto max-h-full will-change-transform contain-paint`}
+      className={`${containerClassName || ""} overflow-auto will-change-transform contain-paint`}
     >
+      {header || ""}
       <div
         style={{
           height: `${virtualizer.getTotalSize() + sizeEstimate + (hasFooter ? sizeEstimate : 0)}px`,

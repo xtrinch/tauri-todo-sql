@@ -44,6 +44,24 @@ function SoldPiecesList() {
   );
   const woodPieces = woodPiecesQuery.data;
 
+  const unsoldWoodPiecesQuery = useSuspenseQuery(
+    woodPiecesQueryOptions({
+      ...Route.useLoaderDeps(),
+      seller_id: params.sellerId,
+      language: i18n.language as "sl" | "en",
+      id__not_in: woodPieces.map((w) => w.id),
+      enabled: woodPiecesQuery.isFetched,
+    })
+  );
+  const unsoldWoodPieces = useMemo(() => {
+    return unsoldWoodPiecesQuery.data.map((d) => ({
+      ...d,
+      offered_price: undefined,
+      offered_total_price: undefined,
+      buyer_name: "",
+    })) as WoodPiece[];
+  }, [unsoldWoodPiecesQuery.data]);
+
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
       {
@@ -119,8 +137,12 @@ function SoldPiecesList() {
     []
   );
 
+  const combinedRows = useMemo(() => {
+    return [...woodPieces, ...unsoldWoodPieces];
+  }, [woodPieces, unsoldWoodPieces]);
+
   const table = useReactTable({
-    data: woodPieces,
+    data: combinedRows,
     columns,
     getCoreRowModel: getCoreRowModel(),
     defaultColumn: {
@@ -143,20 +165,25 @@ function SoldPiecesList() {
         totalPrice: rows
           .reduce(
             (sum, row) =>
-              sum.plus(row.getValue("offered_total_price") as number),
+              sum.plus((row.getValue("offered_total_price") as number) || 0),
             new Big(0)
           )
           .round(2),
         costsBelow350: rows
           .reduce(
-            (sum, row) => sum.plus(22 * (row.getValue("volume") as number)),
+            (sum, row) =>
+              sum.plus(new Big(22).mul(row.getValue("volume") as number)),
             new Big(0)
           )
           .round(2),
         costsAbove350: rows
           .reduce(
             (sum, row) =>
-              sum.plus(0.05 * (row.getValue("offered_total_price") as number)),
+              sum.plus(
+                new Big(0.05).mul(
+                  (row.getValue("offered_total_price") as number) || 0
+                )
+              ),
             new Big(0)
           )
           .round(2),
@@ -169,7 +196,11 @@ function SoldPiecesList() {
   );
 
   const transportCosts = useMemo(
-    () => (seller.used_transport ? totalVolume.mul(18) : new Big(0)).round(2),
+    () =>
+      (seller.used_transport
+        ? totalVolume.mul(seller.transport_costs || 0)
+        : new Big(0)
+      ).round(2),
     [totalVolume, seller]
   );
 
@@ -180,12 +211,25 @@ function SoldPiecesList() {
   );
 
   const loggingCosts = useMemo(
-    () => (seller.used_logging ? totalVolume.mul(18) : new Big(0)).round(2),
+    () =>
+      (seller.used_logging || seller.used_logging_non_woods
+        ? totalVolume.mul(100)
+        : new Big(0)
+      ).round(2),
     [totalVolume, seller]
   );
 
   const loggingCostsVAT = useMemo(
     () => (seller.used_logging ? loggingCosts.mul(0.095) : new Big(0)).round(2),
+    [loggingCosts, seller]
+  );
+
+  const loggingCostsNonWoodsVAT = useMemo(
+    () =>
+      (seller.used_logging_non_woods
+        ? loggingCosts.mul(0.22)
+        : new Big(0)
+      ).round(2),
     [loggingCosts, seller]
   );
 
@@ -216,6 +260,7 @@ function SoldPiecesList() {
       .minus(transportVAT)
       .minus(loggingCosts)
       .minus(loggingCostsVAT)
+      .minus(loggingCostsNonWoodsVAT)
       .round(2);
   }, [
     sellerIncomeGrossAfterTax,
@@ -223,6 +268,7 @@ function SoldPiecesList() {
     transportVAT,
     loggingCosts,
     loggingCostsVAT,
+    loggingCostsNonWoodsVAT,
   ]);
 
   const columns_summary = useMemo<PdfTableCol[]>(
@@ -272,20 +318,24 @@ function SoldPiecesList() {
             bold: true,
           },
           seller.used_transport > 0 && {
-            label: t("transportCosts"),
+            label: `${t("transportCosts")} (${(seller.transport_costs || 0).toFixed(2)} EUR / m3)`,
             value: `${transportCosts.toFixed(2)} EUR`,
           },
           seller.used_transport > 0 && {
             label: t("transportVAT"),
             value: `${transportVAT.toFixed(2)} EUR`,
           },
-          seller.used_logging > 0 && {
-            label: t("loggingCosts"),
+          (seller.used_logging > 0 || seller.used_logging_non_woods) && {
+            label: `${t("loggingCosts")} (${(seller.logging_costs || 0).toFixed(2)} EUR / m3)`,
             value: `${loggingCosts.toFixed(2)} EUR`,
           },
           seller.used_logging > 0 && {
             label: t("loggingCostsVAT"),
             value: `${loggingCostsVAT.toFixed(2)} EUR`,
+          },
+          seller.used_logging_non_woods > 0 && {
+            label: t("loggingCostsNonWoodsVAT"),
+            value: `${loggingCostsNonWoodsVAT.toFixed(2)} EUR`,
           },
           { label: t("payout"), value: `${payout.toFixed(2)} EUR`, bold: true },
         ]),
@@ -303,6 +353,7 @@ function SoldPiecesList() {
         transportVAT,
         loggingCosts,
         loggingCostsVAT,
+        loggingCostsNonWoodsVAT,
         payout,
         seller,
       ]
@@ -322,7 +373,7 @@ function SoldPiecesList() {
       saveToPDF(
         path,
         <SoldPiecesExport
-          woodPiecesData={woodPieces}
+          woodPiecesData={combinedRows}
           rowsSummary={rows_summary}
           colsSummary={columns_summary}
           seller={seller}
@@ -337,11 +388,11 @@ function SoldPiecesList() {
         className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
         onClick={exportToFile}
       >
-        {t("export")}
+        {t("exportInvoice")}
       </button>
       <CustomTable
         table={table}
-        containerClassName="overflow-hidden"
+        // containerClassName="overflow-hidden"
         trClassName="border-b"
         trhClassName="border-b"
       />

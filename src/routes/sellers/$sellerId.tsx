@@ -87,6 +87,18 @@ function SellerComponent() {
         size: 200,
       },
       {
+        accessorKey: "ident",
+        header: () => t("ident"),
+        meta: {},
+        size: 100,
+      },
+      {
+        accessorKey: "iban",
+        header: () => t("iban"),
+        meta: {},
+        size: 300,
+      },
+      {
         id: "1",
         header: () => "",
         accessorFn: () => 1,
@@ -102,44 +114,55 @@ function SellerComponent() {
   const columns1 = useMemo<ColumnDef<Seller>[]>(
     () => [
       {
-        accessorKey: "ident",
-        header: () => t("ident"),
-        meta: {},
-        size: 100,
-      },
-      {
-        accessorKey: "iban",
-        header: () => t("iban"),
-        meta: {},
-        size: 300,
-      },
-      {
         accessorKey: "is_flat_rate",
         header: () => t("isFlatRate"),
         meta: {},
-        size: 70,
+        size: 130,
         cell: TableCellCheckbox,
       },
       {
         accessorKey: "is_vat_liable",
         header: () => t("isVatLiable"),
         meta: {},
-        size: 110,
+        size: 130,
         cell: TableCellCheckbox,
       },
       {
         accessorKey: "used_transport",
         header: () => t("usedTransport"),
         meta: {},
-        size: 120,
+        size: 130,
         cell: TableCellCheckbox,
       },
       {
         accessorKey: "used_logging",
         header: () => t("usedLogging"),
         meta: {},
-        size: 90,
+        size: 130,
         cell: TableCellCheckbox,
+      },
+      {
+        accessorKey: "used_logging_non_woods",
+        header: () => t("usedLoggingOutsideWoods"),
+        meta: {},
+        size: 130,
+        cell: TableCellCheckbox,
+      },
+      {
+        accessorKey: "transport_costs",
+        header: () => `${t("transportCosts")} / m3`,
+        meta: {
+          type: "float",
+        },
+        size: 140,
+      },
+      {
+        accessorKey: "logging_costs",
+        header: () => `${t("loggingPrice")} / m3`,
+        meta: {
+          type: "float",
+        },
+        size: 140,
       },
     ],
     []
@@ -201,7 +224,7 @@ function SellerComponent() {
           [
             ["/sellers/$sellerId/edit-wood-pieces", t("editWoodPieces")],
             ["/sellers/$sellerId/wood-pieces-list", t("woodPieces")],
-            ["/sellers/$sellerId/sold-pieces-list", t("soldWoodPieces")],
+            ["/sellers/$sellerId/sold-pieces-list", t("invoice")],
           ] as const
         ).map(([to, label]) => {
           return (
