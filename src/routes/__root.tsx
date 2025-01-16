@@ -8,6 +8,7 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { useDetectClickOutside } from "react-detect-click-outside";
+
 // import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
@@ -15,7 +16,11 @@ import { info } from "@tauri-apps/plugin-log";
 import { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FaArrowRotateLeft, FaRegFloppyDisk } from "react-icons/fa6";
+import {
+  FaAngleDown,
+  FaArrowRotateLeft,
+  FaRegFloppyDisk,
+} from "react-icons/fa6";
 import { Spinner } from "../components/Spinner";
 import { queryClient } from "../main";
 import { buyersQueryOptions } from "../utils/buyerService";
@@ -150,10 +155,18 @@ function RootComponent() {
   };
 
   const [fileMenuOpen, setFileMenuOpen] = useState<boolean>(false);
-  const drodownRef = useDetectClickOutside({
+  const [languageMenuOpen, setLanguageMenuOpen] = useState<boolean>(false);
+  const dropdownRefFile = useDetectClickOutside({
     onTriggered: () => {
       if (fileMenuOpen) {
         setFileMenuOpen(false);
+      }
+    },
+  });
+  const dropdownRefLanguage = useDetectClickOutside({
+    onTriggered: () => {
+      if (languageMenuOpen) {
+        setLanguageMenuOpen(false);
       }
     },
   });
@@ -194,26 +207,6 @@ function RootComponent() {
         <div className={`flex items-center justify-between border-b gap-2`}>
           <div className="flex flex-row space-x-3 items-center">
             <h1 className={`text-3xl p-2 w-[130px]`}>{t("title")}</h1>
-            <button
-              style={{
-                backgroundColor: i18n.language === "en" ? "white" : undefined,
-                color: i18n.language === "en" ? "rgb(59,130,246)" : undefined,
-              }}
-              className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
-              onClick={() => i18n.changeLanguage("sl")}
-            >
-              SL
-            </button>
-            <button
-              style={{
-                backgroundColor: i18n.language === "sl" ? "white" : undefined,
-                color: i18n.language === "sl" ? "rgb(59,130,246)" : undefined,
-              }}
-              className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
-              onClick={() => i18n.changeLanguage("en")}
-            >
-              EN
-            </button>
           </div>
           {/* Show a global spinner when the router is transitioning */}
           <div className="flex flex-row pr-2 space-x-2 items-center">
@@ -243,7 +236,7 @@ function RootComponent() {
               <FaArrowRotateLeft />
             </button>
             <div className="relative inline-block text-left">
-              <div className="">
+              <div className="flex flex-row space-x-2">
                 <button
                   type="button"
                   className="bg-blue-400 h-[40px] text-white inline-flex w-full justify-center items-center gap-x-1.5 rounded-md px-3 text-sm font-semibold "
@@ -253,26 +246,25 @@ function RootComponent() {
                   onMouseEnter={() => setFileMenuOpen(true)}
                 >
                   {t("options")}
-                  <svg
-                    className="-mr-1 size-5 text-white"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    data-slot="icon"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
+                  <FaAngleDown />
+                </button>
+                <button
+                  type="button"
+                  className="bg-blue-400 h-[40px] text-white inline-flex w-full justify-center items-center gap-x-1.5 rounded-md px-3 text-sm font-semibold "
+                  id="menu-button"
+                  aria-expanded="true"
+                  aria-haspopup="true"
+                  onMouseEnter={() => setLanguageMenuOpen(true)}
+                >
+                  {t("language")}
+                  <FaAngleDown />
                 </button>
               </div>
 
               {fileMenuOpen && (
                 <div
-                  ref={drodownRef}
-                  className="absolute right-0 z-10 mt-2 w-60 origin-top-right rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none overflow-hidden"
+                  ref={dropdownRefFile}
+                  className="absolute right-20 z-10 mt-2 w-60 origin-top-right rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none overflow-hidden"
                   role="menu"
                   aria-orientation="vertical"
                   aria-labelledby="menu-button"
@@ -314,6 +306,32 @@ function RootComponent() {
                       onClick={() => resetApplicationData()}
                     >
                       {t("resetApplicationData")}
+                    </button>
+                  </div>
+                </div>
+              )}
+              {languageMenuOpen && (
+                <div
+                  ref={dropdownRefLanguage}
+                  className="absolute right-0 z-10 mt-2 w-30 origin-top-right rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none overflow-hidden"
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="menu-button"
+                  tabIndex={-1}
+                  onMouseLeave={() => setLanguageMenuOpen(false)}
+                >
+                  <div role="none">
+                    <button
+                      className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
+                      onClick={() => i18n.changeLanguage("sl")}
+                    >
+                      sl
+                    </button>
+                    <button
+                      className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
+                      onClick={() => i18n.changeLanguage("en")}
+                    >
+                      en
                     </button>
                   </div>
                 </div>

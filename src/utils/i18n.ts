@@ -114,6 +114,7 @@ const resources = {
       loggingPrice: "Logging price",
       invoice: "Invoice",
       resetApplicationData: "Reset application data",
+      language: "Language",
     },
   },
   sl: {
@@ -226,6 +227,7 @@ const resources = {
       loggingPrice: "Posek cena",
       invoice: "Obračun",
       resetApplicationData: "Resetiraj podatke aplikacije",
+      language: "Jezik",
     },
   },
 };
