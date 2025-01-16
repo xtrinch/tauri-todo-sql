@@ -3,6 +3,25 @@ use serde_json::{Map, Value};
 use std::fs;
 use tauri::Manager;
 
+fn truncate_db(conn: &Connection) -> Result<(), Box<dyn std::error::Error>> {
+    // Define the specific import sequence
+    let import_sequence = vec![
+        "buyers",
+        "sellers",
+        "tree_species",
+        "wood_pieces",
+        "wood_piece_offers",
+    ];
+    
+    // Truncate all tables in the import sequence
+    for table in import_sequence.iter().rev() {
+        let truncate_query = format!("DELETE FROM {};", table);
+        conn.execute(&truncate_query, [])?;
+    }
+
+    Ok(())
+}
+
 fn import_from_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     // Read JSON file
     let json_content = fs::read_to_string(json_path)?;
@@ -95,6 +114,17 @@ pub fn read_json(app_handle: tauri::AppHandle, file_path: String) -> Result<(), 
 
     import_from_json(&conn, &file_path).map_err(|e| format!("Error importing database: {}", e))?;
     println!("Data imported from JSON successfully!");
+
+    Ok(())
+}
+
+
+#[tauri::command]
+pub fn truncate_all_data(app_handle: tauri::AppHandle) -> Result<(), String> {
+    let conn: Connection = get_connection(app_handle).map_err(|e| format!("Error opening database: {}", e))?;
+
+    truncate_db(&conn).map_err(|e| format!("Error importing database: {}", e))?;
+    println!("Data truncated successfully!");
 
     Ok(())
 }

@@ -235,11 +235,13 @@ function SoldPiecesList() {
 
   const { sellerIncomeTaxFlat, sellerIncomeTaxVat } = useMemo(
     () => ({
-      sellerIncomeTaxFlat: (seller.is_flat_rate
+      sellerIncomeTaxFlat: (seller.is_flat_rate &&
+      sellerIncomeGross > new Big(0)
         ? sellerIncomeGross.mul(0.08)
         : new Big(0)
       ).round(2),
-      sellerIncomeTaxVat: (seller.is_vat_liable
+      sellerIncomeTaxVat: (seller.is_vat_liable &&
+      sellerIncomeGross > new Big(0)
         ? sellerIncomeGross.mul(0.22)
         : new Big(0)
       ).round(2),
@@ -392,7 +394,6 @@ function SoldPiecesList() {
       </button>
       <CustomTable
         table={table}
-        // containerClassName="overflow-hidden"
         trClassName="border-b"
         trhClassName="border-b"
       />

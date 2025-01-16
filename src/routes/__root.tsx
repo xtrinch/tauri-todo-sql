@@ -4,6 +4,7 @@ import {
   Link,
   Outlet,
   createRootRouteWithContext,
+  useNavigate,
   useRouterState,
 } from "@tanstack/react-router";
 import { useDetectClickOutside } from "react-detect-click-outside";
@@ -38,6 +39,7 @@ export const Route = createRootRouteWithContext<{
 
 function RootComponent() {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate({ from: Route.fullPath });
 
   const [changes, setChanges] = useState<boolean | null>(
     localStorage.getItem("unsaved_changes_v2") === "true"
@@ -87,6 +89,23 @@ function RootComponent() {
   const resetToSaved = async () => {
     if (await confirm({ confirmation: t("areYouSure") })) {
       loadOnly();
+    }
+  };
+
+  const resetApplicationData = async () => {
+    if (await confirm({ confirmation: t("areYouSure") })) {
+      localStorage.setItem("unsaved_changes_v2", "false");
+      localStorage.removeItem("save_file_path_v2");
+      try {
+        await invoke("truncate_all_data", {});
+      } catch (e) {
+        info(JSON.stringify(e));
+        throw e;
+      }
+      await queryClient.invalidateQueries();
+      navigate({
+        to: "/statistics",
+      });
     }
   };
 
@@ -253,7 +272,7 @@ function RootComponent() {
               {fileMenuOpen && (
                 <div
                   ref={drodownRef}
-                  className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none overflow-hidden"
+                  className="absolute right-0 z-10 mt-2 w-60 origin-top-right rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none overflow-hidden"
                   role="menu"
                   aria-orientation="vertical"
                   aria-labelledby="menu-button"
@@ -289,6 +308,12 @@ function RootComponent() {
                       onClick={() => loadFile()}
                     >
                       {t("open")}
+                    </button>
+                    <button
+                      className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
+                      onClick={() => resetApplicationData()}
+                    >
+                      {t("resetApplicationData")}
                     </button>
                   </div>
                 </div>

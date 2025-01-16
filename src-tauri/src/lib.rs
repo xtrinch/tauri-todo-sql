@@ -209,7 +209,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             commands::load_sqlite_db,
             commands::clear_db,
             export::write_json,
-            import::read_json
+            import::read_json,
+            import::truncate_all_data
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

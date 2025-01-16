@@ -113,6 +113,7 @@ const resources = {
       usedLoggingOutsideWoods: "Logging non-woods",
       loggingPrice: "Logging price",
       invoice: "Invoice",
+      resetApplicationData: "Reset application data",
     },
   },
   sl: {
@@ -154,7 +155,7 @@ const resources = {
       offeredPriceM3: "Ponujena cena / m3",
       inventory: "Inventar",
       save: "Shrani",
-      resetToSaved: "Zavrži spremembe",
+      resetToSaved: "Zavrži neshranjene spremembe",
       saveAs: "Shrani kot",
       open: "Odpri",
       undo: "Nazaj",
@@ -224,6 +225,7 @@ const resources = {
       usedLoggingOutsideWoods: "Posek izvengozdni",
       loggingPrice: "Posek cena",
       invoice: "Obračun",
+      resetApplicationData: "Resetiraj podatke aplikacije",
     },
   },
 };
