@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   page: {
     fontFamily: "Roboto",
     flexDirection: "column",
-    backgroundColor: "#E4E4E4",
+    backgroundColor: "#fff",
     padding: "30px",
     fontSize: 12,
   },

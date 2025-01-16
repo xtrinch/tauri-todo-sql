@@ -170,11 +170,11 @@ function SoldPiecesList() {
     const path = await save({
       filters: [
         {
-          name: "Sold pieces Filter",
+          name: "Wood pieces Filter",
           extensions: ["pdf"],
         },
       ],
-      defaultPath: t("soldPiecesPDFName"),
+      defaultPath: t("woodPieces"),
     });
     if (path) {
       saveToPDF(

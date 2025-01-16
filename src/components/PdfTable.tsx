@@ -41,6 +41,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 3,
     fontSize: 11,
   },
+  tableColFooterStyle: {
+    borderStyle: "solid",
+    borderColor: "#3f3f3f",
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    backgroundColor: "#bdbdbd",
+    paddingVertical: 4,
+    paddingHorizontal: 3,
+    fontSize: 11,
+    borderTopWidth: 0,
+  },
+  firstTableColFooterStyle: {
+    borderStyle: "solid",
+    borderColor: "#3f3f3f",
+    borderWidth: 1,
+    borderLeftWidth: 1,
+    backgroundColor: "#bdbdbd",
+    borderTopWidth: 0,
+  },
 });
 
 export interface PdfTableCol {
@@ -49,6 +68,7 @@ export interface PdfTableCol {
   size: number;
   meta?: { type?: string };
   bold?: boolean;
+  footer?: (data: any[]) => JSX.Element;
 }
 
 export const PdfTable = (params: { columns: PdfTableCol[]; data: any[] }) => {
@@ -102,6 +122,22 @@ export const PdfTable = (params: { columns: PdfTableCol[]; data: any[] }) => {
           ))}
         </View>
       ))}
+      <View style={styles.tableRowStyle}>
+        {columns.map((col, idx) => (
+          <View
+            style={compact([
+              styles.tableColFooterStyle,
+              idx == 0 ? styles.firstTableColFooterStyle : null,
+              {
+                width: `${col.size}%`,
+                fontWeight: col.bold ? "bold" : undefined,
+              },
+            ])}
+          >
+            {col.footer && <>{col.footer(params.data)}</>}
+          </View>
+        ))}
+      </View>
     </View>
   );
 };

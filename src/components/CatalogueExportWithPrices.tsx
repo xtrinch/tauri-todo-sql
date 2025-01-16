@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   page: {
     fontFamily: "Roboto",
     flexDirection: "column",
-    backgroundColor: "#E4E4E4",
+    backgroundColor: "#fff",
     padding: "30px",
     paddingLeft: "95px",
     fontSize: 12,

@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import font from "../assets/fonts/Roboto-Regular.ttf";
 import { Seller } from "../utils/sellerService";
 import { WoodPiece } from "../utils/woodPieceService";
+import { PDFSumFooter } from "./PDFSumFooter";
 import { PdfTable, PdfTableCol } from "./PdfTable";
 
 Font.register({ family: "Roboto", src: font });
@@ -19,7 +20,7 @@ const styles = StyleSheet.create({
   page: {
     fontFamily: "Roboto",
     flexDirection: "column",
-    backgroundColor: "#E4E4E4",
+    backgroundColor: "#fff",
     padding: "30px",
     fontSize: 12,
   },
@@ -88,6 +89,9 @@ export const SellerPiecesExport = (params: {
         meta: {
           type: "float",
         },
+        footer: (data) => (
+          <PDFSumFooter data={data} column={"volume"} measure="m3" />
+        ),
       },
     ],
     []
