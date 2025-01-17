@@ -128,7 +128,7 @@ function WoodPiecesList() {
   });
   const removeWoodPieceMutation = useRemoveWoodPieceOfferMutation({
     onError: () => {
-      toast.error(t("couldNotRemove"));
+      toast.error(t("couldNotDelete"));
     },
   });
 
@@ -142,6 +142,10 @@ function WoodPiecesList() {
     },
   });
 
+  const onWoodPieceRemove = async (woodPieceId: number) => {
+    removeWoodPieceMutation.mutate({ id: woodPieceId });
+  };
+
   const table = useReactTable({
     data: woodPieces,
     columns,
@@ -154,9 +158,7 @@ function WoodPiecesList() {
       onEdit: (data: WoodPiece) => {
         updateWoodPieceMutation.mutate(data);
       },
-      onRemove: (woodPieceId: number) => {
-        removeWoodPieceMutation.mutate({ id: woodPieceId });
-      },
+      onRemove: onWoodPieceRemove,
     },
   });
 

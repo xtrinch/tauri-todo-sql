@@ -24,6 +24,7 @@ import {
   useRemoveBuyerMutation,
   useUpdateBuyerMutation,
 } from "../../utils/buyerService";
+import { confirm } from "../../utils/confirm";
 
 export const Route = createFileRoute("/buyers/$buyerId")({
   params: {
@@ -111,6 +112,12 @@ function BuyerComponent() {
     return [buyer];
   }, [JSON.stringify(buyer)]);
 
+  const onBuyerRemove = async (buyerId: number) => {
+    if (await confirm({ confirmation: t("areYouSure") })) {
+      removeBuyerMutation.mutate({ id: buyerId });
+    }
+  };
+
   const table = useReactTable({
     data: buyerData,
     columns,
@@ -120,9 +127,7 @@ function BuyerComponent() {
       onEdit: (data: Buyer) => {
         updateBuyerMutation.mutate(data);
       },
-      onRemove: (woodPieceId: number) => {
-        removeBuyerMutation.mutate({ id: woodPieceId });
-      },
+      onRemove: onBuyerRemove,
     },
   });
 

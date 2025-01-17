@@ -19,6 +19,7 @@ import { CustomTable } from "../../components/CustomTable";
 import { RemoveCell } from "../../components/RemoveCell";
 import { TableCell } from "../../components/TableCell";
 import { TableCellCheckbox } from "../../components/TableCellCheckbox";
+import { confirm } from "../../utils/confirm";
 import {
   Seller,
   sellerQueryOptions,
@@ -173,13 +174,19 @@ function SellerComponent() {
       navigate({ to: "/sellers" });
     },
     onError: () => {
-      toast(t("couldNotRemove"));
+      toast.error(t("couldNotDelete"));
     },
   });
 
   const sellerData = useMemo(() => {
     return [seller];
   }, [JSON.stringify(seller)]);
+
+  const onSellerRemove = async (sellerId: number) => {
+    if (await confirm({ confirmation: t("areYouSure") })) {
+      removeSellerMutation.mutate({ id: sellerId });
+    }
+  };
 
   const table = useReactTable({
     data: sellerData,
@@ -190,9 +197,7 @@ function SellerComponent() {
       onEdit: (data: Seller) => {
         updateSellerMutation.mutate(data);
       },
-      onRemove: (woodPieceId: number) => {
-        removeSellerMutation.mutate({ id: woodPieceId });
-      },
+      onRemove: onSellerRemove,
     },
   });
 
@@ -205,9 +210,7 @@ function SellerComponent() {
       onEdit: (data: Seller) => {
         updateSellerMutation.mutate(data);
       },
-      onRemove: (woodPieceId: number) => {
-        removeSellerMutation.mutate({ id: woodPieceId });
-      },
+      onRemove: (woodPieceId: number) => onSellerRemove,
     },
   });
 
