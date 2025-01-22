@@ -21,8 +21,9 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     flexDirection: "column",
     backgroundColor: "#fff",
-    padding: "30px",
     fontSize: 12,
+    padding: "30px",
+    paddingLeft: "95px",
   },
   topTable: {
     marginBottom: 15,
