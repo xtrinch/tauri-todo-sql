@@ -210,13 +210,13 @@ function SellerComponent() {
       onEdit: (data: Seller) => {
         updateSellerMutation.mutate(data);
       },
-      onRemove: (woodPieceId: number) => onSellerRemove,
+      onRemove: onSellerRemove,
     },
   });
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-col space-y-3 p-3">
+      <div className="flex flex-col space-y-3 p-3 pb-0">
         <div>
           <CustomTable table={table} sizeEstimate={35} />
           <CustomTable table={table1} sizeEstimate={35} />

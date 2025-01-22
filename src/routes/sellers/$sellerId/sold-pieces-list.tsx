@@ -213,7 +213,7 @@ function SoldPiecesList() {
   const loggingCosts = useMemo(
     () =>
       (seller.used_logging || seller.used_logging_non_woods
-        ? totalVolume.mul(100)
+        ? totalVolume.mul(seller.logging_costs || 0)
         : new Big(0)
       ).round(2),
     [totalVolume, seller]
@@ -385,7 +385,7 @@ function SoldPiecesList() {
   };
 
   return (
-    <div className="p-3 h-[calc(100vh-280px)] overflow-auto">
+    <div className="p-3 h-[calc(100vh-268px)] overflow-auto">
       <button
         className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
         onClick={exportToFile}
