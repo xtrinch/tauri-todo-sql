@@ -47,6 +47,7 @@ function ListInventoryComponent() {
       ...filters,
       language: i18n.language as "sl" | "en",
       mark_duplicates: true,
+      fill_empty_seq_lines: true,
     })
   );
   const woodPieces = woodPiecesQuery.data;
@@ -99,7 +100,9 @@ function ListInventoryComponent() {
           <TableCellReadonly
             {...cellInfo}
             shouldBeRed={(row: Row<WoodPiece>) => {
-              return row.getValue("duplicate_seq_no");
+              return (
+                row.getValue("duplicate_seq_no") || !row.getValue("sequence_no")
+              );
             }}
           />
         ),

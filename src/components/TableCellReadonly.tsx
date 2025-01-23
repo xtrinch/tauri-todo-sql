@@ -59,7 +59,7 @@ export const TableCellReadonly = <TableItem,>({
         paddingLeft: shouldBeRed?.(row) ? 3 : undefined,
       }}
     >
-      {getFormattedVal(initialValue) || ""}
+      {getFormattedVal(initialValue) || <>&nbsp;</>}
     </div>
   );
 };

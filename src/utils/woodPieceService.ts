@@ -1,6 +1,6 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
 import { info } from "@tauri-apps/plugin-log";
-import { compact, keyBy } from "lodash";
+import { compact, groupBy, keyBy, maxBy, range } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase, getDatabaseForModify } from "./database";
 
@@ -49,6 +49,7 @@ interface ListOptions {
   offered_price__isnotzero?: boolean;
   id__not_in?: number[];
   mark_duplicates?: boolean;
+  fill_empty_seq_lines?: boolean;
 }
 
 const ensureWoodPieces = async (opts: ListOptions) => {
@@ -135,6 +136,27 @@ const ensureWoodPieces = async (opts: ListOptions) => {
     }));
   }
 
+  if (opts.fill_empty_seq_lines && woodPieces.length > 0) {
+    const nullSeqNoWps = woodPieces.filter((wp) => !wp.sequence_no);
+    const max_seq_no = maxBy(woodPieces, "sequence_no")?.sequence_no;
+    if (max_seq_no) {
+      const woodPiecesMap = groupBy<WoodPiece>(woodPieces, "sequence_no");
+      woodPieces = [];
+      for (let i of range(1, max_seq_no + 1)) {
+        if (woodPiecesMap[i]) {
+          woodPieces.push(
+            ...woodPiecesMap[i].map((wp) => ({
+              ...wp,
+              sequence_no: wp.sequence_no || 0,
+            }))
+          );
+        } else {
+          woodPieces.push({} as WoodPiece);
+        }
+      }
+      woodPieces.push(...nullSeqNoWps);
+    }
+  }
   return woodPieces;
 };
 
