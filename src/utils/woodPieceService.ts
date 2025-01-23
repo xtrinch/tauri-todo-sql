@@ -1,6 +1,6 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
 import { info } from "@tauri-apps/plugin-log";
-import { compact } from "lodash";
+import { compact, keyBy } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase, getDatabaseForModify } from "./database";
 
@@ -27,6 +27,8 @@ export interface WoodPiece {
   offered_price?: number;
   buyer_name?: string;
   ident: string;
+  duplicate_plate_no?: boolean;
+  duplicate_seq_no?: boolean;
 }
 
 interface ListOptions {
@@ -46,6 +48,7 @@ interface ListOptions {
   enabled?: boolean;
   offered_price__isnotzero?: boolean;
   id__not_in?: number[];
+  mark_duplicates?: boolean;
 }
 
 const ensureWoodPieces = async (opts: ListOptions) => {
@@ -111,7 +114,27 @@ const ensureWoodPieces = async (opts: ListOptions) => {
     info(JSON.stringify(e));
     throw e;
   }
-  const woodPieces = result as WoodPiece[];
+
+  let woodPieces = result as WoodPiece[];
+  if (opts.mark_duplicates) {
+    const duplicate_plate_no_sql = `SELECT "plate_no", COUNT(*) c FROM "wood_pieces" GROUP BY "plate_no" HAVING c > 1;`;
+    const duplicate_plate_nos = (await db.select(duplicate_plate_no_sql)) as {
+      id: number;
+    }[];
+    const duplicate_plate_nos_map = keyBy(duplicate_plate_nos, "plate_no");
+
+    const duplicate_seq_no_sql = `SELECT "sequence_no", COUNT(*) c FROM "wood_pieces" GROUP BY "sequence_no" HAVING c > 1;`;
+    const duplicate_seq_nos = (await db.select(duplicate_seq_no_sql)) as {
+      id: number;
+    }[];
+    const duplicate_seq_nos_map = keyBy(duplicate_seq_nos, "sequence_no");
+    woodPieces = woodPieces.map((wp) => ({
+      ...wp,
+      duplicate_plate_no: !!duplicate_plate_nos_map[wp.plate_no],
+      duplicate_seq_no: !!duplicate_seq_nos_map[wp.sequence_no],
+    }));
+  }
+
   return woodPieces;
 };
 

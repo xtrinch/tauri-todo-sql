@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   ColumnDef,
   getCoreRowModel,
+  Row,
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
@@ -13,6 +14,7 @@ import { TableCellReadonly } from "../../components/TableCellReadonly";
 import { buyersQueryOptions } from "../../utils/buyerService";
 import { sellersQueryOptions } from "../../utils/sellerService";
 import { treeSpeciesQueryOptions } from "../../utils/treeSpeciesService";
+
 import {
   WoodPiece,
   woodPiecesQueryOptions,
@@ -44,6 +46,7 @@ function ListInventoryComponent() {
       relations: [],
       ...filters,
       language: i18n.language as "sl" | "en",
+      mark_duplicates: true,
     })
   );
   const woodPieces = woodPiecesQuery.data;
@@ -92,11 +95,39 @@ function ListInventoryComponent() {
         meta: {
           type: "integer",
         },
+        cell: (cellInfo) => (
+          <TableCellReadonly
+            {...cellInfo}
+            shouldBeRed={(row: Row<WoodPiece>) => {
+              return row.getValue("duplicate_seq_no");
+            }}
+          />
+        ),
       },
       {
         accessorKey: "plate_no",
         header: () => t("plateNo"),
         size: 100,
+        cell: (cellInfo) => (
+          <TableCellReadonly
+            {...cellInfo}
+            shouldBeRed={(row: Row<WoodPiece>) => {
+              return row.getValue("duplicate_plate_no");
+            }}
+          />
+        ),
+      },
+      {
+        accessorKey: "duplicate_plate_no",
+        header: () => <></>,
+        size: 0,
+        cell: undefined,
+      },
+      {
+        accessorKey: "duplicate_seq_no",
+        header: () => <></>,
+        size: 0,
+        cell: undefined,
       },
       {
         accessorKey: "tree_species_name",

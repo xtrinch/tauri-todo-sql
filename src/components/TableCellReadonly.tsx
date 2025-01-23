@@ -51,10 +51,12 @@ export const TableCellReadonly = <TableItem,>({
 
   return (
     <div
-      className="text-base py-1"
+      className="text-base h-full min-h-full"
       style={{
-        color: shouldBeRed?.(row) ? "red" : undefined,
-        fontWeight: shouldBeRed?.(row) ? "red" : undefined,
+        color: shouldBeRed?.(row) ? "white" : undefined,
+        fontWeight: shouldBeRed?.(row) ? "bold" : undefined,
+        backgroundColor: shouldBeRed?.(row) ? "red" : undefined,
+        paddingLeft: shouldBeRed?.(row) ? 3 : undefined,
       }}
     >
       {getFormattedVal(initialValue) || ""}
