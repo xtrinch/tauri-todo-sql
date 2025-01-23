@@ -23,7 +23,7 @@ export function CustomTable<TableItem>({
   hasFooter?: boolean;
   header?: ReactElement;
 }) {
-  const znj = useFormTab();
+  useFormTab();
   const parentRef = useRef<HTMLDivElement>(null);
   const { rows } = table.getRowModel();
   const getItemKey = useCallback((index: number) => {
