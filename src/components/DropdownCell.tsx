@@ -48,7 +48,7 @@ export const DropdownCell = <TableItem,>({
     () =>
       (choiceData || []).map((c) => ({
         value: c.value,
-        label: `${c.label || "No label"}`,
+        label: c.label,
       })),
     [choiceData]
   );

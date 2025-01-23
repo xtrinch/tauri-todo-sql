@@ -15,6 +15,7 @@ import { buyersQueryOptions } from "../../utils/buyerService";
 import { sellersQueryOptions } from "../../utils/sellerService";
 import { treeSpeciesQueryOptions } from "../../utils/treeSpeciesService";
 
+import { compact, values } from "lodash";
 import {
   WoodPiece,
   woodPiecesQueryOptions,
@@ -39,6 +40,10 @@ function ListInventoryComponent() {
     buyer_id_label?: string;
   }>();
 
+  const filtersHaveValue = useMemo(() => {
+    return compact(values(filters)).length > 0;
+  }, [filters]);
+
   const woodPiecesQuery = useSuspenseQuery(
     woodPiecesQueryOptions({
       ...Route.useLoaderDeps(),
@@ -46,8 +51,9 @@ function ListInventoryComponent() {
       relations: [],
       ...filters,
       language: i18n.language as "sl" | "en",
-      mark_duplicates: true,
-      fill_empty_seq_lines: true,
+      ...(!filtersHaveValue
+        ? { mark_duplicates: true, fill_empty_seq_lines: true }
+        : {}),
     })
   );
   const woodPieces = woodPiecesQuery.data;
@@ -273,7 +279,7 @@ function ListInventoryComponent() {
               setFilters((prev) => ({
                 ...prev,
                 tree_species_id: newValue?.value!,
-                tree_species_id_label: newValue?.label || "No label",
+                tree_species_id_label: newValue?.label,
               }))
             }
             value={{
@@ -319,7 +325,7 @@ function ListInventoryComponent() {
               setFilters((prev) => ({
                 ...prev,
                 seller_id: newValue?.value!,
-                seller_id_label: newValue?.label || "No label",
+                seller_id_label: newValue?.label,
               }))
             }
             value={{
