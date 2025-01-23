@@ -1,6 +1,7 @@
 import { flexRender, Row, Table } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { memo, ReactElement, useCallback, useRef } from "react";
+import useFormTab from "../utils/useFormTab";
 import { CustomTableMeta } from "./TableCell";
 
 export function CustomTable<TableItem>({
@@ -22,6 +23,7 @@ export function CustomTable<TableItem>({
   hasFooter?: boolean;
   header?: ReactElement;
 }) {
+  const znj = useFormTab();
   const parentRef = useRef<HTMLDivElement>(null);
   const { rows } = table.getRowModel();
   const getItemKey = useCallback((index: number) => {
