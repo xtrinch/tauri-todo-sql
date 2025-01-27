@@ -2,11 +2,11 @@ import { useCallback, useEffect } from "react";
 
 export default function useFormTab() {
   const keyDownHandler = useCallback((event: KeyboardEvent) => {
-    // stackoverflow.com/a/68785699/2402929
     if (event.key === "Enter") {
+      const inputTarget = event.currentTarget as HTMLInputElement;
+
       const fields: HTMLInputElement[] =
-        // @ts-ignore
-        Array.from(event.currentTarget!.querySelectorAll("input")) || [];
+        Array.from(inputTarget.querySelectorAll("input")) || [];
       const position = fields.indexOf(event.target as HTMLInputElement);
       fields[position + 1] && fields[position + 1].focus();
     }

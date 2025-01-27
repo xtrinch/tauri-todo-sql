@@ -115,6 +115,7 @@ const resources = {
       invoice: "Invoice",
       resetApplicationData: "Reset application data",
       language: "Language",
+      totalIncome: "Total income",
     },
   },
   sl: {
@@ -228,6 +229,7 @@ const resources = {
       invoice: "Obračun",
       resetApplicationData: "Resetiraj podatke aplikacije",
       language: "Jezik",
+      totalIncome: "Skupni prihodki",
     },
   },
 };

@@ -52,7 +52,7 @@ interface ListOptions {
   fill_empty_seq_lines?: boolean;
 }
 
-const ensureWoodPieces = async (opts: ListOptions) => {
+export const ensureWoodPieces = async (opts: ListOptions) => {
   const db = await getDatabase();
   const params = [opts.seller_id, opts.tree_species_id, opts.buyer_id];
 
@@ -283,7 +283,10 @@ export const useCreateWoodPieceMutation = (opts?: {
   return useMutation({
     mutationFn: postWoodPiece,
     onSuccess: (woodPiece: WoodPiece) => {
-      queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          ["wood_pieces", "statistics"].includes(query.queryKey[0] as string),
+      });
       if (opts?.onSuccess) opts.onSuccess(woodPiece);
     },
     onError: (e) => {
@@ -299,7 +302,10 @@ export const useRemoveWoodPieceMutation = (opts?: {
   return useMutation({
     mutationFn: removeWoodPiece,
     onSuccess: (woodPiece: WoodPiece) => {
-      queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          ["wood_pieces", "statistics"].includes(query.queryKey[0] as string),
+      });
       if (opts?.onSuccess) opts.onSuccess(woodPiece);
     },
     onError: (e) => {
@@ -316,7 +322,10 @@ export const useUpdateWoodPieceMutation = (opts?: {
   return useMutation({
     mutationFn: patchWoodPiece,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          ["wood_pieces", "statistics"].includes(query.queryKey[0] as string),
+      });
       if (opts?.onSuccess) opts.onSuccess();
     },
     gcTime: 1000 * 10,

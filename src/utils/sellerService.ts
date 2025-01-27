@@ -21,7 +21,7 @@ export type Seller = {
   logging_costs: number;
 };
 
-const ensureSellers = async (opts: {
+export const ensureSellers = async (opts: {
   filterBy?: string;
   sortBy?: "seller_name" | "id" | "email";
   sortDirection?: "DESC" | "ASC";
@@ -159,7 +159,10 @@ export const useCreateSellerMutation = (opts?: {
   return useMutation({
     mutationFn: postSeller,
     onSuccess: (seller: Seller) => {
-      queryClient.invalidateQueries({ queryKey: ["sellers"] });
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          ["sellers", "statistics"].includes(query.queryKey[0] as string),
+      });
       if (opts?.onSuccess) opts.onSuccess(seller);
     },
     onError: (e) => {
@@ -180,8 +183,12 @@ export const useUpdateSellerMutation = (
     mutationKey: ["sellers", "update", sellerId],
     mutationFn: patchSeller,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sellers"] });
-      queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          ["sellers", "wood_pieces" /* TODO ?? */, "statistics"].includes(
+            query.queryKey[0] as string
+          ),
+      });
       if (opts?.onSuccess) opts.onSuccess();
     },
     gcTime: 1000 * 10,
@@ -221,7 +228,10 @@ export const useRemoveSellerMutation = (opts?: {
   return useMutation({
     mutationFn: removeSeller,
     onSuccess: (seller: Seller) => {
-      queryClient.invalidateQueries({ queryKey: ["sellers"] });
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          ["sellers", "statistics"].includes(query.queryKey[0] as string),
+      });
       if (opts?.onSuccess) opts.onSuccess(seller);
     },
     onError: (e) => {
