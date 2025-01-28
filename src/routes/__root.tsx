@@ -99,8 +99,10 @@ function RootComponent() {
 
   const resetApplicationData = async () => {
     if (await confirm({ confirmation: t("areYouSure") })) {
-      localStorage.setItem("unsaved_changes_v2", "false");
       localStorage.removeItem("save_file_path_v2");
+      localStorage.setItem("unsaved_changes_v2", "false");
+      window.dispatchEvent(new Event("storage"));
+
       try {
         await invoke("truncate_all_data", {});
       } catch (e) {
@@ -184,6 +186,8 @@ function RootComponent() {
       const localStorageChanges =
         localStorage.getItem("unsaved_changes_v2") === "true";
       setChanges(localStorageChanges);
+      const localStorageFilePath = localStorage.getItem("save_file_path_v2");
+      setFilePath(localStorageFilePath);
     }
 
     window.addEventListener("storage", checkUserData);

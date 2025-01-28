@@ -50,25 +50,29 @@ function RouteComponent() {
         {(statisticsQuery.data.total_income_new || 0).toFixed(2)} EUR
       </div> */}
       <div>
-        {t("loggingCosts")}: {statisticsQuery.data.total_logging_costs} EUR
+        {t("loggingCosts")}:{" "}
+        {(statisticsQuery.data.total_logging_costs || 0).toFixed(2)} EUR
       </div>
       {/* <div>
         {t("loggingCosts")}: {statisticsQuery.data.total_logging_costs_new} EUR
       </div> */}
       <div>
-        {t("transportCosts")}: {statisticsQuery.data.total_transport_costs} EUR
+        {t("transportCosts")}:{" "}
+        {(statisticsQuery.data.total_transport_costs || 0).toFixed(2)} EUR
       </div>
       {/* <div>
         {t("transportCostsNew")}: {statisticsQuery.data.total_transport_costs_new} EUR
       </div> */}
       <div>
-        {t("costsTo350")}: {statisticsQuery.data.costs_below_350} EUR
+        {t("costsTo350")}:{" "}
+        {(statisticsQuery.data.costs_below_350 || 0).toFixed(2)} EUR
       </div>
       {/* <div>
         {t("costsBelow350New")}: {statisticsQuery.data.costs_below_350_new} EUR
       </div> */}
       <div>
-        {t("costsAbove350")}: {statisticsQuery.data.costs_above_350} EUR
+        {t("costsAbove350")}:{" "}
+        {(statisticsQuery.data.costs_above_350 || 0).toFixed(2)} EUR
       </div>
       {/* <div>
         {t("costsAbove350New")}: {statisticsQuery.data.costs_above_350_new} EUR
