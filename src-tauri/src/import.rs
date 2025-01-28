@@ -8,7 +8,6 @@ fn truncate_db(conn: &Connection) -> Result<(), Box<dyn std::error::Error>> {
     let import_sequence = vec![
         "buyers",
         "sellers",
-        "tree_species",
         "wood_pieces",
         "wood_piece_offers",
     ];

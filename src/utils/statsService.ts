@@ -5,6 +5,7 @@ import { getDatabase } from "./database";
 export interface Statistics {
   total_volume: number;
   num_wood_pieces: number;
+  num_unsold_wood_pieces: number;
   offered_max_price: number;
   total_income: number;
   costs_below_350: number;
@@ -105,16 +106,17 @@ const ensureStats = async (): Promise<Statistics> => {
           + ROUND("total_logging_costs", 2) 
           + ROUND("costs_below_350", 2) 
           + ROUND("costs_above_350", 2)
-        ) as "total_income"
+        ) AS "total_income"
     FROM (
       SELECT --- this one also does the grouping of all rows
-        ROUND(SUM("total_transport_costs"), 2) as total_transport_costs,
-        ROUND(SUM("total_logging_costs"), 2) as "total_logging_costs",
-        ROUND(SUM("costs_below_350"), 2) as "costs_below_350",
-        ROUND(SUM("costs_above_350_1"), 2) as "costs_above_350",
-        ROUND(SUM("total_volume"), 2) as "total_volume",
-        MAX("offered_price") as "offered_max_price",
-        SUM("num_pieces") as "num_wood_pieces"
+        ROUND(SUM("total_transport_costs"), 2) AS total_transport_costs,
+        ROUND(SUM("total_logging_costs"), 2) AS "total_logging_costs",
+        ROUND(SUM("costs_below_350"), 2) AS "costs_below_350",
+        ROUND(SUM("costs_above_350_1"), 2) AS "costs_above_350",
+        ROUND(SUM("total_volume"), 2) AS "total_volume",
+        MAX("offered_price") AS "offered_max_price",
+        SUM("num_pieces") AS "num_wood_pieces",
+        SUM("num_unsold_pieces") AS "num_unsold_wood_pieces"
       FROM (
         SELECT --- just selects some additional stuff on top of one row per seller
           *,
@@ -126,21 +128,23 @@ const ensureStats = async (): Promise<Statistics> => {
             THEN ROUND("sellers"."logging_costs" * "sellers"."total_volume", 2)
             ELSE 0
           END AS "total_logging_costs",
-          round("sellers"."total_volume" * 22, 2) as "costs_below_350",
-          round("sellers"."total_price1" * 0.05, 2) as "costs_above_350_1"
+          ROUND("sellers"."total_volume" * 22, 2) AS "costs_below_350",
+          ROUND("sellers"."total_price1" * 0.05, 2) AS "costs_above_350_1"
         FROM (
           SELECT  -- this one selects one row per seller, so already summed values
             *,
-            SUM("costs_above_350") as "costs_above_350",
-            MAX("offered_price") as "offered_price",
+            SUM("costs_above_350") AS "costs_above_350",
+            MAX("offered_price") AS "offered_price",
             SUM("volume") AS "total_volume",
-            SUM(case when "wp_id" is NOT null then 1 else 0 end) as "num_pieces",
+            SUM(CASE WHEN "wp_id" IS NOT NULL then 1 else 0 end) as "num_pieces",
+            SUM(CASE WHEN "wpo_id" IS NULL AND "wp_id" IS NOT NULL then 1 else 0 end) as "num_unsold_pieces",
             SUM("total_price") AS "total_price1"
           FROM (
             SELECT --- this one selects all wood pieces flattened
               *,
               COALESCE("offered_price", 0) * "volume" as "total_price",
-              "wood_pieces"."id" as "wp_id"
+              "wood_pieces"."id" as "wp_id",
+              "wood_piece_offers"."id" as "wpo_id"
             FROM "sellers"
             LEFT JOIN "wood_pieces" ON "wood_pieces"."seller_id" = "sellers"."id"
             LEFT JOIN ( --- left join with max offer
@@ -148,10 +152,10 @@ const ensureStats = async (): Promise<Statistics> => {
                 *, 
                 row_number() OVER (PARTITION BY "wood_piece_id" ORDER BY "offered_price" DESC) as "seq_num" 
               FROM "wood_piece_offers" 
-            ) "wpo" ON ("wood_pieces"."id" = "wpo"."wood_piece_id" AND "wpo"."seq_num" = 1)
+            ) "wood_piece_offers" ON ("wood_pieces"."id" = "wood_piece_offers"."wood_piece_id" AND "wood_piece_offers"."seq_num" = 1)
           )
           GROUP BY "seller_id"
-        ) as "sellers"
+        ) AS "sellers"
       )
     )
   `;
@@ -165,6 +169,7 @@ const ensureStats = async (): Promise<Statistics> => {
 
   const statistics: Statistics = {
     num_wood_pieces: priceResult[0].num_wood_pieces,
+    num_unsold_wood_pieces: priceResult[0].num_unsold_wood_pieces,
     offered_max_price: priceResult[0].offered_max_price,
     total_volume: priceResult[0].total_volume,
     total_income: priceResult[0].total_income,

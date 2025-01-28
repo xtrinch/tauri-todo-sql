@@ -1,14 +1,22 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  ColumnDef,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { CustomTable } from "../components/CustomTable";
+import { TableCellReadonly } from "../components/TableCellReadonly";
 import { statsQueryOptions } from "../utils/statsService";
 
 export const Route = createFileRoute("/statistics")({
-  component: RouteComponent,
+  component: StatisticsComponent,
 });
 
-function RouteComponent() {
-  const { t } = useTranslation();
+function StatisticsComponent() {
+  const { t, i18n } = useTranslation();
 
   const statisticsQuery = useSuspenseQuery(
     statsQueryOptions({
@@ -16,67 +24,100 @@ function RouteComponent() {
     })
   );
 
+  const columns = useMemo<ColumnDef<unknown, any>[]>(
+    () => [
+      {
+        accessorKey: "label",
+        size: 650,
+        header: () => t("summary"),
+      },
+      {
+        accessorKey: "value",
+        size: 100,
+        header: () => t("value"),
+      },
+      {
+        accessorKey: "unit",
+        size: 90,
+        header: () => t("unit"),
+      },
+    ],
+    []
+  );
+
+  const data: { label: string; value: string; unit: string; bold?: boolean }[] =
+    useMemo(
+      () => [
+        {
+          label: t("numWoodPieces"),
+          value: `${statisticsQuery.data.num_wood_pieces}`,
+          unit: "",
+        },
+        {
+          label: t("numUnsoldWoodPieces"),
+          value: `${statisticsQuery.data.num_unsold_wood_pieces}`,
+          unit: "",
+        },
+        {
+          label: t("totalVolume"),
+          value: `${(statisticsQuery.data.total_volume || 0).toFixed(2)}`,
+          unit: "m3",
+        },
+        {
+          label: t("offeredMaxPrice"),
+          value: `${(statisticsQuery.data.offered_max_price || 0).toFixed(2)}`,
+          unit: "EUR / m3",
+        },
+        {
+          label: t("loggingCosts"),
+          value: `${(statisticsQuery.data.total_logging_costs || 0).toFixed(2)}`,
+          unit: "EUR",
+        },
+        {
+          label: t("transportCosts"),
+          value: `${(statisticsQuery.data.total_transport_costs || 0).toFixed(2)}`,
+          unit: "EUR",
+        },
+        {
+          label: t("costsTo350"),
+          value: `${(statisticsQuery.data.costs_below_350 || 0).toFixed(2)}`,
+          unit: "EUR",
+        },
+        {
+          label: t("costsAbove350"),
+          value: `${(statisticsQuery.data.costs_above_350 || 0).toFixed(2)}`,
+          unit: "EUR",
+        },
+        {
+          label: t("totalIncome"),
+          value: `${(statisticsQuery.data.total_income || 0).toFixed(2)}`,
+          unit: "EUR",
+        },
+      ],
+      [i18n.language, statisticsQuery.data]
+    );
+
+  const table = useReactTable({
+    data: data,
+    columns: columns,
+    getCoreRowModel: getCoreRowModel(),
+    defaultColumn: {
+      cell: TableCellReadonly,
+    },
+    meta: {},
+  });
+
   return (
-    <div className="p-3 flex flex-col space-y-5">
-      <div className="font-bold text-lg">{t("statistics")}</div>
-      <div>
-        {t("numWoodPieces")}: {statisticsQuery.data.num_wood_pieces}
+    <>
+      <div className="p-3 flex flex-col space-y-5">
+        <div className="font-bold text-lg">{t("statistics")}</div>
+        <CustomTable
+          sizeEstimate={45}
+          table={table}
+          trClassName="border-b"
+          trhClassName="border-b"
+        />
       </div>
-      {/* <div>
-        {t("numWoodPiecesNew")}: {statisticsQuery.data.num_wood_pieces_new}
-      </div> */}
-      <div>
-        {t("offeredMaxPrice")}:{" "}
-        {(statisticsQuery.data.offered_max_price || 0).toFixed(2)} EUR
-      </div>
-      {/* <div>
-        {t("offeredMaxPriceNew")}: {statisticsQuery.data.offered_max_price_new}{" "}
-        EUR
-      </div> */}
-      <div>
-        {t("totalVolume")}:{" "}
-        {(statisticsQuery.data.total_volume || 0).toFixed(2)} m3
-      </div>
-      {/* <div>
-        {t("totalVolumeNew")}:{" "}
-        {(statisticsQuery.data.total_volume_new || 0).toFixed(2)} m3
-      </div> */}
-      <div>
-        {t("totalIncome")}:{" "}
-        {(statisticsQuery.data.total_income || 0).toFixed(2)} EUR
-      </div>
-      {/* <div>
-        {t("totalIncomeNew")}:{" "}
-        {(statisticsQuery.data.total_income_new || 0).toFixed(2)} EUR
-      </div> */}
-      <div>
-        {t("loggingCosts")}:{" "}
-        {(statisticsQuery.data.total_logging_costs || 0).toFixed(2)} EUR
-      </div>
-      {/* <div>
-        {t("loggingCosts")}: {statisticsQuery.data.total_logging_costs_new} EUR
-      </div> */}
-      <div>
-        {t("transportCosts")}:{" "}
-        {(statisticsQuery.data.total_transport_costs || 0).toFixed(2)} EUR
-      </div>
-      {/* <div>
-        {t("transportCostsNew")}: {statisticsQuery.data.total_transport_costs_new} EUR
-      </div> */}
-      <div>
-        {t("costsTo350")}:{" "}
-        {(statisticsQuery.data.costs_below_350 || 0).toFixed(2)} EUR
-      </div>
-      {/* <div>
-        {t("costsBelow350New")}: {statisticsQuery.data.costs_below_350_new} EUR
-      </div> */}
-      <div>
-        {t("costsAbove350")}:{" "}
-        {(statisticsQuery.data.costs_above_350 || 0).toFixed(2)} EUR
-      </div>
-      {/* <div>
-        {t("costsAbove350New")}: {statisticsQuery.data.costs_above_350_new} EUR
-      </div> */}
-    </div>
+    </>
   );
 }

@@ -109,6 +109,7 @@ const resources = {
       catalogueSubtext: "Gornja Radgona 2024",
       statistics: "Statistics",
       numWoodPieces: "Number of wood pieces",
+      numUnsoldWoodPieces: "Number of unsold wood pieces",
       offeredMaxPrice: "Max offered price",
       usedLoggingOutsideWoods: "Logging non-woods",
       loggingPrice: "Logging price",
@@ -116,6 +117,8 @@ const resources = {
       resetApplicationData: "Reset application data",
       language: "Language",
       totalIncome: "Total income",
+      value: "Value",
+      unit: "Unit",
     },
   },
   sl: {
@@ -223,6 +226,7 @@ const resources = {
       catalogueSubtext: "Gornja Radgona 2024",
       statistics: "Statistika",
       numWoodPieces: "Število hlodov",
+      numUnsoldWoodPieces: "Število neprodanih hlodov",
       offeredMaxPrice: "Najvišja ponujena cena",
       usedLoggingOutsideWoods: "Posek izvengozdni",
       loggingPrice: "Posek cena",
@@ -230,6 +234,8 @@ const resources = {
       resetApplicationData: "Resetiraj podatke aplikacije",
       language: "Jezik",
       totalIncome: "Skupni prihodki",
+      value: "Vrednost",
+      unit: "Enota",
     },
   },
 };
