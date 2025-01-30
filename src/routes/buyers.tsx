@@ -160,7 +160,7 @@ function BuyersComponent() {
         >
           <FaPlus />
         </button>
-        <div className="max-h-[calc(100vh-215px)] overflow-auto">
+        <div className="max-h-[calc(100vh-215px)] h-[calc(100vh-215px)] overflow-auto">
           {buyers?.map((buyer) => {
             return (
               <div key={buyer.id}>

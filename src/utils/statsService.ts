@@ -99,7 +99,7 @@ const ensureStats = async (): Promise<Statistics> => {
   //   .add(transportCosts);
 
   const priceSql = `
-    SELECT 
+    SELECT --- sum up the total income
       *,
       SUM(
           ROUND("total_transport_costs", 2) 
@@ -112,7 +112,7 @@ const ensureStats = async (): Promise<Statistics> => {
         ROUND(SUM("total_transport_costs"), 2) AS total_transport_costs,
         ROUND(SUM("total_logging_costs"), 2) AS "total_logging_costs",
         ROUND(SUM("costs_below_350"), 2) AS "costs_below_350",
-        ROUND(SUM("costs_above_350_1"), 2) AS "costs_above_350",
+        ROUND(SUM("costs_above_350"), 2) AS "costs_above_350",
         ROUND(SUM("total_volume"), 2) AS "total_volume",
         MAX("offered_price") AS "offered_max_price",
         SUM("num_pieces") AS "num_wood_pieces",
@@ -129,11 +129,10 @@ const ensureStats = async (): Promise<Statistics> => {
             ELSE 0
           END AS "total_logging_costs",
           ROUND("sellers"."total_volume" * 22, 2) AS "costs_below_350",
-          ROUND("sellers"."total_price1" * 0.05, 2) AS "costs_above_350_1"
+          ROUND("sellers"."total_price1" * 0.05, 2) AS "costs_above_350"
         FROM (
           SELECT  -- this one selects one row per seller, so already summed values
             *,
-            SUM("costs_above_350") AS "costs_above_350",
             MAX("offered_price") AS "offered_price",
             SUM("volume") AS "total_volume",
             SUM(CASE WHEN "wp_id" IS NOT NULL then 1 else 0 end) as "num_pieces",
