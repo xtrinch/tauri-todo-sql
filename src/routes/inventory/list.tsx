@@ -16,6 +16,7 @@ import { sellersQueryOptions } from "../../utils/sellerService";
 import { treeSpeciesQueryOptions } from "../../utils/treeSpeciesService";
 
 import { compact, values } from "lodash";
+import { TableCellCheckboxReadonly } from "../../components/TableCellCheckboxReadonly";
 import {
   WoodPiece,
   woodPiecesQueryOptions,
@@ -191,6 +192,13 @@ function ListInventoryComponent() {
           readonly: true,
         },
         cell: TableCellReadonly,
+      },
+      {
+        accessorKey: "bypass_min_price",
+        header: () => t("bypassMinPrice"),
+        size: 80,
+        meta: {},
+        cell: TableCellCheckboxReadonly,
       },
       {
         accessorKey: "offered_total_price",
