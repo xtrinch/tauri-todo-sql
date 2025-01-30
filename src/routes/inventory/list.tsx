@@ -33,7 +33,6 @@ function ListInventoryComponent() {
     tree_species_id_label?: string;
     offered_price__isnull?: boolean;
     offered_price__isnotnull?: boolean;
-    offered_price__islowerthanmin?: boolean;
     seller_id?: number;
     seller_id_label?: string;
     buyer_id?: number;
@@ -226,45 +225,6 @@ function ListInventoryComponent() {
     meta: {},
   });
 
-  const offeredPriceOptions = useMemo(
-    () => [
-      { label: t("isDefined"), value: "offered_price__isnotnull" },
-      { label: t("isNotDefined"), value: "offered_price__isnull" },
-      {
-        label: t("isLowerThanMin"),
-        value: "offered_price__islowerthanmin",
-      },
-    ],
-    [i18n.language]
-  );
-
-  const getOfferedPriceOptionValue = () => {
-    let value = null;
-
-    if (filters?.offered_price__isnotnull) {
-      value = "offered_price__isnotnull";
-    } else if (filters?.offered_price__isnull) {
-      value = "offered_price__isnull";
-    } else if (filters?.offered_price__islowerthanmin) {
-      value = "offered_price__islowerthanmin";
-    }
-    return value;
-  };
-
-  const getOfferedPriceOptionLabel = () => {
-    let value = null;
-
-    if (filters?.offered_price__isnotnull) {
-      value = t("isDefined");
-    } else if (filters?.offered_price__isnull) {
-      value = t("isNotDefined");
-    } else if (filters?.offered_price__islowerthanmin) {
-      value = t("isLowerThanMin");
-    }
-
-    return value;
-  };
-
   return (
     <div className="p-3">
       <div className="mb-3">{t("filters")}</div>
@@ -285,31 +245,6 @@ function ListInventoryComponent() {
             value={{
               value: filters?.tree_species_id,
               label: filters?.tree_species_id_label,
-            }}
-            isClearable={true}
-            placeholder={t("select")}
-          />
-        </div>
-        <div>
-          <div className="text-sm">{t("maxPrice")}</div>
-          <Select
-            className="w-[250px]"
-            options={offeredPriceOptions}
-            isSearchable={true}
-            onChange={(newValue) =>
-              setFilters((prev) => ({
-                ...prev,
-                offered_price__isnull:
-                  newValue?.value === "offered_price__isnull",
-                offered_price__isnotnull:
-                  newValue?.value === "offered_price__isnotnull",
-                offered_price__islowerthanmin:
-                  newValue?.value === "offered_price__islowerthanmin",
-              }))
-            }
-            value={{
-              value: getOfferedPriceOptionValue(),
-              label: getOfferedPriceOptionLabel(),
             }}
             isClearable={true}
             placeholder={t("select")}

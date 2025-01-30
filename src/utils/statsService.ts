@@ -19,6 +19,7 @@ interface ListOptions {}
 const ensureStats = async (): Promise<Statistics> => {
   const db = await getDatabase();
 
+  // TODO: cleanup
   // let sql = `
   //   SELECT
   //     COUNT(*) as "num_wood_pieces",
@@ -151,7 +152,11 @@ const ensureStats = async (): Promise<Statistics> => {
                 *, 
                 row_number() OVER (PARTITION BY "wood_piece_id" ORDER BY "offered_price" DESC) as "seq_num" 
               FROM "wood_piece_offers" 
-            ) "wood_piece_offers" ON ("wood_pieces"."id" = "wood_piece_offers"."wood_piece_id" AND "wood_piece_offers"."seq_num" = 1)
+            ) "wood_piece_offers" ON (
+              "wood_pieces"."id" = "wood_piece_offers"."wood_piece_id" 
+              AND "wood_piece_offers"."seq_num" = 1
+              AND ("wood_piece_offers"."offered_price" >= "wood_pieces"."min_price" OR "wood_pieces"."bypass_min_price" = 1)
+            )
           )
           GROUP BY "seller_id"
         ) AS "sellers"
