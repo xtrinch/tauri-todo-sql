@@ -32,7 +32,6 @@ function ListInventoryComponent() {
   const [filters, setFilters] = useState<{
     tree_species_id?: number;
     tree_species_id_label?: string;
-    offered_price__isnull?: boolean;
     offered_price__isnotnull?: boolean;
     seller_id?: number;
     seller_id_label?: string;

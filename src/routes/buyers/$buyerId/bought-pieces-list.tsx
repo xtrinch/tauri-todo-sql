@@ -37,9 +37,7 @@ function BoughtPiecesList() {
     woodPiecesQueryOptions({
       ...Route.useLoaderDeps(),
       buyer_id: params.buyerId,
-      offered_price__isnotnull: true,
       offered_price__isnotzero: true,
-      min_price_used: true,
       relations: [],
       language: i18n.language as "sl" | "en",
     })
@@ -50,9 +48,7 @@ function BoughtPiecesList() {
     woodPiecesQueryOptions({
       ...Route.useLoaderDeps(),
       buyer_id: params.buyerId,
-      offered_price__isnotnull: true,
       groupBy_tree_species: true,
-      min_price_used: true,
       relations: [],
       language: i18n.language as "sl" | "en",
     })

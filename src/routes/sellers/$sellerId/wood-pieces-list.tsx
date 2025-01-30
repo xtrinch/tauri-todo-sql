@@ -36,6 +36,7 @@ function SoldPiecesList() {
       seller_id: params.sellerId,
       relations: [],
       language: i18n.language as "sl" | "en",
+      min_price_not_used: true,
     })
   );
   const woodPieces = woodPiecesQuery.data;

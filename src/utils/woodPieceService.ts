@@ -35,7 +35,6 @@ interface ListOptions {
   tree_species_id?: number;
   seller_id?: number;
   buyer_id?: number;
-  offered_price__isnull?: boolean;
   offered_price__isnotnull?: boolean;
   groupBy_tree_species?: boolean;
   filterBy?: string;
@@ -43,7 +42,7 @@ interface ListOptions {
   relations?: string[];
   sortDirection?: "DESC" | "ASC";
   language?: "en" | "sl";
-  min_price_used?: boolean;
+  min_price_not_used?: boolean;
   enabled?: boolean;
   offered_price__isnotzero?: boolean;
   id__not_in?: number[];
@@ -58,12 +57,8 @@ export const ensureWoodPieces = async (opts: ListOptions) => {
   const where = compact([
     opts.seller_id ? `"seller_id" = $1 ` : "",
     opts.tree_species_id ? `"tree_species_id" = $2` : "",
-    opts.offered_price__isnull ? `"offered_price" IS NULL` : "",
     opts.offered_price__isnotnull ? `"offered_price" IS NOT NULL` : "",
     opts.offered_price__isnotzero ? `"offered_price" > 0` : "",
-    opts.min_price_used
-      ? `("min_price" <= "offered_price" OR "min_price" IS NULL OR "bypass_min_price" = 1)`
-      : "",
     opts.id__not_in
       ? `"wood_pieces"."id" NOT IN (${opts.id__not_in.map((id) => `${id}`).join(", ")})`
       : "",
@@ -80,7 +75,21 @@ export const ensureWoodPieces = async (opts: ListOptions) => {
     FROM "wood_pieces"
     LEFT JOIN "tree_species" ON "wood_pieces"."tree_species_id" = "tree_species"."id"
     LEFT JOIN "sellers" ON "wood_pieces"."seller_id" = "sellers"."id"
-    LEFT JOIN "wood_piece_offers" ON "wood_pieces"."id" = "wood_piece_offers"."wood_piece_id"
+    LEFT JOIN ( --- left join with max offer
+      SELECT 
+        *, 
+        row_number() OVER (PARTITION BY "wood_piece_id" ORDER BY "offered_price" DESC) as "seq_num" 
+      FROM "wood_piece_offers" 
+    ) "wood_piece_offers" ON (
+      "wood_pieces"."id" = "wood_piece_offers"."wood_piece_id" 
+      AND "wood_piece_offers"."seq_num" = 1
+      ${
+        opts.min_price_not_used
+          ? ``
+          : `
+        AND ("wood_piece_offers"."offered_price" >= "wood_pieces"."min_price" OR "wood_pieces"."bypass_min_price" = 1)`
+      }
+    )
     LEFT JOIN "buyers" ON "wood_piece_offers"."buyer_id" = "buyers"."id"
     ${where.length > 0 ? `WHERE ${where.join(" AND ")}` : ``}
     GROUP BY "wood_pieces"."id"

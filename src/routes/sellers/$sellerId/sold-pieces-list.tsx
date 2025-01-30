@@ -36,31 +36,11 @@ function SoldPiecesList() {
     woodPiecesQueryOptions({
       ...Route.useLoaderDeps(),
       seller_id: params.sellerId,
-      offered_price__isnotnull: true,
-      min_price_used: true,
       relations: [],
       language: i18n.language as "sl" | "en",
     })
   );
   const woodPieces = woodPiecesQuery.data;
-
-  const unsoldWoodPiecesQuery = useSuspenseQuery(
-    woodPiecesQueryOptions({
-      ...Route.useLoaderDeps(),
-      seller_id: params.sellerId,
-      language: i18n.language as "sl" | "en",
-      id__not_in: woodPieces.map((w) => w.id),
-      enabled: woodPiecesQuery.isFetched,
-    })
-  );
-  const unsoldWoodPieces = useMemo(() => {
-    return unsoldWoodPiecesQuery.data.map((d) => ({
-      ...d,
-      offered_price: undefined,
-      offered_total_price: undefined,
-      buyer_name: "",
-    })) as WoodPiece[];
-  }, [unsoldWoodPiecesQuery.data]);
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
@@ -138,8 +118,8 @@ function SoldPiecesList() {
   );
 
   const combinedRows = useMemo(() => {
-    return [...woodPieces, ...unsoldWoodPieces];
-  }, [woodPieces, unsoldWoodPieces]);
+    return woodPieces;
+  }, [woodPieces]);
 
   const table = useReactTable({
     data: combinedRows,
