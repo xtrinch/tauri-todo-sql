@@ -64,15 +64,6 @@ const ensureWoodPieceOffers = async (opts: ListOptions) => {
   return woodPieces;
 };
 
-export async function fetchWoodPieceOfferById(id: number) {
-  const db = await getDatabase();
-  const result = await db.select(`SELECT * from "wood_pieces" where id = $1`, [
-    id,
-  ]);
-  const woodPiece = (result as WoodPieceOffer[])[0];
-  return woodPiece;
-}
-
 export async function postWoodPieceOffer(
   partialWoodPieceOffer: Partial<WoodPieceOffer>
 ): Promise<WoodPieceOffer> {
@@ -132,13 +123,6 @@ export async function patchWoodPieceOffer(
   );
 }
 
-export const woodPieceQueryOptions = (woodPieceId: number) =>
-  queryOptions({
-    queryKey: ["wood_pieces", woodPieceId],
-    queryFn: () => fetchWoodPieceOfferById(woodPieceId),
-    staleTime: Infinity,
-  });
-
 export const useCreateWoodPieceOfferMutation = (opts?: {
   onSuccess?: (woodPieceOffer: WoodPieceOffer) => void;
   onError?: (error: Error) => void;
@@ -148,7 +132,7 @@ export const useCreateWoodPieceOfferMutation = (opts?: {
     onSuccess: (woodPiece: WoodPieceOffer) => {
       queryClient.invalidateQueries({
         predicate: (query) =>
-          ["wood_piece_offers", "statistics"].includes(
+          ["wood_piece_offers", "statistics", "wood_pieces"].includes(
             query.queryKey[0] as string
           ),
       });
@@ -170,7 +154,7 @@ export const useRemoveWoodPieceOfferMutation = (opts: {
     onSuccess: (woodPiece: WoodPieceOffer) => {
       queryClient.invalidateQueries({
         predicate: (query) =>
-          ["wood_piece_offers", "statistics"].includes(
+          ["wood_piece_offers", "statistics", "wood_pieces"].includes(
             query.queryKey[0] as string
           ),
       });
@@ -192,7 +176,7 @@ export const useUpdateWoodPieceOfferMutation = (opts?: {
     onSuccess: () => {
       queryClient.invalidateQueries({
         predicate: (query) =>
-          ["wood_piece_offers", "statistics"].includes(
+          ["wood_piece_offers", "statistics", "wood_pieces"].includes(
             query.queryKey[0] as string
           ),
       });

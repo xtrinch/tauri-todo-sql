@@ -78,7 +78,7 @@ export const ensureWoodPieces = async (opts: ListOptions) => {
     LEFT JOIN ( --- left join with max offer
       SELECT 
         *, 
-        row_number() OVER (PARTITION BY "wood_piece_id" ORDER BY "offered_price" DESC) as "seq_num" 
+        row_number() OVER (PARTITION BY "wood_piece_id" ORDER BY "offered_price" DESC, "id" ASC) as "seq_num" 
       FROM "wood_piece_offers" 
     ) "wood_piece_offers" ON (
       "wood_pieces"."id" = "wood_piece_offers"."wood_piece_id" 
