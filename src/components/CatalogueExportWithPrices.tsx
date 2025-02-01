@@ -92,7 +92,7 @@ export const CatalogueExportWithPrices = (params: {
           <Text>{t("catalogue")}</Text>
         </View>
         <View style={styles.subheader}>
-          <Text>2024</Text>
+          <Text>{t("year")}</Text>
         </View>
         <View>
           <PdfTable data={params.woodPiecesData} columns={columns} />

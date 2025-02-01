@@ -52,6 +52,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 5,
   },
+  pageNumbers: {
+    marginTop: 5,
+  },
 });
 
 export const CatalogueExportForBuyers = (params: {
@@ -121,7 +124,7 @@ export const CatalogueExportForBuyers = (params: {
           <Text>{t("catalogueTitle")}</Text>
         </View>
         <View style={styles.header}>
-          <Text>{t("catalogue")}</Text>
+          <Text>{t("sellingCatalogue")}</Text>
         </View>
         <View style={styles.statistics}>
           <View style={styles.statisticsHeader}>
@@ -130,12 +133,6 @@ export const CatalogueExportForBuyers = (params: {
           <View>
             <Text>
               {t("numWoodPieces")}: {params.statistics.num_wood_pieces}
-            </Text>
-          </View>
-          <View>
-            <Text>
-              {t("offeredMaxPrice")}:{" "}
-              {params.statistics.offered_max_price.toFixed(2)} EUR
             </Text>
           </View>
           <View>
@@ -152,6 +149,13 @@ export const CatalogueExportForBuyers = (params: {
         <View>
           <PdfTable data={params.woodPiecesData} columns={columns} />
         </View>
+        <Text
+          render={({ pageNumber, totalPages }) =>
+            `${pageNumber - 1} / ${totalPages - 1}`
+          }
+          fixed
+          style={styles.pageNumbers}
+        />
       </Page>
     </Document>
   );

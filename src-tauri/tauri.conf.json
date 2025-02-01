@@ -31,12 +31,22 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "createUpdaterArtifacts": true
   },
   "plugins": {
     "sql": {
       "preload": ["sqlite:main_database_v2.db"]
     },
-    "filesystem": {}
+    "filesystem": {},
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDdGM0Y1MzY2NDgxRjkwMkUKUldRdWtCOUlabE0vZng3aDlBc3F2MDl6ZzBSTDdkaWtxVnRZRjhHbTR4Tk0yc2phTkV5VFc1NVoK",
+      "endpoints": [
+        "https://github.com/xtrinch/tauri-todo-sql/releases/latest/download/release.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
   }
 }

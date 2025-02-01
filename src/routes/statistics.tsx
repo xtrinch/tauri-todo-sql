@@ -8,6 +8,7 @@ import {
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../components/CustomTable";
+import { DynamicStatsTable } from "../components/DynamicStatsTable";
 import { TableCellReadonly } from "../components/TableCellReadonly";
 import { statsQueryOptions } from "../utils/statsService";
 
@@ -21,6 +22,7 @@ function StatisticsComponent() {
   const statisticsQuery = useSuspenseQuery(
     statsQueryOptions({
       ...Route.useLoaderDeps(),
+      language: i18n.language as "en" | "sl",
     })
   );
 
@@ -109,14 +111,22 @@ function StatisticsComponent() {
 
   return (
     <>
-      <div className="p-3 flex flex-col space-y-5">
+      <div className="p-3 flex flex-col space-y-5 overflow-auto max-h-[calc(100vh-55px)]">
         <div className="font-bold text-lg">{t("statistics")}</div>
         <CustomTable
           sizeEstimate={45}
           table={table}
           trClassName="border-b"
           trhClassName="border-b"
+          containerClassName="!overflow-visible"
         />
+        {statisticsQuery.data.top_logs.map((ts) => (
+          <DynamicStatsTable
+            title={ts.tree_species_name}
+            woodPieces={ts.top_logs_per_volume || []}
+            woodPiecesTotal={ts.top_logs_total || []}
+          />
+        ))}
       </div>
     </>
   );

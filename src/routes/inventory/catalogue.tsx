@@ -6,7 +6,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { save } from "@tauri-apps/plugin-dialog";
+import { info } from "@tauri-apps/plugin-log";
+import { openPath } from "@tauri-apps/plugin-opener";
 import { useMemo } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { CatalogueExportForBuyers } from "../../components/CatalogueExportForBuyers";
 import { CatalogueExportWithPrices } from "../../components/CatalogueExportWithPrices";
@@ -125,20 +128,33 @@ function CatalogueComponent() {
     const path = await save({
       filters: [
         {
-          name: "Catalog Filter",
+          name: "pdf",
           extensions: ["pdf"],
         },
       ],
-      defaultPath: "catalog",
+      defaultPath: t("sellingCatalogue").replace(" ", "-"),
     });
     if (path) {
-      saveToPDF(
-        path,
-        <CatalogueExportForBuyers
-          woodPiecesData={woodPieces}
-          statistics={statistics}
-        />
-      );
+      try {
+        saveToPDF(
+          path,
+          <CatalogueExportForBuyers
+            woodPiecesData={woodPieces}
+            statistics={statistics}
+          />
+        );
+      } catch (e) {
+        let error = e as Error;
+        toast.error(
+          `${JSON.stringify(error)} ${error.message} ${error.name} ${error.cause} ${error.stack}`,
+          {
+            duration: 10000,
+          }
+        );
+        throw e;
+      }
+
+      await openPath(path);
     }
   };
 
@@ -146,20 +162,30 @@ function CatalogueComponent() {
     const path = await save({
       filters: [
         {
-          name: "Catalog Filter",
+          name: "pdf",
           extensions: ["pdf"],
         },
       ],
       defaultPath: "catalog",
     });
     if (path) {
-      saveToPDF(
-        path,
-        <CatalogueExportWithPrices
-          woodPiecesData={woodPieces}
-          statistics={statistics}
-        />
-      );
+      try {
+        saveToPDF(
+          path,
+          <CatalogueExportWithPrices
+            woodPiecesData={woodPieces}
+            statistics={statistics}
+          />
+        );
+      } catch (e) {
+        info(JSON.stringify(e));
+        let error = e as Error;
+        toast.error(`${JSON.stringify(error)}`);
+
+        throw e;
+      }
+
+      await openPath(path);
     }
   };
 

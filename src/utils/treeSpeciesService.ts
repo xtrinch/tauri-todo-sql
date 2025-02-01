@@ -21,7 +21,7 @@ interface ListOptions {
   language?: "en" | "sl";
 }
 
-const ensureTreeSpecies = async (opts: ListOptions) => {
+export const ensureTreeSpecies = async (opts: ListOptions) => {
   const db = await getDatabase();
   const params = compact([opts.sortBy || "id"]);
   const sql = `
@@ -147,7 +147,10 @@ export const useUpdateTreeSpeciesMutation = (opts?: {
   return useMutation({
     mutationFn: patchTreeSpecies,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tree_species"] });
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          ["tree_species", "statistics"].includes(query.queryKey[0] as string),
+      });
       if (opts?.onSuccess) opts.onSuccess();
     },
     gcTime: 1000 * 10,

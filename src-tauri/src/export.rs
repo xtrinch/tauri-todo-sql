@@ -85,7 +85,8 @@ pub fn get_connection(app_handle: tauri::AppHandle) -> Result<Connection, String
 
 #[tauri::command]
 pub fn write_json(app_handle: tauri::AppHandle, file_path: String) -> Result<(), String> {
-    let conn: Connection = get_connection(app_handle).map_err(|e| format!("Error opening database: {}", e))?;
+    let conn: Connection =
+        get_connection(app_handle).map_err(|e| format!("Error opening database: {}", e))?;
 
     export_to_json(&conn, &file_path).map_err(|e| format!("Error exporting database: {}", e))?;
     println!("Data exported to JSON successfully!");

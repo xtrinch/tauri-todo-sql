@@ -6,6 +6,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { save } from "@tauri-apps/plugin-dialog";
+import { openPath } from "@tauri-apps/plugin-opener";
 import Big from "big.js";
 import { compact } from "lodash";
 import { useMemo } from "react";
@@ -157,15 +158,15 @@ function SoldPiecesList() {
           )
           .round(2),
         costsAbove350: rows
-          .reduce(
-            (sum, row) =>
-              sum.plus(
-                new Big(0.05).mul(
-                  (row.getValue("offered_total_price") as number) || 0
-                )
-              ),
-            new Big(0)
-          )
+          .reduce((sum, row) => {
+            if ((row.getValue("offered_price") as number) <= 350) {
+              return sum;
+            }
+            const totalAbove350 = new Big(
+              row.getValue("offered_total_price") as number
+            ).minus(new Big(350).mul(row.getValue("volume")));
+            return sum.plus(new Big(0.05).mul(totalAbove350));
+          }, new Big(0))
           .round(2),
       };
     }, [rows]);
@@ -361,6 +362,8 @@ function SoldPiecesList() {
           seller={seller}
         />
       );
+
+      await openPath(path);
     }
   };
 

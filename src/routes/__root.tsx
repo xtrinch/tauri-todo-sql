@@ -10,6 +10,7 @@ import {
 import { useDetectClickOutside } from "react-detect-click-outside";
 
 // import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { info } from "@tauri-apps/plugin-log";
@@ -45,6 +46,9 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate({ from: Route.fullPath });
+  const [appVersion, setAppVersion] = useState<string>("");
+
+  getVersion().then((version) => setAppVersion(version));
 
   const [changes, setChanges] = useState<boolean | null>(
     localStorage.getItem("unsaved_changes_v2") === "true"
@@ -209,8 +213,9 @@ function RootComponent() {
 
       <div className={`min-h-screen flex flex-col`}>
         <div className={`flex items-center justify-between border-b gap-2`}>
-          <div className="flex flex-row space-x-3 items-center">
-            <h1 className={`text-3xl p-2 w-[130px]`}>{t("title")}</h1>
+          <div className="flex flex-row space-x-3 items-end p-2">
+            <h1 className={`text-3xl`}>{t("title")}</h1>{" "}
+            <div>v{appVersion}</div>
           </div>
           {/* Show a global spinner when the router is transitioning */}
           <div className="flex flex-row pr-2 space-x-2 items-center">

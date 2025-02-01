@@ -13,6 +13,15 @@
     "sql:allow-execute",
     "dialog:default",
     "fs:default",
-    "fs:allow-app-write"
+    "fs:allow-app-write",
+    "updater:default",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [
+        {
+          "path": "*/**"
+        }
+      ]
+    }
   ]
 }

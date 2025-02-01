@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
 
     if (shouldRedirect) {
       redirect({
-        to: "/sellers",
+        to: "/statistics",
         throw: true,
       });
     }

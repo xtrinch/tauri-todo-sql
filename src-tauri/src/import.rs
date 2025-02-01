@@ -5,13 +5,8 @@ use tauri::Manager;
 
 fn truncate_db(conn: &Connection) -> Result<(), Box<dyn std::error::Error>> {
     // Define the specific import sequence
-    let import_sequence = vec![
-        "buyers",
-        "sellers",
-        "wood_pieces",
-        "wood_piece_offers",
-    ];
-    
+    let import_sequence = vec!["buyers", "sellers", "wood_pieces", "wood_piece_offers"];
+
     // Truncate all tables in the import sequence
     for table in import_sequence.iter().rev() {
         let truncate_query = format!("DELETE FROM {};", table);
@@ -34,13 +29,13 @@ fn import_from_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn st
         "wood_pieces",
         "wood_piece_offers",
     ];
-    
+
     // Truncate all tables in the import sequence
     for table in import_sequence.iter().rev() {
         let truncate_query = format!("DELETE FROM {};", table);
         conn.execute(&truncate_query, [])?;
     }
-    
+
     // Iterate over tables in the JSON
     for table in import_sequence {
         if let Some(Value::Array(rows)) = data.get(table) {
@@ -48,7 +43,8 @@ fn import_from_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn st
                 if let Value::Object(columns) = row {
                     // Prepare column names and placeholders for the query
                     let col_names: Vec<&str> = columns.keys().map(String::as_str).collect();
-                    let placeholders: Vec<String> = col_names.iter().map(|_| "?".to_string()).collect();
+                    let placeholders: Vec<String> =
+                        col_names.iter().map(|_| "?".to_string()).collect();
 
                     let query = format!(
                         "INSERT INTO {} ({}) VALUES ({});",
@@ -79,7 +75,11 @@ fn import_from_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn st
                     // Create references to the `temp_values` for the query
                     let values: Vec<&dyn ToSql> = temp_values
                         .iter()
-                        .map(|opt| opt.as_ref().map(|b| b.as_ref()).unwrap_or(&rusqlite::types::Null))
+                        .map(|opt| {
+                            opt.as_ref()
+                                .map(|b| b.as_ref())
+                                .unwrap_or(&rusqlite::types::Null)
+                        })
                         .collect();
 
                     // Execute the insertion
@@ -106,10 +106,10 @@ pub fn get_connection(app_handle: tauri::AppHandle) -> Result<Connection, String
     Connection::open(sqlite_file).map_err(|e| e.to_string())
 }
 
-
 #[tauri::command]
 pub fn read_json(app_handle: tauri::AppHandle, file_path: String) -> Result<(), String> {
-    let conn: Connection = get_connection(app_handle).map_err(|e| format!("Error opening database: {}", e))?;
+    let conn: Connection =
+        get_connection(app_handle).map_err(|e| format!("Error opening database: {}", e))?;
 
     import_from_json(&conn, &file_path).map_err(|e| format!("Error importing database: {}", e))?;
     println!("Data imported from JSON successfully!");
@@ -117,10 +117,10 @@ pub fn read_json(app_handle: tauri::AppHandle, file_path: String) -> Result<(), 
     Ok(())
 }
 
-
 #[tauri::command]
 pub fn truncate_all_data(app_handle: tauri::AppHandle) -> Result<(), String> {
-    let conn: Connection = get_connection(app_handle).map_err(|e| format!("Error opening database: {}", e))?;
+    let conn: Connection =
+        get_connection(app_handle).map_err(|e| format!("Error opening database: {}", e))?;
 
     truncate_db(&conn).map_err(|e| format!("Error importing database: {}", e))?;
     println!("Data truncated successfully!");
