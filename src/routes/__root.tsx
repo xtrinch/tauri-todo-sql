@@ -205,6 +205,25 @@ function RootComponent() {
     i18n.changeLanguage("sl");
   }, []);
 
+  useEffect(() => {
+    function disableContextMenu(e: Event) {
+      if (window.location.hostname !== "tauri.localhost") {
+        return;
+      }
+
+      e.preventDefault();
+      return false;
+    }
+
+    document.addEventListener("contextmenu", disableContextMenu, {
+      capture: true,
+    });
+
+    return () => {
+      window.removeEventListener("contextmenu", disableContextMenu);
+    };
+  });
+
   return (
     <>
       <div>
