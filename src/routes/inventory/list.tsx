@@ -97,7 +97,7 @@ function ListInventoryComponent() {
       {
         accessorKey: "sequence_no",
         header: () => t("seqNo"),
-        size: 60,
+        size: 70,
         meta: {
           type: "integer",
         },

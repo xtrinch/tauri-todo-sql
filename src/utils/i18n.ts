@@ -126,6 +126,10 @@ const resources = {
       totalPrice: "Total price",
       success: "Success",
       generating: "Generating...",
+      companyName: "Company name",
+      address: "Address",
+      stamp: "Stamp",
+      signature: "Signature",
     },
   },
   sl: {
@@ -250,6 +254,10 @@ const resources = {
       totalPrice: "Skupna cena",
       success: "Uspešno",
       generating: "Generiram...",
+      companyName: "Ime podjetja",
+      address: "Naslov",
+      stamp: "Žig",
+      signature: "Podpis",
     },
   },
 };

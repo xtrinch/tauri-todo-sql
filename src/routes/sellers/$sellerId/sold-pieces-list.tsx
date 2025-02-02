@@ -6,7 +6,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { save } from "@tauri-apps/plugin-dialog";
-import { openPath } from "@tauri-apps/plugin-opener";
 import Big from "big.js";
 import { compact } from "lodash";
 import { useMemo } from "react";
@@ -48,7 +47,7 @@ function SoldPiecesList() {
       {
         accessorKey: "sequence_no",
         header: () => t("seqNo"),
-        size: 60,
+        size: 70,
         meta: {
           type: "integer",
         },
@@ -363,7 +362,7 @@ function SoldPiecesList() {
         />
       );
 
-      await openPath(path);
+      // await openPath(path);
     }
   };
 

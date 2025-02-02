@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
   },
   firstPage: {
     textAlign: "center",
+    paddingLeft: "30px",
   },
   header: {
     fontSize: 24,
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     borderWidth: "2px",
     borderColor: "black",
     borderStyle: "solid",
-    marginBottom: 80,
+    marginBottom: 60,
     marginLeft: "auto",
     marginRight: "auto",
   },
@@ -59,6 +60,11 @@ const styles = StyleSheet.create({
   statistics: {
     fontSize: 12,
     height: 100,
+  },
+  buyerInput: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   statisticsHeader: {
     fontSize: 14,
@@ -155,6 +161,12 @@ export const CatalogueExportForBuyers = (params: {
               {t("totalVolume")}: {params.statistics.total_volume.toFixed(2)} m3
             </Text>
           </View>
+        </View>
+        <View style={styles.buyerInput}>
+          <Text>{t("companyName")}:</Text>
+          <Text>{t("address")}:</Text>
+          <Text>{t("stamp")}:</Text>
+          <Text>{t("signature")}:</Text>
         </View>
         <View style={styles.subheader}>
           <Text>{t("catalogueSubtext")}</Text>
