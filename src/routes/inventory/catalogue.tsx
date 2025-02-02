@@ -7,7 +7,6 @@ import {
 } from "@tanstack/react-table";
 import { save } from "@tauri-apps/plugin-dialog";
 import { info } from "@tauri-apps/plugin-log";
-import { openPath } from "@tauri-apps/plugin-opener";
 import { useMemo } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -65,7 +64,7 @@ function CatalogueComponent() {
       {
         accessorKey: "sequence_no",
         header: () => t("seqNo"),
-        size: 60,
+        size: 70,
         meta: {
           type: "integer",
         },
@@ -134,7 +133,9 @@ function CatalogueComponent() {
       ],
       defaultPath: t("sellingCatalogue").replace(" ", "-"),
     });
+    let toastId: string;
     if (path) {
+      toastId = toast.loading(t("generating"), {});
       try {
         saveToPDF(
           path,
@@ -152,9 +153,13 @@ function CatalogueComponent() {
           }
         );
         throw e;
+      } finally {
+        toast.dismiss(toastId);
       }
 
-      await openPath(path);
+      // TODO: comment out
+      // await openPath(path);
+      toast.success(t("success"));
     }
   };
 
@@ -168,7 +173,9 @@ function CatalogueComponent() {
       ],
       defaultPath: "catalog",
     });
+    let toastId: string;
     if (path) {
+      toastId = toast.loading(t("generating"));
       try {
         saveToPDF(
           path,
@@ -183,9 +190,12 @@ function CatalogueComponent() {
         toast.error(`${JSON.stringify(error)}`);
 
         throw e;
+      } finally {
+        toast.dismiss(toastId);
       }
 
-      await openPath(path);
+      toast.success(t("success"));
+      // await openPath(path);
     }
   };
 

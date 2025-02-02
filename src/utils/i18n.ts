@@ -124,6 +124,8 @@ const resources = {
       topThreeOffersPerVolumePrice: "Top three offers - price per volume",
       topThreeOffersPerTotalPrice: "Top three offers - total price",
       totalPrice: "Total price",
+      success: "Success",
+      generating: "Generating...",
     },
   },
   sl: {
@@ -246,6 +248,8 @@ const resources = {
       topThreeOffersPerVolumePrice: "Top 3 ponudbe - cena na volumen",
       topThreeOffersPerTotalPrice: "Top 3 ponudbe - skupna cena",
       totalPrice: "Skupna cena",
+      success: "Uspešno",
+      generating: "Generiram...",
     },
   },
 };

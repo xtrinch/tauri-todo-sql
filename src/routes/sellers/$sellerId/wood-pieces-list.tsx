@@ -7,7 +7,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { save } from "@tauri-apps/plugin-dialog";
-import { openPath } from "@tauri-apps/plugin-opener";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
@@ -55,7 +54,7 @@ function SoldPiecesList() {
       {
         accessorKey: "sequence_no",
         header: () => t("seqNo"),
-        size: 60,
+        size: 70,
         meta: {
           type: "integer",
         },
@@ -184,7 +183,7 @@ function SoldPiecesList() {
         <SellerPiecesExport woodPiecesData={woodPieces} seller={seller} />
       );
 
-      await openPath(path);
+      // await openPath(path);
     }
   };
 

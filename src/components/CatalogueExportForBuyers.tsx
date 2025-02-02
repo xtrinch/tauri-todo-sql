@@ -8,7 +8,9 @@ import {
 } from "@react-pdf/renderer";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import headerImage from "../assets/images/header-image.png"; // Import the image
+import headerImage from "../assets/images/header-image.png";
+import woodImage from "../assets/images/wood-image.jpg";
+
 import { Statistics } from "../utils/statsService";
 import { WoodPiece } from "../utils/woodPieceService";
 import { PdfTable, PdfTableCol } from "./PdfTable";
@@ -32,15 +34,25 @@ const styles = StyleSheet.create({
   },
   subheader: {
     fontSize: 16,
-    marginTop: 150,
+    marginTop: 100,
   },
   image: {
-    width: 300, // Set the width of the image
+    width: 450, // Set the width of the image
     height: "auto", // Maintain aspect ratio
     borderWidth: "2px",
     borderColor: "black",
     borderStyle: "solid",
-    marginBottom: 280,
+    marginBottom: 80,
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  woodImage: {
+    width: "100%",
+    height: "auto", // Maintain aspect ratio
+    borderWidth: "2px",
+    borderColor: "black",
+    borderStyle: "solid",
+    marginBottom: 20,
     marginLeft: "auto",
     marginRight: "auto",
   },
@@ -122,6 +134,9 @@ export const CatalogueExportForBuyers = (params: {
         </View>
         <View style={styles.header}>
           <Text>{t("catalogueTitle")}</Text>
+        </View>
+        <View>
+          <Image src={woodImage} style={styles.woodImage} />
         </View>
         <View style={styles.header}>
           <Text>{t("sellingCatalogue")}</Text>
