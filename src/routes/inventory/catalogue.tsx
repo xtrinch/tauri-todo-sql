@@ -200,25 +200,28 @@ function CatalogueComponent() {
   };
 
   return (
-    <div className="p-3">
-      <div className="flex flex-row space-x-3 mb-3">
-        <button
-          className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
-          onClick={exportToFileForBuyers}
-        >
-          {t("exportForBuyers")}
-        </button>
-        <button
-          className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
-          onClick={exportToFileWithPrices}
-        >
-          {t("exportWithPrices")}
-        </button>
+    <div>
+      <div className="p-3">
+        <div className="flex flex-row space-x-3 mb-3">
+          <button
+            className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+            onClick={exportToFileForBuyers}
+          >
+            {t("exportForBuyers")}
+          </button>
+          <button
+            className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+            onClick={exportToFileWithPrices}
+          >
+            {t("exportWithPrices")}
+          </button>
+        </div>
       </div>
       <CustomTable
         table={table}
         trClassName="border-b"
         trhClassName="border-b"
+        containerClassName="p-3 h-[calc(100vh-172px)]"
       />
     </div>
   );

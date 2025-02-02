@@ -233,77 +233,80 @@ function ListInventoryComponent() {
   });
 
   return (
-    <div className="p-3">
-      <div className="mb-3">{t("filters")}</div>
-      <div className="flex flex-row space-x-3 mb-3">
-        <div>
-          <div className="text-sm">{t("treeSpecies")}</div>
-          <Select
-            className="w-[200px]"
-            options={treeSpeciesOptions}
-            isSearchable={true}
-            onChange={(newValue) =>
-              setFilters((prev) => ({
-                ...prev,
-                tree_species_id: newValue?.value!,
-                tree_species_id_label: newValue?.label,
-              }))
-            }
-            value={{
-              value: filters?.tree_species_id,
-              label: filters?.tree_species_id_label,
-            }}
-            isClearable={true}
-            placeholder={t("select")}
-          />
-        </div>
-        <div>
-          <div className="text-sm">{t("seller")}</div>
-          <Select
-            className="w-[200px]"
-            options={sellerOptions}
-            isSearchable={true}
-            onChange={(newValue) =>
-              setFilters((prev) => ({
-                ...prev,
-                seller_id: newValue?.value!,
-                seller_id_label: newValue?.label,
-              }))
-            }
-            value={{
-              value: filters?.seller_id,
-              label: filters?.seller_id_label,
-            }}
-            isClearable={true}
-            placeholder={t("select")}
-          />
-        </div>
-        <div>
-          <div className="text-sm">{t("buyer")}</div>
-          <Select
-            className="w-[200px]"
-            options={buyerOptions}
-            isSearchable={true}
-            onChange={(newValue) =>
-              setFilters((prev) => ({
-                ...prev,
-                buyer_id: newValue?.value!,
-                buyer_id_label: newValue?.label!,
-              }))
-            }
-            value={{
-              value: filters?.buyer_id,
-              label: filters?.buyer_id_label,
-            }}
-            isClearable={true}
-            placeholder={t("select")}
-          />
+    <div>
+      <div className="p-3">
+        <div className="mb-3">{t("filters")}</div>
+        <div className="flex flex-row space-x-3 mb-3">
+          <div>
+            <div className="text-sm">{t("treeSpecies")}</div>
+            <Select
+              className="w-[200px]"
+              options={treeSpeciesOptions}
+              isSearchable={true}
+              onChange={(newValue) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  tree_species_id: newValue?.value!,
+                  tree_species_id_label: newValue?.label,
+                }))
+              }
+              value={{
+                value: filters?.tree_species_id,
+                label: filters?.tree_species_id_label,
+              }}
+              isClearable={true}
+              placeholder={t("select")}
+            />
+          </div>
+          <div>
+            <div className="text-sm">{t("seller")}</div>
+            <Select
+              className="w-[200px]"
+              options={sellerOptions}
+              isSearchable={true}
+              onChange={(newValue) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  seller_id: newValue?.value!,
+                  seller_id_label: newValue?.label,
+                }))
+              }
+              value={{
+                value: filters?.seller_id,
+                label: filters?.seller_id_label,
+              }}
+              isClearable={true}
+              placeholder={t("select")}
+            />
+          </div>
+          <div>
+            <div className="text-sm">{t("buyer")}</div>
+            <Select
+              className="w-[200px]"
+              options={buyerOptions}
+              isSearchable={true}
+              onChange={(newValue) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  buyer_id: newValue?.value!,
+                  buyer_id_label: newValue?.label!,
+                }))
+              }
+              value={{
+                value: filters?.buyer_id,
+                label: filters?.buyer_id_label,
+              }}
+              isClearable={true}
+              placeholder={t("select")}
+            />
+          </div>
         </div>
       </div>
       <CustomTable
         table={table}
         trClassName="border-b"
         trhClassName="border-b"
+        containerClassName="p-3 h-[calc(100vh-225px)]"
       />
     </div>
   );
