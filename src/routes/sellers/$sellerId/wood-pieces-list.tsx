@@ -11,11 +11,10 @@ import { openPath } from "@tauri-apps/plugin-opener";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
-import { SellerPiecesExport } from "../../../components/SellerPiecesExport";
 import { SumFooter } from "../../../components/SumFooter";
 import { TableCellCheckboxReadonly } from "../../../components/TableCellCheckboxReadonly";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
-import { saveToPDF } from "../../../utils/pdf";
+import { PdfTypeEnum, saveToPDF } from "../../../utils/pdf";
 import { sellerQueryOptions } from "../../../utils/sellerService";
 import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
@@ -181,7 +180,9 @@ function SoldPiecesList() {
     if (path) {
       await saveToPDF(
         path,
-        <SellerPiecesExport woodPiecesData={woodPieces} seller={seller} />
+        { woodPiecesData: woodPieces, seller: seller },
+        PdfTypeEnum.sellerPieces,
+        i18n.language
       );
 
       await openPath(path);

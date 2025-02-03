@@ -6,16 +6,17 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { save } from "@tauri-apps/plugin-dialog";
+import { openPath } from "@tauri-apps/plugin-opener";
 import Big from "big.js";
 import { compact } from "lodash";
 import { useMemo } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { BoughtPiecesExport } from "../../../components/BoughtPiecesExport";
 import { CustomTable } from "../../../components/CustomTable";
 import { PdfTableCol } from "../../../components/PdfTable";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { buyerQueryOptions } from "../../../utils/buyerService";
-import { saveToPDF } from "../../../utils/pdf";
+import { PdfTypeEnum, saveToPDF } from "../../../utils/pdf";
 import {
   WoodPiece,
   woodPiecesQueryOptions,
@@ -225,17 +226,36 @@ function BoughtPiecesList() {
       ],
       defaultPath: t("boughtPiecesPDFName"),
     });
+    let toastId: string;
     if (path) {
-      saveToPDF(
-        path,
-        <BoughtPiecesExport
-          buyer={buyer}
-          woodPiecesData={woodPieces}
-          woodPiecesGroupedData={woodPiecesGrouped}
-          rowsSummary={rowsSummary}
-          colsSummary={columnsSummary}
-        />
-      );
+      toastId = toast.loading(t("generating"), {
+        position: "top-center",
+      });
+      try {
+        await saveToPDF(
+          path,
+          {
+            buyer: buyer,
+            woodPiecesData: woodPieces,
+            woodPiecesGroupedData: woodPiecesGrouped,
+            rowsSummary: rowsSummary,
+            colsSummary: columnsSummary,
+          },
+          PdfTypeEnum.boughtPieces,
+          i18n.language
+        );
+      } catch (e) {
+        let error = e as Error;
+        toast.error(`${error.message}`, {
+          duration: 10000,
+        });
+        throw e;
+      } finally {
+        toast.dismiss(toastId);
+      }
+
+      await openPath(path);
+      toast.success(t("success"));
     }
   };
 

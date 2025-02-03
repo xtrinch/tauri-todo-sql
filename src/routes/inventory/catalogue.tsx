@@ -11,11 +11,9 @@ import { openPath } from "@tauri-apps/plugin-opener";
 import { useMemo } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { CatalogueExportForBuyers } from "../../components/CatalogueExportForBuyers";
-import { CatalogueExportWithPrices } from "../../components/CatalogueExportWithPrices";
 import { CustomTable } from "../../components/CustomTable";
 import { TableCellReadonly } from "../../components/TableCellReadonly";
-import { saveToPDF } from "../../utils/pdf";
+import { PdfTypeEnum, saveToPDF } from "../../utils/pdf";
 import { statsQueryOptions } from "../../utils/statsService";
 import { treeSpeciesQueryOptions } from "../../utils/treeSpeciesService";
 import {
@@ -142,10 +140,9 @@ function CatalogueComponent() {
       try {
         await saveToPDF(
           path,
-          <CatalogueExportForBuyers
-            woodPiecesData={woodPieces}
-            statistics={statistics}
-          />
+          { woodPiecesData: woodPieces, statistics },
+          PdfTypeEnum.catalogForBuyers,
+          i18n.language
         );
       } catch (e) {
         let error = e as Error;
@@ -183,10 +180,9 @@ function CatalogueComponent() {
       try {
         await saveToPDF(
           path,
-          <CatalogueExportWithPrices
-            woodPiecesData={woodPieces}
-            statistics={statistics}
-          />
+          { woodPiecesData: woodPieces, statistics },
+          PdfTypeEnum.catalogWithPrices,
+          i18n.language
         );
       } catch (e) {
         info(JSON.stringify(e));

@@ -13,9 +13,8 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
 import { PdfTableCol } from "../../../components/PdfTable";
-import { SoldPiecesExport } from "../../../components/SoldPiecesExport";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
-import { saveToPDF } from "../../../utils/pdf";
+import { PdfTypeEnum, saveToPDF } from "../../../utils/pdf";
 import { sellerQueryOptions } from "../../../utils/sellerService";
 import {
   WoodPiece,
@@ -355,12 +354,14 @@ function SoldPiecesList() {
     if (path) {
       await saveToPDF(
         path,
-        <SoldPiecesExport
-          woodPiecesData={combinedRows}
-          rowsSummary={rows_summary}
-          colsSummary={columns_summary}
-          seller={seller}
-        />
+        {
+          woodPiecesData: combinedRows,
+          rowsSummary: rows_summary,
+          colsSummary: columns_summary,
+          seller: seller,
+        },
+        PdfTypeEnum.soldPieces,
+        i18n.language
       );
 
       await openPath(path);

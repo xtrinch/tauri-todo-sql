@@ -47,13 +47,15 @@ const styles = StyleSheet.create({
   },
 });
 
-export const BoughtPiecesExport = (params: {
+export interface BoughtPiecesExportProps {
   buyer: Buyer;
   woodPiecesData: WoodPiece[];
   woodPiecesGroupedData: WoodPiece[];
   rowsSummary: { label: string; value: string; bold?: boolean }[];
   colsSummary: PdfTableCol[];
-}) => {
+}
+
+export const BoughtPiecesExport = (params: BoughtPiecesExportProps) => {
   const { t } = useTranslation();
 
   const columns = useMemo<PdfTableCol[]>(

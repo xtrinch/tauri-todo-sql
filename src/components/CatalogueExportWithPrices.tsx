@@ -25,10 +25,14 @@ const styles = StyleSheet.create({
   },
 });
 
-export const CatalogueExportWithPrices = (params: {
+export interface CatalogueExportWithPricesProps {
   woodPiecesData: WoodPiece[];
   statistics: Statistics;
-}) => {
+}
+
+export const CatalogueExportWithPrices = (
+  params: CatalogueExportWithPricesProps
+) => {
   const { t } = useTranslation();
 
   const columns = useMemo<PdfTableCol[]>(

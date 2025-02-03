@@ -41,12 +41,14 @@ const styles = StyleSheet.create({
   },
 });
 
-export const SoldPiecesExport = (params: {
+export interface SoldPiecesExportProps {
   seller: Seller;
   woodPiecesData: WoodPiece[];
   rowsSummary: { label: string; value: string; bold?: boolean }[];
   colsSummary: PdfTableCol[];
-}) => {
+}
+
+export const SoldPiecesExport = (params: SoldPiecesExportProps) => {
   const { t } = useTranslation();
 
   const columns = useMemo<PdfTableCol[]>(

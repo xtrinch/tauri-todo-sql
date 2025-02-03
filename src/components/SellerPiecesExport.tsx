@@ -43,10 +43,12 @@ const styles = StyleSheet.create({
   },
 });
 
-export const SellerPiecesExport = (params: {
+export interface SellerPiecesExportProps {
   seller: Seller;
   woodPiecesData: WoodPiece[];
-}) => {
+}
+
+export const SellerPiecesExport = (params: SellerPiecesExportProps) => {
   const { t } = useTranslation();
 
   const columns = useMemo<PdfTableCol[]>(
