@@ -201,7 +201,7 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
       ) as wpo
     ) AS wp
     LEFT JOIN "buyers" ON "buyers"."id" = "wp"."buyer_id"
-    WHERE "sequence_num" <= 3
+    WHERE "sequence_num" <= 3 AND "offered_price" > 0
   `;
 
   let topLogsResult: WoodPiece[] = [];
@@ -223,7 +223,7 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
       )
     ) AS wp
     LEFT JOIN "buyers" ON "buyers"."id" = "wp"."buyer_id"
-    WHERE "sequence_num" <= 3
+    WHERE "sequence_num" <= 3 AND "offered_price" > 0
   `;
 
   let topLogsTotalResult: WoodPiece[] = [];

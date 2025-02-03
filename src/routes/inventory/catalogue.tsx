@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-table";
 import { save } from "@tauri-apps/plugin-dialog";
 import { info } from "@tauri-apps/plugin-log";
+import { openPath } from "@tauri-apps/plugin-opener";
 import { useMemo } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -135,9 +136,11 @@ function CatalogueComponent() {
     });
     let toastId: string;
     if (path) {
-      toastId = toast.loading(t("generating"), {});
+      toastId = toast.loading(t("generating"), {
+        position: "top-center",
+      });
       try {
-        saveToPDF(
+        await saveToPDF(
           path,
           <CatalogueExportForBuyers
             woodPiecesData={woodPieces}
@@ -157,8 +160,7 @@ function CatalogueComponent() {
         toast.dismiss(toastId);
       }
 
-      // TODO: comment out
-      // await openPath(path);
+      await openPath(path);
       toast.success(t("success"));
     }
   };
@@ -175,10 +177,13 @@ function CatalogueComponent() {
     });
     let toastId: string;
     if (path) {
-      toastId = toast.loading(t("generating"));
+      toastId = toast.loading(t("generating"), {
+        position: "top-center",
+      });
       try {
-        saveToPDF(
+        await saveToPDF(
           path,
+          { woodPieces, statistics },
           <CatalogueExportWithPrices
             woodPiecesData={woodPieces}
             statistics={statistics}
@@ -195,7 +200,7 @@ function CatalogueComponent() {
       }
 
       toast.success(t("success"));
-      // await openPath(path);
+      await openPath(path);
     }
   };
 

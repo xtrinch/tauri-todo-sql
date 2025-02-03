@@ -7,6 +7,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { save } from "@tauri-apps/plugin-dialog";
+import { openPath } from "@tauri-apps/plugin-opener";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
@@ -178,12 +179,12 @@ function SoldPiecesList() {
       defaultPath: t("woodPieces"),
     });
     if (path) {
-      saveToPDF(
+      await saveToPDF(
         path,
         <SellerPiecesExport woodPiecesData={woodPieces} seller={seller} />
       );
 
-      // await openPath(path);
+      await openPath(path);
     }
   };
 

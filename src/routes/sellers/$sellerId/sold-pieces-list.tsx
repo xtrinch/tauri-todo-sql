@@ -6,6 +6,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { save } from "@tauri-apps/plugin-dialog";
+import { openPath } from "@tauri-apps/plugin-opener";
 import Big from "big.js";
 import { compact } from "lodash";
 import { useMemo } from "react";
@@ -352,7 +353,7 @@ function SoldPiecesList() {
       defaultPath: t("soldPiecesPDFName"),
     });
     if (path) {
-      saveToPDF(
+      await saveToPDF(
         path,
         <SoldPiecesExport
           woodPiecesData={combinedRows}
@@ -362,7 +363,7 @@ function SoldPiecesList() {
         />
       );
 
-      // await openPath(path);
+      await openPath(path);
     }
   };
 

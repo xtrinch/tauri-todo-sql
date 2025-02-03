@@ -253,7 +253,7 @@ const resources = {
       topThreeOffersPerTotalPrice: "Top 3 ponudbe - skupna cena",
       totalPrice: "Skupna cena",
       success: "Uspešno",
-      generating: "Generiram...",
+      generating: "Generiranje...",
       companyName: "Ime podjetja",
       address: "Naslov",
       stamp: "Žig",
