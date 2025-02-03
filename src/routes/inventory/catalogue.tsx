@@ -183,7 +183,6 @@ function CatalogueComponent() {
       try {
         await saveToPDF(
           path,
-          { woodPieces, statistics },
           <CatalogueExportWithPrices
             woodPiecesData={woodPieces}
             statistics={statistics}

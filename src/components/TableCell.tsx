@@ -25,11 +25,13 @@ export const TableCell = <TableItem,>({
   row,
   column,
   table,
+  shouldBeRed,
 }: {
   getValue: Getter<unknown>;
   row: Row<TableItem>;
   column: Column<TableItem>;
   table: Table<TableItem>;
+  shouldBeRed?: (row: Row<TableItem>) => boolean;
 }) => {
   const initialValue = getValue();
   const rowId = (row.original as { id: number }).id;
@@ -133,7 +135,7 @@ export const TableCell = <TableItem,>({
       <input
         ref={input}
         value={value as string}
-        className="bg-green h-10 min-w-[100%] max-w-[100%] border p-1 px-2 rounded"
+        className={`bg-green h-10 min-w-[100%] max-w-[100%] border p-1 px-2 rounded ${shouldBeRed?.(row) && "bg-red-400"}`}
         onChange={onChange}
         onBlur={onBlur}
         readOnly={columnMeta?.readonly}

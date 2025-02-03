@@ -9,6 +9,7 @@ import {
 import {
   ColumnDef,
   getCoreRowModel,
+  Row,
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
@@ -156,6 +157,17 @@ function SellerComponent() {
           type: "float",
         },
         size: 140,
+        cell: (cellInfo) => (
+          <TableCell
+            {...cellInfo}
+            shouldBeRed={(row: Row<Seller>) => {
+              return (
+                row.getValue("used_transport") == 1 &&
+                !row.getValue("transport_costs")
+              );
+            }}
+          />
+        ),
       },
       {
         accessorKey: "logging_costs",
@@ -164,6 +176,18 @@ function SellerComponent() {
           type: "float",
         },
         size: 140,
+        cell: (cellInfo) => (
+          <TableCell
+            {...cellInfo}
+            shouldBeRed={(row: Row<Seller>) => {
+              return (
+                (row.getValue("used_logging") == 1 ||
+                  row.getValue("used_logging_non_woods") == 1) &&
+                !row.getValue("logging_costs")
+              );
+            }}
+          />
+        ),
       },
     ],
     []
