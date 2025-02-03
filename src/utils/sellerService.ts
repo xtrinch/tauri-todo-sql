@@ -30,7 +30,7 @@ export const ensureSellers = async (opts: {
   const result = await db.select(
     `SELECT * from "sellers" ${opts.filterBy ? `WHERE lower("seller_name") LIKE lower($1)` : ""} 
     ORDER BY ${opts.sortBy || "seller_name"} ${opts.sortDirection || "DESC"}`,
-    [opts.filterBy ? `%${opts.filterBy}%` : undefined]
+    [opts.filterBy ? `%${opts.filterBy.replace(/š|č|ž/g, "")}%` : undefined]
   );
 
   const sellers = result as Seller[];

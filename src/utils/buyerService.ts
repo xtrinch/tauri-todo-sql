@@ -22,7 +22,7 @@ const ensureBuyers = async (opts: {
   const result = await db.select(
     `SELECT * from "buyers" ${opts.filterBy ? `WHERE "buyer_name" LIKE lower($1)` : ""} 
     ORDER BY ${opts.sortBy || "buyer_name"} ${opts.sortDirection || "DESC"}`,
-    [opts.filterBy ? `%${opts.filterBy}%` : undefined]
+    [opts.filterBy ? `%${opts.filterBy.replace(/š|č|ž/g, "")}%` : undefined]
   );
 
   const sellers = result as Buyer[];
