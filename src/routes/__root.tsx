@@ -14,6 +14,8 @@ import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { info } from "@tauri-apps/plugin-log";
+import { relaunch } from "@tauri-apps/plugin-process";
+import { check } from "@tauri-apps/plugin-updater";
 import { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -162,6 +164,52 @@ function RootComponent() {
     }
   };
 
+  const checkForUpdates = async () => {
+    const update = await check();
+    if (update) {
+      console.log(
+        `found update ${update.version} from ${update.date} with notes ${update.body}`
+      );
+
+      if (
+        await confirm({
+          confirmation: `${t("foundUpdate")} ${update.version} - ${update.date}. ${t("shouldRelaunch")}}`,
+          title: t("info"),
+        })
+      ) {
+        let downloaded = 0;
+        let contentLength = 0;
+        // alternatively we could also call update.download() and update.install() separately
+        await update.downloadAndInstall((event) => {
+          switch (event.event) {
+            case "Started":
+              contentLength = event.data.contentLength!;
+              console.log(
+                `started downloading ${event.data.contentLength} bytes`
+              );
+              break;
+            case "Progress":
+              downloaded += event.data.chunkLength;
+              console.log(`downloaded ${downloaded} from ${contentLength}`);
+              break;
+            case "Finished":
+              console.log("download finished");
+              break;
+          }
+        });
+
+        console.log("update installed");
+        await relaunch();
+      }
+    } else {
+      await confirm({
+        confirmation: t("noUpdatesFound"),
+        title: t("info"),
+        hideCancel: true,
+      });
+    }
+  };
+
   const dropdownRefFile = useDetectClickOutside({
     onTriggered: () => {
       if (fileMenuOpen) {
@@ -300,6 +348,12 @@ function RootComponent() {
                   onMouseLeave={() => setFileMenuOpen(false)}
                 >
                   <div role="none">
+                    <button
+                      className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
+                      onClick={() => checkForUpdates()}
+                    >
+                      {t("checkForUpdates")}
+                    </button>
                     {filePath && (
                       <>
                         <button

@@ -7,6 +7,7 @@ export interface Props {
   cancelLabel?: string;
   title?: string;
   confirmation?: string;
+  hideCancel?: boolean;
 }
 
 const Confirmation: ConfirmDialog<Props, boolean> = (props) => {
@@ -36,12 +37,14 @@ const Confirmation: ConfirmDialog<Props, boolean> = (props) => {
           </div>
           <div className="px-4 pt-4">{props.confirmation}</div>
           <div className="flex flex-row space-x-3 p-4 justify-between">
-            <button
-              onClick={() => props.proceed(false)}
-              className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
-            >
-              {props.cancelLabel || t("cancel")}
-            </button>
+            {!props.hideCancel && (
+              <button
+                onClick={() => props.proceed(false)}
+                className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+              >
+                {props.cancelLabel || t("cancel")}
+              </button>
+            )}
             <button
               onClick={() => props.proceed(true)}
               className="button-l bg-red-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"

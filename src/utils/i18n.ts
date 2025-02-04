@@ -130,6 +130,11 @@ const resources = {
       address: "Address",
       stamp: "Stamp",
       signature: "Signature",
+      checkForUpdates: "Check for updates",
+      noUpdatesFound: "No updates found",
+      info: "Info",
+      foundUpdate: "Found update",
+      shouldRelaunch: "Update and relaunch application?",
     },
   },
   sl: {
@@ -258,6 +263,11 @@ const resources = {
       address: "Naslov",
       stamp: "Žig",
       signature: "Podpis",
+      checkForUpdates: "Preveri posodobitve",
+      noUpdatesFound: "Ni posodobitev, aplikacija je že najnovejše verzije",
+      info: "Informacija",
+      foundUpdate: "Najdena posodobitev",
+      shouldRelaunch: "Posodobim in na novo zaženem aplikacijo?",
     },
   },
 };
