@@ -135,6 +135,7 @@ const resources = {
       info: "Info",
       foundUpdate: "Found update",
       shouldRelaunch: "Update and relaunch application?",
+      updateInstalled: "Update installed",
     },
   },
   sl: {
@@ -268,6 +269,7 @@ const resources = {
       info: "Informacija",
       foundUpdate: "Najdena posodobitev",
       shouldRelaunch: "Posodobim in na novo zaženem aplikacijo?",
+      updateInstalled: "Aplikacija posodobljena",
     },
   },
 };

@@ -173,7 +173,7 @@ function RootComponent() {
 
       if (
         await confirm({
-          confirmation: `${t("foundUpdate")} ${update.version} - ${update.date}. ${t("shouldRelaunch")}}`,
+          confirmation: `${t("foundUpdate")} ${update.version}. ${t("shouldRelaunch")}`,
           title: t("info"),
         })
       ) {
@@ -184,22 +184,26 @@ function RootComponent() {
           switch (event.event) {
             case "Started":
               contentLength = event.data.contentLength!;
-              console.log(
-                `started downloading ${event.data.contentLength} bytes`
-              );
+              info(`started downloading ${event.data.contentLength} bytes`);
               break;
             case "Progress":
               downloaded += event.data.chunkLength;
-              console.log(`downloaded ${downloaded} from ${contentLength}`);
+              info(`downloaded ${downloaded} from ${contentLength}`);
               break;
             case "Finished":
-              console.log("download finished");
+              info("download finished");
               break;
           }
         });
 
-        console.log("update installed");
-        await relaunch();
+        info("update installed");
+        toast.success(t("updateInstalled"));
+        try {
+          await relaunch();
+        } catch (e) {
+          info("Failed to relaunch");
+          info(JSON.stringify(e));
+        }
       }
     } else {
       await confirm({

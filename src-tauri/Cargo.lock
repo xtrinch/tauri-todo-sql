@@ -2694,7 +2694,7 @@ dependencies = [
 
 [[package]]
 name = "licitacija"
-version = "0.2.0"
+version = "0.1.0"
 dependencies = [
  "cargo-xwin",
  "csv",
@@ -2707,6 +2707,7 @@ dependencies = [
  "tauri-plugin-fs",
  "tauri-plugin-log",
  "tauri-plugin-opener",
+ "tauri-plugin-process",
  "tauri-plugin-shell",
  "tauri-plugin-sql",
  "tauri-plugin-updater",
@@ -5370,6 +5371,16 @@ dependencies = [
  "url",
  "windows",
  "zbus 4.0.1",
+]
+
+[[package]]
+name = "tauri-plugin-process"
+version = "2.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "40cc553ab29581c8c43dfa5fb0c9d5aee8ba962ad3b42908eea26c79610441b7"
+dependencies = [
+ "tauri",
+ "tauri-plugin",
 ]
 
 [[package]]
