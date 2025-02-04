@@ -29,6 +29,7 @@ tauri-plugin-dialog = "2"
 rusqlite = { version = "0.32.1", features = ["backup"] }
 tauri-plugin-fs = "2"
 tauri-plugin-shell = "2"
+cargo-xwin = "0.18.4"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-updater = "2"
