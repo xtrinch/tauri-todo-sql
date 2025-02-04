@@ -46,16 +46,18 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate({ from: Route.fullPath });
-  const [appVersion, setAppVersion] = useState<string>("");
 
   getVersion().then((version) => setAppVersion(version));
 
+  const [appVersion, setAppVersion] = useState<string>("");
   const [changes, setChanges] = useState<boolean | null>(
     localStorage.getItem("unsaved_changes_v2") === "true"
   );
   const [filePath, setFilePath] = useState<string | null>(
     localStorage.getItem("save_file_path_v2")
   );
+  const [fileMenuOpen, setFileMenuOpen] = useState<boolean>(false);
+  const [languageMenuOpen, setLanguageMenuOpen] = useState<boolean>(false);
 
   const { mutate: undo } = useUndo(() => {
     queryClient.invalidateQueries();
@@ -160,8 +162,6 @@ function RootComponent() {
     }
   };
 
-  const [fileMenuOpen, setFileMenuOpen] = useState<boolean>(false);
-  const [languageMenuOpen, setLanguageMenuOpen] = useState<boolean>(false);
   const dropdownRefFile = useDetectClickOutside({
     onTriggered: () => {
       if (fileMenuOpen) {
