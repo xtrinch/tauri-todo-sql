@@ -7,6 +7,7 @@ import { SellerPiecesExportProps } from "../components/SellerPiecesExport";
 import { SoldPiecesExportProps } from "../components/SoldPiecesExport";
 import { PdfTypeEnum } from "../utils/pdf";
 import "./workerShim";
+// @ts-ignore
 let log = info;
 
 const initializeCommonPdfImports = async (language: "en" | "sl") => {

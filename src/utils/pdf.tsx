@@ -6,14 +6,9 @@ import { info } from "@tauri-apps/plugin-log";
 import { proxy, wrap } from "comlink";
 import { WorkerType } from "../workers/pdf.worker";
 import Worker from "../workers/pdf.worker?worker";
-import { default as SimpleWorker } from "../workers/simple.worker?worker";
 
 export const pdfWorker = wrap<WorkerType>(new Worker({ name: "pdf-worker" }));
 pdfWorker.onProgress(proxy((data: any) => info(data)));
-export const simpleWorker = wrap<WorkerType>(
-  new SimpleWorker({ name: "simple-worker" })
-);
-
 export enum PdfTypeEnum {
   catalogForBuyers = "catalogForBuyers",
   catalogWithPrices = "catalogWithPrices",
