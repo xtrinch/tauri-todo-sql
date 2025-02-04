@@ -1407,6 +1407,11 @@ color-string@^1.9.1:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
 
+comlink@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.4.2.tgz#cbbcd82742fbebc06489c28a183eedc5c60a2bca"
+  integrity sha512-OxGdvBmJuNKSCMO4NTl1L47VRp6xn2wG4F/2hYzB6tiCb709otOxtEYCSvK80PtjODfXXZu8ds+Nw5kVCjqd2g==
+
 commander@^4.0.0:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-4.1.1.tgz#9fd602bd936294e9e9ef46a3f4d6964044b18068"
