@@ -23,7 +23,7 @@ jobs:
         #   - platform: "ubuntu-22.04" # for Tauri v1 you could replace this with ubuntu-20.04.
         #     args: ""
           - platform: "windows-latest"
-            args: "--runner cargo-xwin --target x86_64-pc-windows-msvc"
+            args: "--target x86_64-pc-windows-msvc"
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -54,8 +54,8 @@ jobs:
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_PRIVATE_KEY:  ${{ secrets.TAURI_PRIVATE_KEY }}
-          TAURI_KEY_PASSWORD: ""
+          TAURI_SIGNING_PRIVATE_KEY:  ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_SIGNING_KEY_PASSWORD: ""
         with:
           tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
           releaseName: "App v__VERSION__"
