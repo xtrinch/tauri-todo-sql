@@ -122,6 +122,7 @@ function StatisticsComponent() {
         />
         {statisticsQuery.data.top_logs.map((ts) => (
           <DynamicStatsTable
+            key={ts.id}
             title={ts.tree_species_name}
             woodPieces={ts.top_logs_per_volume || []}
             woodPiecesTotal={ts.top_logs_total || []}

@@ -1,8 +1,7 @@
 import { flexRender, Row, Table } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { memo, ReactElement, useCallback, useRef } from "react";
+import React, { memo, ReactElement, useCallback, useRef } from "react";
 import useFormTab from "../utils/useFormTab";
-import { CustomTableMeta } from "./TableCell";
 
 export function CustomTable<TableItem>({
   table,
@@ -31,8 +30,7 @@ export function CustomTable<TableItem>({
   }, []);
 
   const virtualizer = useVirtualizer({
-    count:
-      rows.length + ((table.options?.meta as CustomTableMeta).onAdd ? 1 : 0),
+    count: rows.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => sizeEstimate,
     overscan: 20,
@@ -89,7 +87,7 @@ export function CustomTable<TableItem>({
           <tbody>
             {virtualizer.getVirtualItems().map((virtualRow, index) => {
               const row = rows[virtualRow.index];
-              if (!row) return <></>;
+              if (!row) return <React.Fragment key={index}></React.Fragment>;
               return (
                 <tr
                   key={row.id}
@@ -111,7 +109,7 @@ export function CustomTable<TableItem>({
           {hasFooter && (
             <tfoot>
               <>
-                {table.getFooterGroups().map((footerGroup) => (
+                {table.getFooterGroups().map((footerGroup, index) => (
                   <tr
                     key={footerGroup.id}
                     className={`${trfClassName}`}
@@ -119,6 +117,7 @@ export function CustomTable<TableItem>({
                       height: `${sizeEstimate}px`,
                     }}
                     ref={virtualizer.measureElement}
+                    data-index={index}
                   >
                     {footerGroup.headers.map((footer) => (
                       <th

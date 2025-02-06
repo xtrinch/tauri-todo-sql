@@ -162,7 +162,7 @@ function SellersComponent() {
         <div className="max-h-[calc(100vh-215px)] h-[calc(100vh-215px)] overflow-auto">
           {sellers?.map((seller) => {
             return (
-              <div>
+              <div key={seller.id}>
                 <Link
                   to="/sellers/$sellerId"
                   params={{

@@ -31,7 +31,10 @@ const Confirmation: ConfirmDialog<Props, boolean> = (props) => {
         <div className="flex space-y-3 flex-col">
           <div className="flex flex-row p-4 border-b bg-gray-200 rounded-t-lg">
             <div className="flex-1">{props.title || t("confirmNeeded")}</div>
-            <button className="bg-red-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 w-10 h-10 flex justify-center items-center text-xl">
+            <button
+              className="bg-red-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 w-10 h-10 flex justify-center items-center text-xl"
+              onClick={() => props.proceed(false)}
+            >
               <FaX />
             </button>
           </div>

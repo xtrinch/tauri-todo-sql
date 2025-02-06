@@ -102,13 +102,14 @@ export const PdfTable = (params: { columns: PdfTableCol[]; data: any[] }) => {
                 fontWeight: col.bold ? "bold" : undefined,
               },
             ])}
+            key={idx}
           >
             {col.header && <Text>{col.header()}</Text>}
           </View>
         ))}
       </View>
-      {params.data.map((piece) => (
-        <View style={styles.tableRowStyle} wrap={false}>
+      {params.data.map((piece, index) => (
+        <View style={styles.tableRowStyle} wrap={false} key={index}>
           {columns.map((col, idx) => (
             <View
               style={compact([
@@ -116,6 +117,7 @@ export const PdfTable = (params: { columns: PdfTableCol[]; data: any[] }) => {
                 idx == 0 ? styles.firstTableColStyle : null,
                 { width: `${col.size}%` },
               ])}
+              key={idx}
             >
               <Text>{getValue(col, piece)}</Text>
             </View>
@@ -133,6 +135,7 @@ export const PdfTable = (params: { columns: PdfTableCol[]; data: any[] }) => {
                 fontWeight: col.bold ? "bold" : undefined,
               },
             ])}
+            key={idx}
           >
             {col.footer && <>{col.footer(params.data)}</>}
           </View>
