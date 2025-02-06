@@ -126,6 +126,7 @@ function StatisticsComponent() {
             title={ts.tree_species_name}
             woodPieces={ts.top_logs_per_volume || []}
             woodPiecesTotal={ts.top_logs_total || []}
+            volume={ts.volume}
           />
         ))}
       </div>

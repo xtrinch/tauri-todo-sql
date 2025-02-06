@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { info } from "@tauri-apps/plugin-log";
-import { groupBy } from "lodash";
+import { groupBy, keyBy } from "lodash";
 import { getDatabase } from "./database";
 import { ensureTreeSpecies, TreeSpecies } from "./treeSpeciesService";
 import { WoodPiece } from "./woodPieceService";
@@ -8,6 +8,7 @@ import { WoodPiece } from "./woodPieceService";
 type TreeSpeciesWithStats = TreeSpecies & {
   top_logs_per_volume: WoodPiece[];
   top_logs_total: WoodPiece[];
+  volume: number;
 };
 export interface Statistics {
   total_volume: number;
@@ -238,6 +239,35 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
   }
   const topLogsTotalGrouped = groupBy(topLogsTotalResult, "tree_species_id");
 
+  const treeSpeciesCubatureStatsSql = `
+  SELECT 
+    ROUND(SUM("volume"), 2) as "total_volume", 
+    "tree_species_id" 
+  FROM (
+    ${woodPiecesSql}
+  ) AS wp
+  GROUP BY "tree_species_id"
+`;
+
+  let treeSpeciesCubatureResult: {
+    total_volume: number;
+    tree_species_id: number;
+  }[] = [];
+  try {
+    treeSpeciesCubatureResult = (await db.select(
+      treeSpeciesCubatureStatsSql,
+      []
+    )) as { total_volume: number; tree_species_id: number }[];
+  } catch (e) {
+    info(JSON.stringify(e));
+    throw e;
+  }
+  const treeSpeciesCubatureGrouped = keyBy(
+    treeSpeciesCubatureResult,
+    "tree_species_id"
+  );
+  info(JSON.stringify(treeSpeciesCubatureGrouped));
+
   let treeSpecies: TreeSpeciesWithStats[] = (await ensureTreeSpecies({
     language: opts.language,
   })) as any;
@@ -245,6 +275,7 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
   treeSpecies = treeSpecies.map((ts) => {
     ts.top_logs_per_volume = topLogsGrouped[ts.id];
     ts.top_logs_total = topLogsTotalGrouped[ts.id];
+    ts.volume = treeSpeciesCubatureGrouped[ts.id]?.total_volume;
     return ts;
   });
 

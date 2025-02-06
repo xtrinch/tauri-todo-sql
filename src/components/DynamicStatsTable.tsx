@@ -13,6 +13,7 @@ export function DynamicStatsTable(props: {
   woodPieces: WoodPiece[];
   woodPiecesTotal: WoodPiece[];
   title: string;
+  volume: number;
 }) {
   const { t } = useTranslation();
 
@@ -75,6 +76,9 @@ export function DynamicStatsTable(props: {
   return (
     <>
       <div className="text-xl font-bold">{props.title}</div>
+      <div>
+        {t("totalVolume")}: {props.volume || 0} m3
+      </div>
       <div className="flex flex-row space-x-20">
         <div className="flex flex-col space-y-3">
           <div className="font-bold">{t("topThreeOffersPerVolumePrice")}</div>
