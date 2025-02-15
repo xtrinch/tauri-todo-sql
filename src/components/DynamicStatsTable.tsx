@@ -20,6 +20,11 @@ export function DynamicStatsTable(props: {
   const columns = useMemo<ColumnDef<unknown, any>[]>(
     () => [
       {
+        accessorKey: "sequence_no",
+        size: 80,
+        header: () => `${t("seqNo")}`,
+      },
+      {
         accessorKey: "offered_price",
         size: 120,
         header: () => `${t("offeredPrice")} (EUR / m3)`,
@@ -35,6 +40,11 @@ export function DynamicStatsTable(props: {
 
   const columns1 = useMemo<ColumnDef<unknown, any>[]>(
     () => [
+      {
+        accessorKey: "sequence_no",
+        size: 80,
+        header: () => `${t("seqNo")}`,
+      },
       {
         accessorKey: "total_price",
         size: 120,

@@ -110,8 +110,12 @@ export const useUpdateBuyerMutation = (
     mutationKey: ["buyers", "update", buyerId],
     mutationFn: patchBuyer,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["buyers"] });
-      queryClient.invalidateQueries({ queryKey: ["wood_pieces"] });
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          ["buyers", "statistics", "wood_pieces"].includes(
+            query.queryKey[0] as string
+          ),
+      });
 
       if (opts?.onSuccess) opts.onSuccess();
     },
