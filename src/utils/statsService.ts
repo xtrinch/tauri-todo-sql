@@ -1,6 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { info } from "@tauri-apps/plugin-log";
 import { groupBy, keyBy } from "lodash";
+import { LICITATOR_350_PERCENTAGE, LICITATOR_FIXED_COST } from "./constants";
 import { getDatabase } from "./database";
 import { ensureTreeSpecies, TreeSpecies } from "./treeSpeciesService";
 import { WoodPiece } from "./woodPieceService";
@@ -87,14 +88,14 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
   //   // sum auction costs
   //   const sellerCostsBelow350 = sellerWoodPieces
   //     .reduce(
-  //       (sum, row) => sum.plus(new Big(22).mul(row.volume as number)),
+  //       (sum, row) => sum.plus(new Big(LICITATOR_FIXED_COST).mul(row.volume as number)),
   //       new Big(0)
   //     )
   //     .round(2);
   //   const sellerCostsAbove350 = sellerWoodPieces
   //     .reduce(
   //       (sum, row) =>
-  //         sum.plus(new Big(0.05).mul((row.offered_total_price as number) || 0)),
+  //         sum.plus(new Big(LICITATOR_350_PERCENTAGE).mul((row.offered_total_price as number) || 0)),
   //       new Big(0)
   //     )
   //     .round(2);
@@ -141,8 +142,8 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
         THEN ROUND("sellers"."logging_costs" * "sellers"."total_volume", 2)
         ELSE 0
       END AS "total_logging_costs",
-      ROUND("sellers"."total_volume" * 22, 2) AS "costs_below_350",
-      ROUND("costs_above_350_per_seller" * 0.05, 2) AS "costs_above_350"
+      ROUND("sellers"."total_volume" * ${LICITATOR_FIXED_COST}, 2) AS "costs_below_350",
+      ROUND("costs_above_350_per_seller" * ${LICITATOR_350_PERCENTAGE}, 2) AS "costs_above_350"
     FROM (
       SELECT  -- this one selects one row per seller, so already summed values
         *,

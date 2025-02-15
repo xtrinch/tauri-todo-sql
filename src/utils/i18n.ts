@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import { LICITATOR_350_PERCENTAGE, LICITATOR_FIXED_COST } from "./constants";
 
 // the translations
 // (tip move them in a JSON file and import them,
@@ -65,10 +66,8 @@ const resources = {
       isFlatRate: "Flat rate",
       isVatLiable: "VAT liable",
       totalGross: "Total gross",
-      costsTo350:
-        "Auction costs for wood pieces valued up to 350 EUR / m3 (22 EUR / m3)",
-      costsAbove350:
-        "Auction costs for wood pieces valued above 350 EUR / m3 (5% total)",
+      costsTo350: `Auction costs for wood pieces valued up to 350 EUR / m3 (${LICITATOR_FIXED_COST} EUR / m3)`,
+      costsAbove350: `Auction costs for wood pieces valued above 350 EUR / m3 (${LICITATOR_350_PERCENTAGE * 100}% total)`,
       sellerIncome: "Seller income",
       sellerIncomeGross: "Seller gross income",
       flatRate: "Flat rate (8%)",
@@ -198,10 +197,8 @@ const resources = {
       isFlatRate: "Pavšalist",
       isVatLiable: "DDV zavezanec",
       totalGross: "Skupaj bruto",
-      costsTo350:
-        "Stroški licitacije za vrednost hlodov do 350 EUR / m3 (22 EUR / m3)",
-      costsAbove350:
-        "Stroški licitacije za vrednost hlodov nad 350 EUR / m3 (5% vrednosti)",
+      costsTo350: `Stroški licitacije za vrednost hlodov do 350 EUR / m3 (${LICITATOR_FIXED_COST} EUR / m3)`,
+      costsAbove350: `Stroški licitacije za vrednost hlodov nad 350 EUR / m3 (${LICITATOR_350_PERCENTAGE * 100}% vrednosti)`,
       sellerIncome: "Dohodek lastnika hlodov",
       sellerIncomeGross: "Dohodek lastnika hlodov bruto",
       flatRate: "Pavšal (8%)",

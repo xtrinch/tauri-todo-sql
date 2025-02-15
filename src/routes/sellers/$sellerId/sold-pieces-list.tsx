@@ -14,6 +14,10 @@ import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
 import { PdfTableCol } from "../../../components/PdfTable";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
+import {
+  LICITATOR_350_PERCENTAGE,
+  LICITATOR_FIXED_COST,
+} from "../../../utils/constants";
 import { PdfTypeEnum, saveToPDF } from "../../../utils/pdf";
 import { sellerQueryOptions } from "../../../utils/sellerService";
 import {
@@ -152,7 +156,11 @@ function SoldPiecesList() {
         costsBelow350: rows
           .reduce(
             (sum, row) =>
-              sum.plus(new Big(22).mul(row.getValue("volume") as number)),
+              sum.plus(
+                new Big(LICITATOR_FIXED_COST).mul(
+                  row.getValue("volume") as number
+                )
+              ),
             new Big(0)
           )
           .round(2),
@@ -164,7 +172,9 @@ function SoldPiecesList() {
             const totalAbove350 = new Big(
               row.getValue("offered_total_price") as number
             ).minus(new Big(350).mul(row.getValue("volume")));
-            return sum.plus(new Big(0.05).mul(totalAbove350));
+            return sum.plus(
+              new Big(LICITATOR_350_PERCENTAGE).mul(totalAbove350)
+            );
           }, new Big(0))
           .round(2),
       };
