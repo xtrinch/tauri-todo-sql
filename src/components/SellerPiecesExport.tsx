@@ -114,7 +114,7 @@ export const SellerPiecesExport = (params: SellerPiecesExportProps) => {
           <Text>{params.seller.iban}</Text>
         </View>
         <View style={styles.topTable}>
-          <PdfTable data={params.woodPiecesData} columns={columns} />
+          <PdfTable data={params.woodPiecesData} columns={columns} hasFooter />
         </View>
       </Page>
     </Document>

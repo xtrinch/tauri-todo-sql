@@ -71,8 +71,12 @@ export interface PdfTableCol {
   footer?: (data: any[]) => JSX.Element;
 }
 
-export const PdfTable = (params: { columns: PdfTableCol[]; data: any[] }) => {
-  const { columns } = params;
+export const PdfTable = (params: {
+  columns: PdfTableCol[];
+  data: any[];
+  hasFooter?: boolean;
+}) => {
+  const { columns, hasFooter } = params;
 
   const getValue = (col: PdfTableCol, piece: any) => {
     let val = (piece as any)[col.accessorKey];
@@ -124,23 +128,25 @@ export const PdfTable = (params: { columns: PdfTableCol[]; data: any[] }) => {
           ))}
         </View>
       ))}
-      <View style={styles.tableRowStyle}>
-        {columns.map((col, idx) => (
-          <View
-            style={compact([
-              styles.tableColFooterStyle,
-              idx == 0 ? styles.firstTableColFooterStyle : null,
-              {
-                width: `${col.size}%`,
-                fontWeight: col.bold ? "bold" : undefined,
-              },
-            ])}
-            key={idx}
-          >
-            {col.footer && <>{col.footer(params.data)}</>}
-          </View>
-        ))}
-      </View>
+      {hasFooter && (
+        <View style={styles.tableRowStyle}>
+          {columns.map((col, idx) => (
+            <View
+              style={compact([
+                styles.tableColFooterStyle,
+                idx == 0 ? styles.firstTableColFooterStyle : null,
+                {
+                  width: `${col.size}%`,
+                  fontWeight: col.bold ? "bold" : undefined,
+                },
+              ])}
+              key={idx}
+            >
+              {col.footer && <>{col.footer(params.data)}</>}
+            </View>
+          ))}
+        </View>
+      )}
     </View>
   );
 };

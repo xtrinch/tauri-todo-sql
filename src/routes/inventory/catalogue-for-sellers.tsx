@@ -41,6 +41,7 @@ function CatalogueForSellersComponent() {
   const statisticsQuery = useSuspenseQuery(
     statsQueryOptions({
       ...Route.useLoaderDeps(),
+      language: i18n.language as "sl" | "en",
     })
   );
   const statistics = statisticsQuery.data;
@@ -174,6 +175,48 @@ function CatalogueForSellersComponent() {
           </button>
         </div>
       </div>
+      {/* <div>
+        <PDFViewer>
+          <CatalogueExportWithPrices
+            woodPiecesData={woodPieces.splice(0, 40)}
+            statistics={{
+              total_volume: 200.4,
+              top_logs: {
+                top_logs_per_volume: woodPieces.splice(0, 3),
+                top_logs_total: woodPieces.splice(0, 3),
+              },
+              top_logs_by_species: [
+                {
+                  top_logs_per_volume: woodPieces.splice(0, 3),
+                  top_logs_total: woodPieces.splice(0, 3),
+                  id: 1,
+                  latin_name: "abc",
+                  tree_species_name: "Maklen",
+                  tree_species_name_slo: "Maklen",
+                  tree_species_name_en: "Maklen",
+                },
+                {
+                  top_logs_per_volume: woodPieces.splice(0, 3),
+                  top_logs_total: woodPieces.splice(0, 3),
+                  id: 1,
+                  latin_name: "abc",
+                  tree_species_name: "Hrast Graden",
+                  tree_species_name_slo: "Hrast Graden",
+                  tree_species_name_en: "Hrast Graden",
+                },
+              ],
+              costs_above_350: 20,
+              costs_below_350: 30,
+              num_unsold_wood_pieces: 2,
+              num_wood_pieces: 20,
+              offered_max_price: 200,
+              total_income: 43009,
+              total_logging_costs: 2000,
+              total_transport_costs: 1000,
+            }}
+          />
+        </PDFViewer>
+      </div> */}
       <CustomTable
         table={table}
         trClassName="border-b"
