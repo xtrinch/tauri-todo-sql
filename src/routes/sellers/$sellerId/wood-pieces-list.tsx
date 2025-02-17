@@ -63,7 +63,7 @@ function SoldPiecesList() {
       {
         accessorKey: "plate_no",
         header: () => t("plateNo"),
-        size: 100,
+        size: 80,
       },
       {
         accessorKey: "tree_species_name",
