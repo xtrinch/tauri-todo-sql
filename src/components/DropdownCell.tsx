@@ -3,13 +3,36 @@ import "choices.js/public/assets/styles/choices.css";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FaAngleDown } from "react-icons/fa6";
-import Select, { SingleValue } from "react-select";
+import Select, { createFilter, SingleValue } from "react-select";
 import { CustomTableMeta } from "./TableCell";
 
 interface Option {
   value: number;
   label: string;
 }
+
+// copy some interfaces from react-select since they don't export them
+interface Config<Option> {
+  readonly ignoreCase?: boolean;
+  readonly ignoreAccents?: boolean;
+  readonly stringify?: (option: FilterOptionOption<Option>) => string;
+  readonly trim?: boolean;
+  readonly matchFrom?: "any" | "start";
+}
+export interface FilterOptionOption<Option> {
+  readonly label: string;
+  readonly value: string;
+  readonly data: Option;
+}
+
+const filterConfig: Config<Option> = {
+  ignoreCase: true,
+  ignoreAccents: true,
+  trim: true,
+  matchFrom: "any",
+  stringify: (option) => `${option.label}`,
+};
+
 export const DropdownCell = <TableItem,>({
   getValue,
   row,
@@ -100,6 +123,7 @@ export const DropdownCell = <TableItem,>({
           onChange={onChange}
           value={value}
           placeholder={t("select")}
+          filterOption={createFilter(filterConfig)}
           styles={{
             // ...styles,
             control: (base) => ({
