@@ -7,8 +7,8 @@ import { ensureTreeSpecies, TreeSpecies } from "./treeSpeciesService";
 import { WoodPiece } from "./woodPieceService";
 
 type TreeSpeciesWithStats = TreeSpecies & {
-  top_logs_per_volume: WoodPiece[];
-  top_logs_total: WoodPiece[];
+  top_logs_by_species_per_volume: WoodPiece[];
+  top_logs_by_species_total: WoodPiece[];
   volume: number;
 };
 export interface Statistics {
@@ -21,7 +21,7 @@ export interface Statistics {
   total_logging_costs: number;
   total_transport_costs: number;
   costs_above_350: number;
-  top_logs: TreeSpeciesWithStats[];
+  top_logs_by_species: TreeSpeciesWithStats[];
 }
 
 interface ListOptions {
@@ -204,6 +204,7 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     ) AS wp
     LEFT JOIN "buyers" ON "buyers"."id" = "wp"."buyer_id"
     WHERE "sequence_num" <= 3 AND "offered_price" > 0
+    ORDER BY "total_price" DESC
   `;
 
   let topLogsResult: WoodPiece[] = [];
@@ -226,6 +227,7 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     ) AS wp
     LEFT JOIN "buyers" ON "buyers"."id" = "wp"."buyer_id"
     WHERE "sequence_num" <= 3 AND "offered_price" > 0
+    ORDER BY "total_price" DESC
   `;
 
   let topLogsTotalResult: WoodPiece[] = [];
@@ -274,8 +276,8 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
   })) as any;
 
   treeSpecies = treeSpecies.map((ts) => {
-    ts.top_logs_per_volume = topLogsGrouped[ts.id];
-    ts.top_logs_total = topLogsTotalGrouped[ts.id];
+    ts.top_logs_by_species_per_volume = topLogsGrouped[ts.id];
+    ts.top_logs_by_species_total = topLogsTotalGrouped[ts.id];
     ts.volume = treeSpeciesCubatureGrouped[ts.id]?.total_volume;
     return ts;
   });
@@ -290,7 +292,7 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     costs_above_350: priceResult[0].costs_above_350,
     total_logging_costs: priceResult[0].total_logging_costs,
     total_transport_costs: priceResult[0].total_transport_costs,
-    top_logs: treeSpecies,
+    top_logs_by_species: treeSpecies,
 
     // num_wood_pieces: totalResult[0].num_wood_pieces,
     // offered_max_price: totalResult[0].offered_max_price,

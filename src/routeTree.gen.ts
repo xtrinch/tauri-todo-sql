@@ -20,7 +20,8 @@ import { Route as TreeSpeciesEditImport } from './routes/treeSpecies/edit'
 import { Route as SellersSellerIdImport } from './routes/sellers/$sellerId'
 import { Route as InventoryListImport } from './routes/inventory/list'
 import { Route as InventoryEditImport } from './routes/inventory/edit'
-import { Route as InventoryCatalogueImport } from './routes/inventory/catalogue'
+import { Route as InventoryCatalogueForSellersImport } from './routes/inventory/catalogue-for-sellers'
+import { Route as InventoryCatalogueForBuyersImport } from './routes/inventory/catalogue-for-buyers'
 import { Route as BuyersBuyerIdImport } from './routes/buyers/$buyerId'
 import { Route as SellersSellerIdWoodPiecesListImport } from './routes/sellers/$sellerId/wood-pieces-list'
 import { Route as SellersSellerIdSoldPiecesListImport } from './routes/sellers/$sellerId/sold-pieces-list'
@@ -84,11 +85,19 @@ const InventoryEditRoute = InventoryEditImport.update({
   getParentRoute: () => InventoryRoute,
 } as any)
 
-const InventoryCatalogueRoute = InventoryCatalogueImport.update({
-  id: '/catalogue',
-  path: '/catalogue',
-  getParentRoute: () => InventoryRoute,
-} as any)
+const InventoryCatalogueForSellersRoute =
+  InventoryCatalogueForSellersImport.update({
+    id: '/catalogue-for-sellers',
+    path: '/catalogue-for-sellers',
+    getParentRoute: () => InventoryRoute,
+  } as any)
+
+const InventoryCatalogueForBuyersRoute =
+  InventoryCatalogueForBuyersImport.update({
+    id: '/catalogue-for-buyers',
+    path: '/catalogue-for-buyers',
+    getParentRoute: () => InventoryRoute,
+  } as any)
 
 const BuyersBuyerIdRoute = BuyersBuyerIdImport.update({
   id: '/$buyerId',
@@ -177,11 +186,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyersBuyerIdImport
       parentRoute: typeof BuyersImport
     }
-    '/inventory/catalogue': {
-      id: '/inventory/catalogue'
-      path: '/catalogue'
-      fullPath: '/inventory/catalogue'
-      preLoaderRoute: typeof InventoryCatalogueImport
+    '/inventory/catalogue-for-buyers': {
+      id: '/inventory/catalogue-for-buyers'
+      path: '/catalogue-for-buyers'
+      fullPath: '/inventory/catalogue-for-buyers'
+      preLoaderRoute: typeof InventoryCatalogueForBuyersImport
+      parentRoute: typeof InventoryImport
+    }
+    '/inventory/catalogue-for-sellers': {
+      id: '/inventory/catalogue-for-sellers'
+      path: '/catalogue-for-sellers'
+      fullPath: '/inventory/catalogue-for-sellers'
+      preLoaderRoute: typeof InventoryCatalogueForSellersImport
       parentRoute: typeof InventoryImport
     }
     '/inventory/edit': {
@@ -278,13 +294,15 @@ const BuyersRouteWithChildren =
   BuyersRoute._addFileChildren(BuyersRouteChildren)
 
 interface InventoryRouteChildren {
-  InventoryCatalogueRoute: typeof InventoryCatalogueRoute
+  InventoryCatalogueForBuyersRoute: typeof InventoryCatalogueForBuyersRoute
+  InventoryCatalogueForSellersRoute: typeof InventoryCatalogueForSellersRoute
   InventoryEditRoute: typeof InventoryEditRoute
   InventoryListRoute: typeof InventoryListRoute
 }
 
 const InventoryRouteChildren: InventoryRouteChildren = {
-  InventoryCatalogueRoute: InventoryCatalogueRoute,
+  InventoryCatalogueForBuyersRoute: InventoryCatalogueForBuyersRoute,
+  InventoryCatalogueForSellersRoute: InventoryCatalogueForSellersRoute,
   InventoryEditRoute: InventoryEditRoute,
   InventoryListRoute: InventoryListRoute,
 }
@@ -327,7 +345,8 @@ export interface FileRoutesByFullPath {
   '/sellers': typeof SellersRouteWithChildren
   '/statistics': typeof StatisticsRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
-  '/inventory/catalogue': typeof InventoryCatalogueRoute
+  '/inventory/catalogue-for-buyers': typeof InventoryCatalogueForBuyersRoute
+  '/inventory/catalogue-for-sellers': typeof InventoryCatalogueForSellersRoute
   '/inventory/edit': typeof InventoryEditRoute
   '/inventory/list': typeof InventoryListRoute
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
@@ -346,7 +365,8 @@ export interface FileRoutesByTo {
   '/sellers': typeof SellersRouteWithChildren
   '/statistics': typeof StatisticsRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
-  '/inventory/catalogue': typeof InventoryCatalogueRoute
+  '/inventory/catalogue-for-buyers': typeof InventoryCatalogueForBuyersRoute
+  '/inventory/catalogue-for-sellers': typeof InventoryCatalogueForSellersRoute
   '/inventory/edit': typeof InventoryEditRoute
   '/inventory/list': typeof InventoryListRoute
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
@@ -366,7 +386,8 @@ export interface FileRoutesById {
   '/sellers': typeof SellersRouteWithChildren
   '/statistics': typeof StatisticsRoute
   '/buyers/$buyerId': typeof BuyersBuyerIdRouteWithChildren
-  '/inventory/catalogue': typeof InventoryCatalogueRoute
+  '/inventory/catalogue-for-buyers': typeof InventoryCatalogueForBuyersRoute
+  '/inventory/catalogue-for-sellers': typeof InventoryCatalogueForSellersRoute
   '/inventory/edit': typeof InventoryEditRoute
   '/inventory/list': typeof InventoryListRoute
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
@@ -387,7 +408,8 @@ export interface FileRouteTypes {
     | '/sellers'
     | '/statistics'
     | '/buyers/$buyerId'
-    | '/inventory/catalogue'
+    | '/inventory/catalogue-for-buyers'
+    | '/inventory/catalogue-for-sellers'
     | '/inventory/edit'
     | '/inventory/list'
     | '/sellers/$sellerId'
@@ -405,7 +427,8 @@ export interface FileRouteTypes {
     | '/sellers'
     | '/statistics'
     | '/buyers/$buyerId'
-    | '/inventory/catalogue'
+    | '/inventory/catalogue-for-buyers'
+    | '/inventory/catalogue-for-sellers'
     | '/inventory/edit'
     | '/inventory/list'
     | '/sellers/$sellerId'
@@ -423,7 +446,8 @@ export interface FileRouteTypes {
     | '/sellers'
     | '/statistics'
     | '/buyers/$buyerId'
-    | '/inventory/catalogue'
+    | '/inventory/catalogue-for-buyers'
+    | '/inventory/catalogue-for-sellers'
     | '/inventory/edit'
     | '/inventory/list'
     | '/sellers/$sellerId'
@@ -484,7 +508,8 @@ export const routeTree = rootRoute
     "/inventory": {
       "filePath": "inventory.tsx",
       "children": [
-        "/inventory/catalogue",
+        "/inventory/catalogue-for-buyers",
+        "/inventory/catalogue-for-sellers",
         "/inventory/edit",
         "/inventory/list"
       ]
@@ -506,8 +531,12 @@ export const routeTree = rootRoute
         "/buyers/$buyerId/wood-piece-offers-list"
       ]
     },
-    "/inventory/catalogue": {
-      "filePath": "inventory/catalogue.tsx",
+    "/inventory/catalogue-for-buyers": {
+      "filePath": "inventory/catalogue-for-buyers.tsx",
+      "parent": "/inventory"
+    },
+    "/inventory/catalogue-for-sellers": {
+      "filePath": "inventory/catalogue-for-sellers.tsx",
       "parent": "/inventory"
     },
     "/inventory/edit": {

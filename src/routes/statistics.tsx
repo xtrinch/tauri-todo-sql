@@ -120,12 +120,12 @@ function StatisticsComponent() {
           trhClassName="border-b"
           containerClassName="!overflow-visible"
         />
-        {statisticsQuery.data.top_logs.map((ts) => (
+        {statisticsQuery.data.top_logs_by_species.map((ts) => (
           <DynamicStatsTable
             key={ts.id}
             title={ts.tree_species_name}
-            woodPieces={ts.top_logs_per_volume || []}
-            woodPiecesTotal={ts.top_logs_total || []}
+            woodPieces={ts.top_logs_by_species_per_volume || []}
+            woodPiecesTotal={ts.top_logs_by_species_total || []}
             volume={ts.volume}
           />
         ))}

@@ -15,17 +15,16 @@ import { CustomTable } from "../../components/CustomTable";
 import { TableCellReadonly } from "../../components/TableCellReadonly";
 import { PdfTypeEnum, saveToPDF } from "../../utils/pdf";
 import { statsQueryOptions } from "../../utils/statsService";
-import { treeSpeciesQueryOptions } from "../../utils/treeSpeciesService";
 import {
   WoodPiece,
   woodPiecesQueryOptions,
 } from "../../utils/woodPieceService";
 
-export const Route = createFileRoute("/inventory/catalogue")({
-  component: CatalogueComponent,
+export const Route = createFileRoute("/inventory/catalogue-for-sellers")({
+  component: CatalogueForSellersComponent,
 });
 
-function CatalogueComponent() {
+function CatalogueForSellersComponent() {
   const { t, i18n } = useTranslation();
 
   const woodPiecesQuery = useSuspenseQuery(
@@ -45,19 +44,6 @@ function CatalogueComponent() {
     })
   );
   const statistics = statisticsQuery.data;
-
-  const treeSpeciesQuery = useSuspenseQuery(
-    treeSpeciesQueryOptions({ language: i18n.language as "en" | "sl" })
-  );
-  const treeSpeciesData = treeSpeciesQuery.data;
-  const treeSpeciesOptions = useMemo(
-    () =>
-      treeSpeciesData.map((ts) => ({
-        value: ts.id,
-        label: ts.tree_species_name,
-      })),
-    [treeSpeciesData]
-  );
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
@@ -105,12 +91,28 @@ function CatalogueComponent() {
         },
       },
       {
+        accessorKey: "num_offers",
+        header: () => t("numOffers"),
+        size: 60,
+        meta: {
+          type: "integer",
+        },
+      },
+      {
+        accessorKey: "offered_price",
+        header: () => t("maxPriceM3"),
+        size: 120,
+        meta: {
+          type: "float",
+        },
+      },
+      {
         accessorKey: "ident",
         header: () => t("sellerIdent"),
         size: 200,
       },
     ],
-    [treeSpeciesOptions]
+    []
   );
 
   const table = useReactTable({
@@ -122,46 +124,6 @@ function CatalogueComponent() {
     },
     meta: {},
   });
-
-  const exportToFileForBuyers = async () => {
-    const path = await save({
-      filters: [
-        {
-          name: "pdf",
-          extensions: ["pdf"],
-        },
-      ],
-      defaultPath: t("sellingCatalogue").replace(" ", "-"),
-    });
-    let toastId: string;
-    if (path) {
-      toastId = toast.loading(t("generating"), {
-        position: "top-center",
-      });
-      try {
-        await saveToPDF(
-          path,
-          { woodPiecesData: woodPieces, statistics },
-          PdfTypeEnum.catalogForBuyers,
-          i18n.language
-        );
-      } catch (e) {
-        let error = e as Error;
-        toast.error(
-          `${JSON.stringify(error)} ${error.message} ${error.name} ${error.cause} ${error.stack}`,
-          {
-            duration: 10000,
-          }
-        );
-        throw e;
-      } finally {
-        toast.dismiss(toastId);
-      }
-
-      await openPath(path);
-      toast.success(t("success"));
-    }
-  };
 
   const exportToFileWithPrices = async () => {
     const path = await save({
@@ -204,12 +166,6 @@ function CatalogueComponent() {
     <div>
       <div className="p-3">
         <div className="flex flex-row space-x-3 mb-3">
-          <button
-            className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
-            onClick={exportToFileForBuyers}
-          >
-            {t("exportForBuyers")}
-          </button>
           <button
             className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
             onClick={exportToFileWithPrices}

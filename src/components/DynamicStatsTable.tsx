@@ -21,12 +21,37 @@ export function DynamicStatsTable(props: {
     () => [
       {
         accessorKey: "sequence_no",
-        size: 80,
+        size: 60,
         header: () => `${t("seqNo")}`,
       },
       {
+        accessorKey: "length",
+        header: () => t("lengthM"),
+        size: 60,
+        meta: {
+          type: "float",
+          decimalPlaces: 1,
+        },
+      },
+      {
+        accessorKey: "width",
+        header: () => t("widthCm"),
+        size: 60,
+        meta: {
+          type: "integer",
+        },
+      },
+      {
+        accessorKey: "volume",
+        header: () => t("volumeM3"),
+        size: 60,
+        meta: {
+          type: "float",
+        },
+      },
+      {
         accessorKey: "offered_price",
-        size: 120,
+        size: 100,
         header: () => `${t("offeredPrice")} (EUR / m3)`,
       },
       {
@@ -42,18 +67,43 @@ export function DynamicStatsTable(props: {
     () => [
       {
         accessorKey: "sequence_no",
-        size: 80,
+        size: 60,
         header: () => `${t("seqNo")}`,
+      },
+      {
+        accessorKey: "length",
+        header: () => t("lengthM"),
+        size: 60,
+        meta: {
+          type: "float",
+          decimalPlaces: 1,
+        },
+      },
+      {
+        accessorKey: "width",
+        header: () => t("widthCm"),
+        size: 60,
+        meta: {
+          type: "integer",
+        },
+      },
+      {
+        accessorKey: "volume",
+        header: () => t("volumeM3"),
+        size: 60,
+        meta: {
+          type: "float",
+        },
+      },
+      {
+        accessorKey: "offered_price",
+        size: 100,
+        header: () => `${t("offeredPrice")} (EUR / m3)`,
       },
       {
         accessorKey: "total_price",
         size: 120,
         header: () => `${t("totalPrice")} (EUR)`,
-      },
-      {
-        accessorKey: "offered_price",
-        size: 120,
-        header: () => `${t("offeredPrice")} (EUR / m3)`,
       },
       {
         accessorKey: "buyer_name",
