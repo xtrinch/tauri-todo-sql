@@ -101,6 +101,9 @@ function SoldPiecesList() {
         accessorKey: "num_offers",
         header: () => t("numOffers"),
         size: 60,
+        meta: {
+          type: "integer",
+        },
       },
       {
         accessorKey: "offered_price",

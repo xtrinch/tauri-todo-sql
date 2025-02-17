@@ -40,7 +40,7 @@ export const CatalogueExportWithPrices = (
       {
         accessorKey: "sequence_no",
         header: () => t("seqNo"),
-        size: 9,
+        size: 10,
       },
       {
         accessorKey: "plate_no",
@@ -50,7 +50,7 @@ export const CatalogueExportWithPrices = (
       {
         accessorKey: "tree_species_name",
         header: () => t("treeSpecies"),
-        size: 30,
+        size: 25,
       },
       {
         accessorKey: "width",
@@ -78,9 +78,14 @@ export const CatalogueExportWithPrices = (
         },
       },
       {
+        accessorKey: "num_offers",
+        header: () => t("numOffers"),
+        size: 10,
+      },
+      {
         accessorKey: "offered_price",
         header: () => t("offeredPriceM3"),
-        size: 20,
+        size: 15,
         meta: {
           type: "float",
         },

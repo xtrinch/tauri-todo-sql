@@ -34,6 +34,7 @@ function CatalogueComponent() {
       ...Route.useParams(),
       relations: [],
       language: i18n.language as "sl" | "en",
+      min_price_not_used: true,
     })
   );
   const woodPieces = woodPiecesQuery.data;
