@@ -6,11 +6,13 @@ import { getDatabase } from "./database";
 import { ensureTreeSpecies, TreeSpecies } from "./treeSpeciesService";
 import { WoodPiece } from "./woodPieceService";
 
-type TreeSpeciesWithStats = TreeSpecies & {
-  top_logs_by_species_per_volume: WoodPiece[];
-  top_logs_by_species_total: WoodPiece[];
-  volume: number;
-};
+interface WoodPieceStats {
+  top_logs_per_volume: WoodPiece[];
+  top_logs_total: WoodPiece[];
+  volume?: number;
+}
+type TreeSpeciesWithStats = TreeSpecies & WoodPieceStats;
+
 export interface Statistics {
   total_volume: number;
   num_wood_pieces: number;
@@ -22,6 +24,7 @@ export interface Statistics {
   total_transport_costs: number;
   costs_above_350: number;
   top_logs_by_species: TreeSpeciesWithStats[];
+  top_logs: WoodPieceStats;
 }
 
 interface ListOptions {
@@ -193,7 +196,10 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
   }
 
   const topLogStatsSql = `
-    SELECT * FROM (
+    SELECT 
+      *,
+      ${opts.language === "sl" ? "tree_species_name_slo" : "tree_species_name"} as "tree_species_name"
+    FROM (
       SELECT 
         *,
         row_number() OVER (PARTITION BY "tree_species_id" ORDER BY "offered_price" DESC) as "sequence_num",
@@ -203,6 +209,7 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
       ) as wpo
     ) AS wp
     LEFT JOIN "buyers" ON "buyers"."id" = "wp"."buyer_id"
+    LEFT JOIN "tree_species" ON "wp"."tree_species_id" = "tree_species"."id"
     WHERE "sequence_num" <= 3 AND "offered_price" > 0
     ORDER BY "total_price" DESC
   `;
@@ -217,7 +224,10 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
   const topLogsGrouped = groupBy(topLogsResult, "tree_species_id");
 
   const topLogTotalStatsSql = `
-    SELECT * FROM (
+    SELECT 
+      *,
+      ${opts.language === "sl" ? "tree_species_name_slo" : "tree_species_name"} as "tree_species_name"
+    FROM (
       SELECT 
         *,
         row_number() OVER (PARTITION BY "tree_species_id" ORDER BY "total_price" DESC) as "sequence_num"
@@ -226,6 +236,7 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
       )
     ) AS wp
     LEFT JOIN "buyers" ON "buyers"."id" = "wp"."buyer_id"
+    LEFT JOIN "tree_species" ON "wp"."tree_species_id" = "tree_species"."id"
     WHERE "sequence_num" <= 3 AND "offered_price" > 0
     ORDER BY "total_price" DESC
   `;
@@ -276,11 +287,16 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
   })) as any;
 
   treeSpecies = treeSpecies.map((ts) => {
-    ts.top_logs_by_species_per_volume = topLogsGrouped[ts.id];
-    ts.top_logs_by_species_total = topLogsTotalGrouped[ts.id];
+    ts.top_logs_per_volume = topLogsGrouped[ts.id];
+    ts.top_logs_total = topLogsTotalGrouped[ts.id];
     ts.volume = treeSpeciesCubatureGrouped[ts.id]?.total_volume;
     return ts;
   });
+
+  const topLogs: WoodPieceStats = {
+    top_logs_per_volume: topLogsResult.slice(0, 3),
+    top_logs_total: topLogsTotalResult.slice(0, 3),
+  };
 
   const statistics: Statistics = {
     num_wood_pieces: priceResult[0].num_wood_pieces,
@@ -293,6 +309,7 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     total_logging_costs: priceResult[0].total_logging_costs,
     total_transport_costs: priceResult[0].total_transport_costs,
     top_logs_by_species: treeSpecies,
+    top_logs: topLogs,
 
     // num_wood_pieces: totalResult[0].num_wood_pieces,
     // offered_max_price: totalResult[0].offered_max_price,

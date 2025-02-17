@@ -13,7 +13,8 @@ export function DynamicStatsTable(props: {
   woodPieces: WoodPiece[];
   woodPiecesTotal: WoodPiece[];
   title: string;
-  volume: number;
+  volume?: number;
+  includeTreeSpecies?: boolean;
 }) {
   const { t } = useTranslation();
 
@@ -24,6 +25,15 @@ export function DynamicStatsTable(props: {
         size: 60,
         header: () => `${t("seqNo")}`,
       },
+      ...(props.includeTreeSpecies
+        ? [
+            {
+              accessorKey: "tree_species_name",
+              header: () => t("treeSpecies"),
+              size: 150,
+            },
+          ]
+        : []),
       {
         accessorKey: "length",
         header: () => t("lengthM"),
@@ -53,6 +63,9 @@ export function DynamicStatsTable(props: {
         accessorKey: "offered_price",
         size: 100,
         header: () => `${t("offeredPrice")} (EUR / m3)`,
+        meta: {
+          type: "float",
+        },
       },
       {
         accessorKey: "buyer_name",
@@ -60,7 +73,7 @@ export function DynamicStatsTable(props: {
         header: () => `${t("buyer")}`,
       },
     ],
-    []
+    [props.includeTreeSpecies]
   );
 
   const columns1 = useMemo<ColumnDef<unknown, any>[]>(
@@ -70,6 +83,15 @@ export function DynamicStatsTable(props: {
         size: 60,
         header: () => `${t("seqNo")}`,
       },
+      ...(props.includeTreeSpecies
+        ? [
+            {
+              accessorKey: "tree_species_name",
+              header: () => t("treeSpecies"),
+              size: 150,
+            },
+          ]
+        : []),
       {
         accessorKey: "length",
         header: () => t("lengthM"),
@@ -99,6 +121,9 @@ export function DynamicStatsTable(props: {
         accessorKey: "offered_price",
         size: 100,
         header: () => `${t("offeredPrice")} (EUR / m3)`,
+        meta: {
+          type: "float",
+        },
       },
       {
         accessorKey: "total_price",
@@ -111,7 +136,7 @@ export function DynamicStatsTable(props: {
         header: () => `${t("buyer")}`,
       },
     ],
-    []
+    [props.includeTreeSpecies]
   );
 
   const table = useReactTable({
@@ -135,13 +160,15 @@ export function DynamicStatsTable(props: {
   });
   return (
     <>
-      <div className="text-xl font-bold">{props.title}</div>
-      <div>
-        {t("totalVolume")}: {props.volume || 0} m3
-      </div>
-      <div className="flex flex-row space-x-20">
+      <h2 className="text-xl font-bold">{props.title}</h2>
+      {props.volume && (
+        <div>
+          {t("totalVolume")}: {props.volume || 0} m3
+        </div>
+      )}
+      <div className="flex flex-row space-x-5">
         <div className="flex flex-col space-y-3">
-          <div className="font-bold">{t("topThreeOffersPerVolumePrice")}</div>
+          <h3 className="font-bold">{t("topThreeOffersPerVolumePrice")}</h3>
           <CustomTable
             sizeEstimate={45}
             table={table}
@@ -151,7 +178,7 @@ export function DynamicStatsTable(props: {
           />
         </div>
         <div className="flex flex-col space-y-3">
-          <div className="font-bold">{t("topThreeOffersPerTotalPrice")}</div>
+          <h3 className="font-bold">{t("topThreeOffersPerTotalPrice")}</h3>
           <CustomTable
             sizeEstimate={45}
             table={table1}

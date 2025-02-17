@@ -53,3 +53,13 @@ input:focus {
     @apply border-blue-500;
     @apply outline-none;
 }
+
+h2 {
+    @apply dark:text-gray-900;
+    @apply !border-b-gray-200 dark:!border-b-gray-600;
+    border-bottom-width: 2px;
+}
+
+h3 {
+    @apply dark:text-gray-900;
+}

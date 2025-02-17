@@ -112,7 +112,7 @@ function StatisticsComponent() {
   return (
     <>
       <div className="p-3 flex flex-col space-y-5 overflow-auto max-h-[calc(100vh-55px)]">
-        <div className="font-bold text-lg">{t("statistics")}</div>
+        <h2 className="font-bold text-lg">{t("statistics")}</h2>
         <CustomTable
           sizeEstimate={45}
           table={table}
@@ -120,12 +120,19 @@ function StatisticsComponent() {
           trhClassName="border-b"
           containerClassName="!overflow-visible"
         />
+        <DynamicStatsTable
+          title={t("topThreeOffers")}
+          woodPieces={statisticsQuery.data.top_logs.top_logs_per_volume || []}
+          woodPiecesTotal={statisticsQuery.data.top_logs.top_logs_total || []}
+          includeTreeSpecies
+          volume={statisticsQuery.data.total_volume || 0}
+        />
         {statisticsQuery.data.top_logs_by_species.map((ts) => (
           <DynamicStatsTable
             key={ts.id}
             title={ts.tree_species_name}
-            woodPieces={ts.top_logs_by_species_per_volume || []}
-            woodPiecesTotal={ts.top_logs_by_species_total || []}
+            woodPieces={ts.top_logs_per_volume || []}
+            woodPiecesTotal={ts.top_logs_total || []}
             volume={ts.volume}
           />
         ))}
