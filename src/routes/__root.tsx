@@ -179,12 +179,16 @@ function RootComponent() {
       ) {
         let downloaded = 0;
         let contentLength = 0;
+        let toastId: string;
         // alternatively we could also call update.download() and update.install() separately
         await update.downloadAndInstall((event) => {
           switch (event.event) {
             case "Started":
               contentLength = event.data.contentLength!;
               info(`started downloading ${event.data.contentLength} bytes`);
+              toastId = toast.loading(t("downloading"), {
+                position: "top-center",
+              });
               break;
             case "Progress":
               downloaded += event.data.chunkLength;
@@ -192,16 +196,16 @@ function RootComponent() {
               break;
             case "Finished":
               info("download finished");
+              toast.dismiss(toastId);
               break;
           }
         });
 
-        info("update installed");
         toast.success(t("updateInstalled"));
         try {
           await relaunch();
         } catch (e) {
-          info("Failed to relaunch");
+          toast.error(t("failedToRelaunch"));
           info(JSON.stringify(e));
         }
       }

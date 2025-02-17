@@ -230,10 +230,11 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     FROM (
       SELECT 
         *,
-        row_number() OVER (PARTITION BY "tree_species_id" ORDER BY "total_price" DESC) as "sequence_num"
+        row_number() OVER (PARTITION BY "tree_species_id" ORDER BY "total_price" DESC) as "sequence_num",
+        "wpo"."offered_price" * "volume" as "offered_total_price"
       FROM (
         ${woodPiecesSql}
-      )
+      ) as wpo
     ) AS wp
     LEFT JOIN "buyers" ON "buyers"."id" = "wp"."buyer_id"
     LEFT JOIN "tree_species" ON "wp"."tree_species_id" = "tree_species"."id"
@@ -280,7 +281,6 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     treeSpeciesCubatureResult,
     "tree_species_id"
   );
-  info(JSON.stringify(treeSpeciesCubatureGrouped));
 
   let treeSpecies: TreeSpeciesWithStats[] = (await ensureTreeSpecies({
     language: opts.language,

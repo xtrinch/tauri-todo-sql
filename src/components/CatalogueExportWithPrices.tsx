@@ -202,6 +202,14 @@ export const CatalogueExportWithPrices = (
           type: "float",
         },
       },
+      {
+        accessorKey: "offered_total_price",
+        header: () => t("totalPriceM3"),
+        size: 15,
+        meta: {
+          type: "float",
+        },
+      },
     ],
     []
   );
@@ -246,6 +254,14 @@ export const CatalogueExportWithPrices = (
       {
         accessorKey: "offered_price",
         header: () => t("offeredPriceM3"),
+        size: 15,
+        meta: {
+          type: "float",
+        },
+      },
+      {
+        accessorKey: "offered_total_price",
+        header: () => t("totalPriceM3"),
         size: 15,
         meta: {
           type: "float",

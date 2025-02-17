@@ -139,6 +139,8 @@ const resources = {
       shouldRelaunch: "Update and relaunch application?",
       updateInstalled: "Update installed",
       numOffers: "No. offers",
+      failedToRelaunch: "Failed to relaunch",
+      downloading: "Downloading",
     },
   },
   sl: {
@@ -275,6 +277,8 @@ const resources = {
       shouldRelaunch: "Posodobim in na novo zaženem aplikacijo?",
       updateInstalled: "Aplikacija posodobljena",
       numOffers: "Št. ponudb",
+      failedToRelaunch: "Ponovni zagon aplikacije ni uspel",
+      downloading: "Prenos...",
     },
   },
 };
