@@ -19,6 +19,7 @@ export interface WoodPiece {
   sequence_no: number;
   min_price?: number;
   bypass_min_price?: boolean; // whether we can bypass min price for final sale
+  num_offers?: number;
 
   // from other tables
   offered_total_price?: number;
@@ -78,7 +79,8 @@ export const ensureWoodPieces = async (opts: ListOptions) => {
     LEFT JOIN ( --- left join with max offer
       SELECT 
         *, 
-        row_number() OVER (PARTITION BY "wood_piece_id" ORDER BY "offered_price" DESC, "id" ASC) as "seq_num" 
+        COUNT(*) over (PARTITION BY "wood_piece_id") as "num_offers",
+        ROW_NUMBER() OVER (PARTITION BY "wood_piece_id" ORDER BY "offered_price" DESC, "id" ASC) as "seq_num" 
       FROM "wood_piece_offers" 
     ) "wood_piece_offers" ON (
       "wood_pieces"."id" = "wood_piece_offers"."wood_piece_id" 

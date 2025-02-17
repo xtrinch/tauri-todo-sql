@@ -51,7 +51,7 @@ export const TableCellReadonly = <TableItem,>({
 
   return (
     <div
-      className={`text-base h-full min-h-full ${shouldBeRed?.(row) && "bg-red-400"}`}
+      className={`text-base h-full py-2 ${shouldBeRed?.(row) && "bg-red-400"}`}
       style={{
         color: shouldBeRed?.(row) ? "white" : undefined,
         fontWeight: shouldBeRed?.(row) ? "bold" : undefined,

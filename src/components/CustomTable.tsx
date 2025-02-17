@@ -92,9 +92,9 @@ export function CustomTable<TableItem>({
                 <tr
                   key={row.id}
                   className={trClassName}
-                  style={{
-                    height: `${virtualRow.size}px`,
-                  }}
+                  // style={{
+                  //   height: `${virtualRow.size}px`,
+                  // }}
                   data-index={index}
                   ref={virtualizer.measureElement}
                 >

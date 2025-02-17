@@ -16,7 +16,6 @@ import { TableCellCheckboxReadonly } from "../../../components/TableCellCheckbox
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { PdfTypeEnum, saveToPDF } from "../../../utils/pdf";
 import { sellerQueryOptions } from "../../../utils/sellerService";
-import { treeSpeciesQueryOptions } from "../../../utils/treeSpeciesService";
 import {
   WoodPiece,
   woodPiecesQueryOptions,
@@ -44,11 +43,6 @@ function SoldPiecesList() {
   const sellerQuery = useSuspenseQuery(sellerQueryOptions(params.sellerId));
   const seller = sellerQuery.data;
 
-  const treeSpeciesQuery = useSuspenseQuery(
-    treeSpeciesQueryOptions({ language: i18n.language as "en" | "sl" })
-  );
-  const treeSpeciesData = treeSpeciesQuery.data;
-
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
       {
@@ -67,12 +61,12 @@ function SoldPiecesList() {
       {
         accessorKey: "tree_species_name",
         header: () => t("treeSpecies"),
-        size: 200,
+        size: 180,
       },
       {
         accessorKey: "length",
         header: () => t("lengthM"),
-        size: 80,
+        size: 60,
         meta: {
           type: "float",
           decimalPlaces: 1,
@@ -81,7 +75,7 @@ function SoldPiecesList() {
       {
         accessorKey: "width",
         header: () => t("widthCm"),
-        size: 80,
+        size: 60,
         meta: {
           type: "integer",
         },
@@ -89,7 +83,7 @@ function SoldPiecesList() {
       {
         accessorKey: "volume",
         header: () => t("volumeM3"),
-        size: 80,
+        size: 60,
         meta: {
           type: "float",
         },
@@ -101,9 +95,12 @@ function SoldPiecesList() {
         size: 120,
         meta: {
           type: "float",
-          readonly: true,
         },
-        cell: TableCellReadonly,
+      },
+      {
+        accessorKey: "num_offers",
+        header: () => t("numOffers"),
+        size: 60,
       },
       {
         accessorKey: "offered_price",
@@ -111,7 +108,6 @@ function SoldPiecesList() {
         size: 120,
         meta: {
           type: "float",
-          readonly: true,
         },
         cell: (info) => (
           <TableCellReadonly
@@ -140,7 +136,6 @@ function SoldPiecesList() {
         size: 80,
         meta: {
           type: "float",
-          readonly: true,
         },
         cell: TableCellReadonly,
       },
@@ -148,13 +143,11 @@ function SoldPiecesList() {
         accessorKey: "buyer_name",
         header: () => t("buyer"),
         size: 180,
-        meta: {
-          readonly: true,
-        },
+        meta: {},
         cell: TableCellReadonly,
       },
     ],
-    [treeSpeciesData]
+    []
   );
 
   const table = useReactTable({
