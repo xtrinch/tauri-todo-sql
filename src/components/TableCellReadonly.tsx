@@ -46,6 +46,14 @@ export const TableCellReadonly = <TableItem,>({
       }
     }
 
+    if (columnMeta?.type === "boolean") {
+      if (typeof val !== "boolean") {
+        val = "ERR wrong type";
+      } else {
+        val = !!val ? "true" : "false";
+      }
+    }
+
     return val;
   };
 

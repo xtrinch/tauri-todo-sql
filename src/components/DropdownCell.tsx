@@ -40,6 +40,7 @@ export const DropdownCell = <TableItem,>({
   table,
   choices: choiceData,
   isScrolling,
+  shouldBeRed,
 }: {
   getValue: Getter<unknown>;
   row: Row<TableItem>;
@@ -47,6 +48,7 @@ export const DropdownCell = <TableItem,>({
   table: Table<TableItem>;
   choices: Option[];
   isScrolling?: boolean;
+  shouldBeRed?: (row: Row<TableItem>) => boolean;
 }) => {
   const initialValue: number = getValue() as number;
   const { t } = useTranslation();
@@ -99,7 +101,7 @@ export const DropdownCell = <TableItem,>({
   }, [initialValue]);
 
   return (
-    <div className="w-full relative">
+    <div className={`w-full relative`}>
       {isScrolling && false ? (
         <div className="bg-white w-full h-[38px] border rounded-md items-center pl-[10px] flex flex-row">
           <div className="flex-1">
@@ -130,6 +132,9 @@ export const DropdownCell = <TableItem,>({
               ...base,
               "&:hover": { borderWidth: 1 }, // border style on hover
               boxShadow: "none", // no box-shadow
+              ...(shouldBeRed?.(row) && {
+                backgroundColor: "rgb(248,113,113)",
+              }),
             }),
           }}
         />

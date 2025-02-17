@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   ColumnDef,
   getCoreRowModel,
+  Row,
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
@@ -43,6 +44,7 @@ function WoodPiecesList() {
     })
   );
   const woodPiecesData = woodPiecesQuery.data;
+
   const columns = useMemo<ColumnDef<WoodPieceOffer>[]>(
     () => [
       {
@@ -56,7 +58,17 @@ function WoodPiecesList() {
               value: ts.id,
               label: `${ts.sequence_no} - ${ts.seller_name} - ${ts.tree_species_name || "Not set"} - ${ts.volume} m3`,
             })),
+            shouldBeRed: (row: Row<WoodPieceOffer>) => {
+              return row.getValue("duplicate_offer");
+            },
           }),
+      },
+      {
+        accessorKey: "duplicate_offer",
+        header: () => <></>,
+        cell: undefined,
+        size: 0,
+        meta: { type: "boolean" },
       },
       {
         accessorKey: "offered_price",
@@ -117,6 +129,7 @@ function WoodPiecesList() {
       ...Route.useLoaderDeps(),
       ...Route.useParams(),
       language: i18n.language as "en" | "sl",
+      mark_duplicates: true,
     })
   );
   const woodPieces = woodPieceOffersQuery.data;

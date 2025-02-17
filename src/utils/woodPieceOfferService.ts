@@ -1,6 +1,6 @@
 import { queryOptions, useMutation } from "@tanstack/react-query";
 import { info } from "@tauri-apps/plugin-log";
-import { compact } from "lodash";
+import { compact, keyBy } from "lodash";
 import { queryClient } from "../main";
 import { getDatabase, getDatabaseForModify } from "./database";
 
@@ -12,6 +12,7 @@ export type WoodPieceOffer = {
   offered_price: number;
   wood_piece_id: number;
   buyer_id: number;
+  duplicate_offer?: boolean;
 
   // from other tables
   seller_name: string;
@@ -26,6 +27,7 @@ interface ListOptions {
   sortBy?: "name" | "id";
   sortDirection?: "DESC" | "ASC";
   language?: "en" | "sl";
+  mark_duplicates?: boolean;
 }
 
 const ensureWoodPieceOffers = async (opts: ListOptions) => {
@@ -60,8 +62,28 @@ const ensureWoodPieceOffers = async (opts: ListOptions) => {
     info(JSON.stringify(e));
     throw e;
   }
-  const woodPieces = result as WoodPieceOffer[];
-  return woodPieces;
+  let woodPieceOffers = result as WoodPieceOffer[];
+
+  if (opts.mark_duplicates) {
+    const duplicate_wood_pieces_sql = `SELECT "wood_piece_id", COUNT(*) c FROM "wood_piece_offers" ${where.length > 0 ? `WHERE ${where.join(" AND ")}` : ``} GROUP BY "wood_piece_id" HAVING c > 1;`;
+    const duplicate_wood_pieces = (await db.select(
+      duplicate_wood_pieces_sql,
+      params
+    )) as {
+      id: number;
+    }[];
+    const duplicate_wood_pieces_map = keyBy(
+      duplicate_wood_pieces,
+      "wood_piece_id"
+    );
+
+    woodPieceOffers = woodPieceOffers.map((wp) => ({
+      ...wp,
+      duplicate_offer: !!duplicate_wood_pieces_map[wp.wood_piece_id],
+    }));
+  }
+
+  return woodPieceOffers;
 };
 
 export async function postWoodPieceOffer(
