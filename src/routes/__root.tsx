@@ -5,7 +5,6 @@ import {
   Outlet,
   createRootRouteWithContext,
   useNavigate,
-  useRouterState,
 } from "@tanstack/react-router";
 import { useDetectClickOutside } from "react-detect-click-outside";
 
@@ -24,7 +23,6 @@ import {
   FaArrowRotateLeft,
   FaRegFloppyDisk,
 } from "react-icons/fa6";
-import { Spinner } from "../components/Spinner";
 import { queryClient } from "../main";
 import { buyersQueryOptions } from "../utils/buyerService";
 import { confirm } from "../utils/confirm";
@@ -33,11 +31,6 @@ import { sellersQueryOptions } from "../utils/sellerService";
 import { treeSpeciesQueryOptions } from "../utils/treeSpeciesService";
 import { useUndo } from "../utils/undo";
 import { woodPiecesCountQueryOptions } from "../utils/woodPieceService";
-
-function RouterSpinner() {
-  const isLoading = useRouterState({ select: (s) => s.status === "pending" });
-  return <Spinner show={isLoading} />;
-}
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -294,9 +287,6 @@ function RootComponent() {
           </div>
           {/* Show a global spinner when the router is transitioning */}
           <div className="flex flex-row pr-2 space-x-2 items-center">
-            <div className={`text-3xl`}>
-              <RouterSpinner />
-            </div>
             <div className="text-sm flex flex-col items-end">
               <div>{filePath || ""}</div>
               {(changes || !filePath) && <div>{t("unsavedChanges")}</div>}

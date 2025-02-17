@@ -10,3 +10,7 @@ TODO-like application running React on Tauri using Sqlite as a data source.
 
 `yarn tauri dev`
 `export TAURI_SIGNING_PRIVATE_KEY=./licitacija.key && yarn tauri build --runner cargo-xwin --target x86_64-pc-windows-msvc`
+
+## Deploying
+
+Push to `release` branch, CI will pick it up and create a GH release for you, which can then be used for in-app updates.
