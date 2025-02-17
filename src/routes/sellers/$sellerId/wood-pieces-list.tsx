@@ -9,14 +9,16 @@ import {
 import { save } from "@tauri-apps/plugin-dialog";
 import { openPath } from "@tauri-apps/plugin-opener";
 import { useMemo } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
 import { SumFooter } from "../../../components/SumFooter";
-import { TableCellCheckboxReadonly } from "../../../components/TableCellCheckboxReadonly";
+import { TableCellCheckbox } from "../../../components/TableCellCheckbox";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { PdfTypeEnum, saveToPDF } from "../../../utils/pdf";
 import { sellerQueryOptions } from "../../../utils/sellerService";
 import {
+  useUpdateWoodPieceMutation,
   WoodPiece,
   woodPiecesQueryOptions,
 } from "../../../utils/woodPieceService";
@@ -26,6 +28,11 @@ export const Route = createFileRoute("/sellers/$sellerId/wood-pieces-list")({
 
 function SoldPiecesList() {
   const { t, i18n } = useTranslation();
+  const updateWoodPieceMutation = useUpdateWoodPieceMutation({
+    onError: () => {
+      toast.error(t("couldNotUpdate"));
+    },
+  });
 
   const params = Route.useParams();
 
@@ -131,7 +138,7 @@ function SoldPiecesList() {
         header: () => t("bypassMinPrice"),
         size: 80,
         meta: {},
-        cell: TableCellCheckboxReadonly,
+        cell: TableCellCheckbox,
       },
       {
         accessorKey: "offered_total_price",
@@ -160,7 +167,11 @@ function SoldPiecesList() {
     defaultColumn: {
       cell: TableCellReadonly,
     },
-    meta: {},
+    meta: {
+      onEdit: (data: WoodPiece) => {
+        updateWoodPieceMutation.mutate(data);
+      },
+    },
   });
 
   const exportToFile = async () => {
