@@ -357,22 +357,6 @@ function BoughtPiecesList() {
           trhClassName="border-b"
         />
       </div>
-      {/* <div>
-        <table className="mt-5">
-          <tr className="border-b">
-            <td className="px-2 py-2">{t("totalVolume")}</td>
-            <td className="px-2 py-2">{totalVolume.toFixed(2)} m3</td>
-          </tr>
-          <tr className="border-b">
-            <td className="px-2 py-2">{t("total")}</td>
-            <td className="px-2 py-2">{totalPrice.toFixed(2)} EUR</td>
-          </tr>
-          <tr className="border-b">
-            <td className="px-2 py-2 font-bold">{t("totalGross")}</td>
-            <td className="px-2 py-2">{totalPriceGross.toFixed(2)} EUR</td>
-          </tr>
-        </table>
-      </div> */}
       <table className="mt-5">
         {rows_summary.map((row, index) => {
           return (
