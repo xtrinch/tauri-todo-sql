@@ -18,6 +18,7 @@ import { z } from "zod";
 import { CustomTable } from "../../components/CustomTable";
 import { RemoveCell } from "../../components/RemoveCell";
 import { TableCell } from "../../components/TableCell";
+import { TableCellCheckbox } from "../../components/TableCellCheckbox";
 import {
   Buyer,
   buyerQueryOptions,
@@ -98,6 +99,42 @@ function BuyerComponent() {
     ],
     []
   );
+
+  const columns1 = useMemo<ColumnDef<Buyer>[]>(
+    () => [
+      {
+        accessorKey: "is_vat_liable",
+        header: () => t("isVatLiable"),
+        meta: {},
+        size: 130,
+        cell: TableCellCheckbox,
+      },
+      {
+        accessorKey: "used_bundle",
+        header: () => t("usedBundle"),
+        meta: {},
+        size: 130,
+        cell: TableCellCheckbox,
+      },
+      {
+        accessorKey: "used_loading",
+        header: () => t("usedLoading"),
+        meta: {},
+        size: 130,
+        cell: TableCellCheckbox,
+      },
+      {
+        accessorKey: "loading_costs",
+        header: () => `${t("loadingCosts")} / m3`,
+        meta: {
+          type: "float",
+        },
+        size: 140,
+      },
+    ],
+    []
+  );
+
   const navigate = useNavigate();
   const removeBuyerMutation = useRemoveBuyerMutation({
     onSuccess: () => {

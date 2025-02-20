@@ -192,6 +192,7 @@ function SellerComponent() {
     ],
     []
   );
+
   const navigate = useNavigate();
   const removeSellerMutation = useRemoveSellerMutation({
     onSuccess: () => {

@@ -11,6 +11,10 @@ export type Buyer = {
   buyer_name: string;
   address_line1: string;
   address_line2: string;
+  is_vat_liable: number;
+  used_bundle: number;
+  used_loading: number;
+  loading_costs: number;
 };
 
 const ensureBuyers = async (opts: {
@@ -64,13 +68,21 @@ export async function patchBuyer({
       SET 
         "buyer_name" = COALESCE($2, "buyer_name"), 
         "address_line1" = COALESCE($3, "address_line1"), 
-        "address_line2" = COALESCE($4, "address_line2")
+        "address_line2" = COALESCE($4, "address_line2"),
+        "is_vat_liable" = COALESCE($5, "is_vat_liable"),
+        "loading_costs" = COALESCE($6, "loading_costs"),
+        "used_bundle" = COALESCE($7, "used_bundle"),
+        "used_loading" = COALESCE($8, "used_loading")
     WHERE id=$1`,
     [
       id,
       updatedBuyer.buyer_name,
       updatedBuyer.address_line1,
       updatedBuyer.address_line2,
+      updatedBuyer.is_vat_liable,
+      updatedBuyer.loading_costs,
+      updatedBuyer.used_bundle,
+      updatedBuyer.used_loading,
     ]
   );
 }

@@ -52,12 +52,12 @@ function StatisticsComponent() {
       () => [
         {
           label: t("numWoodPieces"),
-          value: `${statisticsQuery.data.num_wood_pieces}`,
+          value: `${statisticsQuery.data.num_wood_pieces || 0}`,
           unit: "",
         },
         {
           label: t("numUnsoldWoodPieces"),
-          value: `${statisticsQuery.data.num_unsold_wood_pieces}`,
+          value: `${statisticsQuery.data.num_unsold_wood_pieces || 0}`,
           unit: "",
         },
         {
