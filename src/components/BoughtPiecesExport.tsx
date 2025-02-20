@@ -101,9 +101,20 @@ export const BoughtPiecesExport = (params: BoughtPiecesExportProps) => {
         },
       },
       {
-        accessorKey: "ident",
-        header: () => t("sellerIdent"),
-        size: 15,
+        accessorKey: "offered_price",
+        header: () => t("offeredPrice"),
+        size: 20,
+        meta: {
+          type: "float",
+        },
+      },
+      {
+        accessorKey: "offered_total_price",
+        header: () => t("totalPriceM3"),
+        size: 20,
+        meta: {
+          type: "float",
+        },
       },
     ],
     []
@@ -151,13 +162,13 @@ export const BoughtPiecesExport = (params: BoughtPiecesExportProps) => {
         <View style={styles.topTable}>
           <PdfTable data={params.woodPiecesData} columns={columns} />
         </View>
-        <View style={styles.middleTable}>
+        <View style={styles.middleTable} wrap={false}>
           <PdfTable
             data={params.woodPiecesGroupedData}
             columns={columnsGrouped}
           />
         </View>
-        <View style={styles.bottomTable}>
+        <View style={styles.bottomTable} wrap={false}>
           <PdfTable data={params.rowsSummary} columns={params.colsSummary} />
         </View>
       </Page>
