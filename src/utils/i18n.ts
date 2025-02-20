@@ -141,6 +141,11 @@ const resources = {
       numOffers: "No. offers",
       failedToRelaunch: "Failed to relaunch",
       downloading: "Downloading",
+      usedBundle: "Bundle preparation",
+      usedLoading: "Loading",
+      loadingCosts: "Loading price",
+      bundleCosts: "Bundle costs",
+      totalBeforeTax: "Total net price",
     },
   },
   sl: {
@@ -279,6 +284,11 @@ const resources = {
       numOffers: "Št. ponudb",
       failedToRelaunch: "Ponovni zagon aplikacije ni uspel",
       downloading: "Prenos...",
+      usedBundle: "Priprava zložaja",
+      usedLoading: "Nakladanje",
+      loadingCosts: "Cena naklada",
+      bundleCosts: "Cena zložaja",
+      totalBeforeTax: "Skupaj neto",
     },
   },
 };

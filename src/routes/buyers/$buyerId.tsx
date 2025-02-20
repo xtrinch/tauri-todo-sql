@@ -73,19 +73,19 @@ function BuyerComponent() {
         accessorKey: "buyer_name",
         header: () => t("name"),
         meta: {},
-        size: 200,
+        size: 350,
       },
       {
         accessorKey: "address_line1",
         header: () => t("addressLine1"),
         meta: {},
-        size: 200,
+        size: 220,
       },
       {
         accessorKey: "address_line2",
         header: () => t("addressLine2"),
         meta: {},
-        size: 200,
+        size: 310,
       },
       {
         id: "1",
@@ -168,10 +168,24 @@ function BuyerComponent() {
     },
   });
 
+  const table1 = useReactTable({
+    data: buyerData,
+    columns: columns1,
+    getCoreRowModel: getCoreRowModel(),
+    defaultColumn,
+    meta: {
+      onEdit: (data: Buyer) => {
+        updateBuyerMutation.mutate(data);
+      },
+      onRemove: onBuyerRemove,
+    },
+  });
+
   return (
     <div className="flex flex-col">
       <div className="flex flex-col p-3">
-        <CustomTable table={table} />
+        <CustomTable table={table} sizeEstimate={35} />
+        <CustomTable table={table1} sizeEstimate={35} />
       </div>
       <div className="flex flex-wrap divide-x border-b">
         {(

@@ -50,7 +50,7 @@ function WoodPiecesList() {
       {
         accessorKey: "wood_piece_id",
         header: () => t("woodPiece"),
-        size: 400,
+        size: 600,
         cell: (data) =>
           DropdownCell({
             ...data,
@@ -179,7 +179,7 @@ function WoodPiecesList() {
     <div className="">
       <CustomTable
         table={table}
-        containerClassName="p-3 h-[calc(100vh-209px)]"
+        containerClassName="p-3 h-[calc(100vh-279px)]"
         hasFooter={true}
       />
     </div>

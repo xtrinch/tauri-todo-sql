@@ -16,6 +16,7 @@ import { CustomTable } from "../../../components/CustomTable";
 import { PdfTableCol } from "../../../components/PdfTable";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { buyerQueryOptions } from "../../../utils/buyerService";
+import { BUNDLE_PER_M3_COST } from "../../../utils/constants";
 import { PdfTypeEnum, saveToPDF } from "../../../utils/pdf";
 import {
   WoodPiece,
@@ -191,6 +192,43 @@ function BoughtPiecesList() {
     };
   }, [rows]);
 
+  const bundleCosts = useMemo(
+    () =>
+      (buyer.used_bundle
+        ? totalVolume.mul(BUNDLE_PER_M3_COST || 0)
+        : new Big(0)
+      ).round(2),
+    [totalVolume, buyer]
+  );
+
+  const loadingCosts = useMemo(
+    () =>
+      (buyer.used_loading
+        ? totalVolume.mul(buyer.loading_costs || 0)
+        : new Big(0)
+      ).round(2),
+    [totalVolume, buyer]
+  );
+
+  const totalPriceBeforeTax = useMemo(() => {
+    return totalPrice.plus(loadingCosts).plus(bundleCosts).round(2);
+  }, [totalPrice, loadingCosts, bundleCosts]);
+
+  const { buyerIncomeTaxVat } = useMemo(
+    () => ({
+      buyerIncomeTaxVat: (buyer.is_vat_liable &&
+      totalPriceBeforeTax > new Big(0)
+        ? totalPriceBeforeTax.mul(0.22)
+        : new Big(0)
+      ).round(2),
+    }),
+    [totalPriceBeforeTax, buyer]
+  );
+
+  const totalPriceGross = useMemo(() => {
+    return totalPriceBeforeTax.plus(buyerIncomeTaxVat).round(2);
+  }, [totalPriceBeforeTax, buyerIncomeTaxVat]);
+
   const columnsSummary = useMemo<PdfTableCol[]>(
     () => [
       {
@@ -206,14 +244,34 @@ function BoughtPiecesList() {
     []
   );
 
-  const rowsSummary: { label: string; value: string; bold?: boolean }[] =
+  const rows_summary: { label: string; value: string; bold?: boolean }[] =
     useMemo(
       () =>
         compact([
           { label: t("totalVolume"), value: `${totalVolume.toFixed(2)} m3` },
-          { label: t("totalGross"), value: `${totalPrice.toFixed(2)} EUR` },
+          { label: t("totalPrice"), value: `${totalPrice.toFixed(2)} EUR` },
+          buyer.used_bundle > 0 && {
+            label: `${t("bundleCosts")} (${(BUNDLE_PER_M3_COST || 0).toFixed(2)} EUR / m3)`,
+            value: `${bundleCosts.toFixed(2)} EUR`,
+          },
+          buyer.used_loading > 0 && {
+            label: `${t("loadingCosts")} (${(buyer.loading_costs || 0).toFixed(2)} EUR / m3)`,
+            value: `${loadingCosts.toFixed(2)} EUR`,
+          },
+          buyer.is_vat_liable > 0 && {
+            label: t("totalBeforeTax"),
+            value: `${totalPriceBeforeTax.toFixed(2)} EUR`,
+          },
+          buyer.is_vat_liable > 0 && {
+            label: t("vat"),
+            value: `${buyerIncomeTaxVat.toFixed(2)} EUR`,
+          },
+          {
+            label: t("totalGross"),
+            value: `${totalPriceGross.toFixed(2)} EUR`,
+          },
         ]),
-      [i18n.language, totalVolume, totalPrice]
+      [i18n.language, totalVolume, totalPrice, totalPriceGross]
     );
 
   const exportToFile = async () => {
@@ -238,7 +296,7 @@ function BoughtPiecesList() {
             buyer: buyer,
             woodPiecesData: woodPieces,
             woodPiecesGroupedData: woodPiecesGrouped,
-            rowsSummary: rowsSummary,
+            rowsSummary: rows_summary,
             colsSummary: columnsSummary,
           },
           PdfTypeEnum.boughtPieces,
@@ -259,8 +317,23 @@ function BoughtPiecesList() {
     }
   };
 
+  const columns_summary = useMemo<PdfTableCol[]>(
+    () => [
+      {
+        accessorKey: "label",
+        size: 260,
+        header: () => t("summary"),
+      },
+      {
+        accessorKey: "value",
+        size: 100,
+      },
+    ],
+    []
+  );
+
   return (
-    <div className="p-3 flex flex-col space-y-3 h-[calc(100vh-209px)] overflow-auto">
+    <div className="p-3 flex flex-col space-y-3 h-[calc(100vh-279px)] overflow-auto">
       <div>
         <button
           className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
@@ -284,18 +357,35 @@ function BoughtPiecesList() {
           trhClassName="border-b"
         />
       </div>
-      <div>
+      {/* <div>
         <table className="mt-5">
           <tr className="border-b">
             <td className="px-2 py-2">{t("totalVolume")}</td>
             <td className="px-2 py-2">{totalVolume.toFixed(2)} m3</td>
           </tr>
           <tr className="border-b">
-            <td className="px-2 py-2 font-bold">{t("totalGross")}</td>
+            <td className="px-2 py-2">{t("total")}</td>
             <td className="px-2 py-2">{totalPrice.toFixed(2)} EUR</td>
           </tr>
+          <tr className="border-b">
+            <td className="px-2 py-2 font-bold">{t("totalGross")}</td>
+            <td className="px-2 py-2">{totalPriceGross.toFixed(2)} EUR</td>
+          </tr>
         </table>
-      </div>
+      </div> */}
+      <table className="mt-5">
+        {rows_summary.map((row, index) => {
+          return (
+            <tr className="border-b" key={index}>
+              {columns_summary.map((col) => (
+                <td className={`px-2 py-2 ${row.bold ? "font-bold" : ""}`}>
+                  {(row as any)[col.accessorKey]}
+                </td>
+              ))}
+            </tr>
+          );
+        })}
+      </table>
     </div>
   );
 }
