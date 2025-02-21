@@ -10,7 +10,6 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import headerImage from "../assets/images/header-image.png";
 import woodImage from "../assets/images/wood-image.jpg";
-
 import { Statistics } from "../utils/statsService";
 import { WoodPiece } from "../utils/woodPieceService";
 import { PdfTable, PdfTableCol } from "./PdfTable";
@@ -129,7 +128,7 @@ export const CatalogueExportForBuyers = (
       },
       {
         accessorKey: "no_key",
-        header: () => t("offeredPriceM3"),
+        header: () => `${t("offeredPriceM3")} (EUR)`,
         size: 20,
       },
     ],

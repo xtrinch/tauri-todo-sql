@@ -173,8 +173,15 @@ function RootComponent() {
         let downloaded = 0;
         let contentLength = 0;
         let toastId: string;
+        const prepareToastId = toast.loading(t("preparingUpdate"), {
+          position: "top-center",
+        });
         // alternatively we could also call update.download() and update.install() separately
         await update.downloadAndInstall((event) => {
+          try {
+            // we do not want this to throw under any circumstance
+            toast.dismiss(prepareToastId);
+          } catch (e) {}
           switch (event.event) {
             case "Started":
               contentLength = event.data.contentLength!;

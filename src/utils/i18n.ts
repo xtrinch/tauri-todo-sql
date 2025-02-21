@@ -146,6 +146,9 @@ const resources = {
       loadingCosts: "Loading price",
       bundleCosts: "Bundle costs",
       totalBeforeTax: "Total net price",
+      exportStatistics: "Export statistics",
+      statisticsPDFName: "statistics",
+      preparingUpdate: "Preparing update...",
     },
   },
   sl: {
@@ -289,6 +292,9 @@ const resources = {
       loadingCosts: "Cena naklada",
       bundleCosts: "Cena zložaja",
       totalBeforeTax: "Skupaj neto",
+      exportStatistics: "Izvozi statistiko",
+      statisticsPDFName: "statistika",
+      preparingUpdate: "Pripravljam posodobitve...",
     },
   },
 };

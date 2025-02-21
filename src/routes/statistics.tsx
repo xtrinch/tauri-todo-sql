@@ -5,11 +5,15 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { save } from "@tauri-apps/plugin-dialog";
+import { openPath } from "@tauri-apps/plugin-opener";
 import { useMemo } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../components/CustomTable";
 import { DynamicStatsTable } from "../components/DynamicStatsTable";
 import { TableCellReadonly } from "../components/TableCellReadonly";
+import { PdfTypeEnum, saveToPDF } from "../utils/pdf";
 import { statsQueryOptions } from "../utils/statsService";
 
 export const Route = createFileRoute("/statistics")({
@@ -109,10 +113,56 @@ function StatisticsComponent() {
     meta: {},
   });
 
+  const exportToFile = async () => {
+    const path = await save({
+      filters: [
+        {
+          name: "pdf",
+          extensions: ["pdf"],
+        },
+      ],
+      defaultPath: t("statisticsPDFName"),
+    });
+    let toastId: string;
+    if (path) {
+      toastId = toast.loading(t("generating"), {
+        position: "top-center",
+      });
+      try {
+        await saveToPDF(
+          path,
+          {
+            statistics: statisticsQuery.data,
+          },
+          PdfTypeEnum.statistics,
+          i18n.language
+        );
+      } catch (e) {
+        let error = e as Error;
+        toast.error(`${error.message}`, {
+          duration: 10000,
+        });
+        throw e;
+      } finally {
+        toast.dismiss(toastId);
+      }
+
+      await openPath(path);
+      toast.success(t("success"));
+    }
+  };
   return (
     <>
       <div className="p-3 flex flex-col space-y-5 overflow-auto max-h-[calc(100vh-55px)]">
         <h2 className="font-bold text-lg">{t("statistics")}</h2>
+        <div>
+          <button
+            className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+            onClick={exportToFile}
+          >
+            {t("exportStatistics")}
+          </button>
+        </div>
         <CustomTable
           sizeEstimate={45}
           table={table}

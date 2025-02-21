@@ -5,6 +5,7 @@ import { CatalogueExportForBuyersProps } from "../components/CatalogueExportForB
 import { CatalogueExportWithPricesProps } from "../components/CatalogueExportWithPrices";
 import { SellerPiecesExportProps } from "../components/SellerPiecesExport";
 import { SoldPiecesExportProps } from "../components/SoldPiecesExport";
+import { StatsExportProps } from "../components/StatsExport";
 import { PdfTypeEnum } from "../utils/pdf";
 import "./workerShim";
 // @ts-ignore
@@ -48,6 +49,15 @@ const renderPDFInWorker = async (
 
   let blob: Blob = new Blob();
   switch (type) {
+    case "statistics":
+      const { StatsExport } = await import("../components/StatsExport");
+
+      const statsData: StatsExportProps = JSON.parse(props);
+
+      blob = await pdf(
+        <StatsExport statistics={statsData.statistics} />
+      ).toBlob();
+      break;
     case "catalogForBuyers":
       const { CatalogueExportForBuyers } = await import(
         "../components/CatalogueExportForBuyers"

@@ -24,6 +24,10 @@ const styles = StyleSheet.create({
     paddingBottom: "50px",
     fontSize: 12,
   },
+  firstPage: {
+    textAlign: "center",
+    paddingLeft: "30px",
+  },
   header: {
     fontSize: 24,
     marginBottom: 15,
@@ -32,14 +36,6 @@ const styles = StyleSheet.create({
   subheader: {
     fontSize: 16,
     marginBottom: 10,
-  },
-  subsubheader: {
-    fontSize: 14,
-    marginBottom: 5,
-  },
-  firstPage: {
-    textAlign: "center",
-    paddingLeft: "30px",
   },
   image: {
     width: 450, // Set the width of the image
@@ -68,12 +64,6 @@ const styles = StyleSheet.create({
   statisticsHeader: {
     fontSize: 14,
     marginBottom: 5,
-  },
-  statsTable: {
-    marginBottom: 10,
-  },
-  statView: {
-    marginBottom: 15,
   },
   pageNumbers: {
     position: "absolute",
@@ -142,126 +132,7 @@ export const CatalogueExportWithPrices = (
       },
       {
         accessorKey: "offered_price",
-        header: () => t("offeredPriceM3"),
-        size: 15,
-        meta: {
-          type: "float",
-        },
-      },
-    ],
-    []
-  );
-
-  const columnsTopThreeAllSpecies = useMemo<PdfTableCol[]>(
-    () => [
-      {
-        accessorKey: "sequence_no",
-        header: () => t("seqNo"),
-        size: 10,
-      },
-      {
-        accessorKey: "plate_no",
-        header: () => t("plateNo"),
-        size: 13,
-      },
-      {
-        accessorKey: "tree_species_name",
-        header: () => t("treeSpecies"),
-        size: 25,
-      },
-      {
-        accessorKey: "width",
-        header: () => t("widthCm"),
-        size: 10,
-        meta: {
-          type: "integer",
-        },
-      },
-      {
-        accessorKey: "length",
-        header: () => t("lengthM"),
-        size: 10,
-        meta: {
-          type: "float",
-          decimalPlaces: 1,
-        },
-      },
-      {
-        accessorKey: "volume",
-        header: () => t("volumeM3"),
-        size: 10,
-        meta: {
-          type: "float",
-        },
-      },
-      {
-        accessorKey: "offered_price",
-        header: () => t("offeredPriceM3"),
-        size: 15,
-        meta: {
-          type: "float",
-        },
-      },
-      {
-        accessorKey: "offered_total_price",
-        header: () => t("totalPriceM3"),
-        size: 15,
-        meta: {
-          type: "float",
-        },
-      },
-    ],
-    []
-  );
-
-  const columnsTopThreePerSpecies = useMemo<PdfTableCol[]>(
-    () => [
-      {
-        accessorKey: "sequence_no",
-        header: () => t("seqNo"),
-        size: 10,
-      },
-      {
-        accessorKey: "plate_no",
-        header: () => t("plateNo"),
-        size: 13,
-      },
-      {
-        accessorKey: "width",
-        header: () => t("widthCm"),
-        size: 10,
-        meta: {
-          type: "integer",
-        },
-      },
-      {
-        accessorKey: "length",
-        header: () => t("lengthM"),
-        size: 10,
-        meta: {
-          type: "float",
-          decimalPlaces: 1,
-        },
-      },
-      {
-        accessorKey: "volume",
-        header: () => t("volumeM3"),
-        size: 10,
-        meta: {
-          type: "float",
-        },
-      },
-      {
-        accessorKey: "offered_price",
-        header: () => t("offeredPriceM3"),
-        size: 15,
-        meta: {
-          type: "float",
-        },
-      },
-      {
-        accessorKey: "offered_total_price",
-        header: () => t("totalPriceM3"),
+        header: () => `${t("offeredPriceM3")} (EUR)`,
         size: 15,
         meta: {
           type: "float",
@@ -305,71 +176,8 @@ export const CatalogueExportWithPrices = (
           <Text>{t("catalogueSubtext")}</Text>
         </View>
       </Page>
-      <Page size="A4" style={styles.page} break={true}>
-        <View style={styles.statView}>
-          <View style={styles.subheader}>
-            <Text>{t("topThreeOffers")}</Text>
-          </View>
-          {params.statistics.top_logs.top_logs_total.length > 0 && (
-            <View style={styles.statsTable} wrap={false}>
-              <View style={styles.subsubheader}>
-                <Text> {t("topThreeOffersPerTotalPrice")}</Text>
-              </View>
-              <PdfTable
-                data={params.statistics.top_logs.top_logs_total}
-                columns={columnsTopThreeAllSpecies}
-              />
-            </View>
-          )}
-          {params.statistics.top_logs.top_logs_per_volume.length > 0 && (
-            <View style={styles.statsTable} wrap={false}>
-              <View style={styles.subsubheader}>
-                <Text>{t("topThreeOffersPerVolumePrice")}</Text>
-              </View>
-              <PdfTable
-                data={params.statistics.top_logs.top_logs_per_volume}
-                columns={columnsTopThreeAllSpecies}
-              />
-            </View>
-          )}
-        </View>
-        {params.statistics.top_logs_by_species.map((ts) => (
-          <>
-            {ts.top_logs_per_volume?.length > 0 &&
-              ts.top_logs_total?.length > 0 && (
-                <View style={styles.statView}>
-                  <View style={styles.subheader}>
-                    <Text>{ts.tree_species_name}</Text>
-                  </View>
-                  {ts.top_logs_per_volume?.length > 0 && (
-                    <View style={styles.statsTable} wrap={false}>
-                      <View style={styles.subsubheader}>
-                        <Text>{t("topThreeOffersPerTotalPrice")}</Text>
-                      </View>
-                      <PdfTable
-                        columns={columnsTopThreePerSpecies}
-                        key={ts.id}
-                        data={ts.top_logs_per_volume || []}
-                      />
-                    </View>
-                  )}
-                  {ts.top_logs_total?.length > 0 && (
-                    <View style={styles.statsTable} wrap={false}>
-                      <View style={styles.subsubheader}>
-                        <Text>{t("topThreeOffersPerVolumePrice")}</Text>
-                      </View>
-                      <PdfTable
-                        columns={columnsTopThreePerSpecies}
-                        key={ts.id}
-                        data={ts.top_logs_total || []}
-                      />
-                    </View>
-                  )}
-                </View>
-              )}
-          </>
-        ))}
-        <View break={true}>
+      <Page size="A4" style={styles.page}>
+        <View>
           <PdfTable data={params.woodPiecesData} columns={columns} />
         </View>
         <Text

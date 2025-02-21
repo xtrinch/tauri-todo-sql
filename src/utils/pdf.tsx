@@ -15,6 +15,7 @@ export enum PdfTypeEnum {
   sellerPieces = "sellerPieces",
   soldPieces = "soldPieces",
   boughtPieces = "boughtPieces",
+  statistics = "statistics",
 }
 
 export const saveToPDF = async (

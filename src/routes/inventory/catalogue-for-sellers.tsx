@@ -134,7 +134,7 @@ function CatalogueForSellersComponent() {
           extensions: ["pdf"],
         },
       ],
-      defaultPath: "catalog",
+      defaultPath: t("catalogue").toLocaleLowerCase(),
     });
     let toastId: string;
     if (path) {
