@@ -178,7 +178,7 @@ export const CatalogueExportWithPrices = (
       </Page>
       <Page size="A4" style={styles.page}>
         <View>
-          <PdfTable data={params.woodPiecesData} columns={columns} />
+          <PdfTable data={params.woodPiecesData || []} columns={columns} />
         </View>
         <Text
           render={({ pageNumber, totalPages }) =>

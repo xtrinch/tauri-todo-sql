@@ -182,30 +182,30 @@ export const StatsExport = (params: StatsExportProps) => {
           <View style={styles.subheader}>
             <Text>{t("topThreeOffers")}</Text>
           </View>
-          {params.statistics.top_logs.top_logs_total.length > 0 && (
+          {params.statistics.top_logs?.top_logs_total?.length > 0 && (
             <View style={styles.statsTable} wrap={false}>
               <View style={styles.subsubheader}>
                 <Text> {t("topThreeOffersPerTotalPrice")}</Text>
               </View>
               <PdfTable
-                data={params.statistics.top_logs.top_logs_total}
+                data={params.statistics.top_logs?.top_logs_total}
                 columns={columnsTopThreeAllSpecies}
               />
             </View>
           )}
-          {params.statistics.top_logs.top_logs_per_volume.length > 0 && (
+          {params.statistics.top_logs?.top_logs_per_volume?.length > 0 && (
             <View style={styles.statsTable} wrap={false}>
               <View style={styles.subsubheader}>
                 <Text>{t("topThreeOffersPerVolumePrice")}</Text>
               </View>
               <PdfTable
-                data={params.statistics.top_logs.top_logs_per_volume}
+                data={params.statistics.top_logs?.top_logs_per_volume}
                 columns={columnsTopThreeAllSpecies}
               />
             </View>
           )}
         </View>
-        {params.statistics.top_logs_by_species.map((ts) => (
+        {params.statistics.top_logs_by_species?.map((ts) => (
           <>
             {ts.top_logs_per_volume?.length > 0 &&
               ts.top_logs_total?.length > 0 && (

@@ -6,6 +6,7 @@ import {
   Text,
   View,
 } from "@react-pdf/renderer";
+import { chunk } from "lodash";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import font from "../assets/fonts/Roboto-Regular.ttf";
@@ -147,6 +148,10 @@ export const BoughtPiecesExport = (params: BoughtPiecesExportProps) => {
     []
   );
 
+  const chunkedWoodData: WoodPiece[][] = useMemo(() => {
+    return chunk(params.woodPiecesData, 31);
+  }, [params.woodPiecesData]);
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -154,22 +159,49 @@ export const BoughtPiecesExport = (params: BoughtPiecesExportProps) => {
           <Text>{t("boughtPieces")}</Text>
         </View>
         <View style={styles.address}>
-          <Text style={styles.addressName}>{params.buyer.buyer_name}</Text>
+          <Text style={styles.addressName}>{params.buyer?.buyer_name}</Text>
           <Text>
-            {params.buyer.address_line1}, {params.buyer.address_line2}
+            {params.buyer?.address_line1}, {params.buyer?.address_line2}
           </Text>
         </View>
+      </Page>
+      <Page size="A4" style={styles.page}>
         <View style={styles.topTable}>
-          <PdfTable data={params.woodPiecesData} columns={columns} />
+          {chunkedWoodData.map((chunk) => (
+            <PdfTable data={chunk} columns={columns} />
+          ))}
+          {/* <PdfTable
+            data={
+              params.woodPiecesData.slice(
+                0,
+                params.woodPiecesData.length / 2
+              ) || []
+              // params.woodPiecesData.splice(-1)
+            }
+            columns={columns}
+          />
+          <PdfTable
+            data={
+              params.woodPiecesData.slice(
+                params.woodPiecesData.length / 2,
+                params.woodPiecesData.length
+              ) || []
+              // params.woodPiecesData.splice(-1)
+            }
+            columns={columns}
+          /> */}
         </View>
         <View style={styles.middleTable} wrap={false}>
           <PdfTable
-            data={params.woodPiecesGroupedData}
+            data={params.woodPiecesGroupedData || []}
             columns={columnsGrouped}
           />
         </View>
         <View style={styles.bottomTable} wrap={false}>
-          <PdfTable data={params.rowsSummary} columns={params.colsSummary} />
+          <PdfTable
+            data={params.rowsSummary || []}
+            columns={params.colsSummary || []}
+          />
         </View>
       </Page>
     </Document>

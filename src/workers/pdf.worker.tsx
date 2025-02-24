@@ -44,7 +44,7 @@ const renderPDFInWorker = async (
   props: string,
   type: PdfTypeEnum,
   language: string
-) => {
+): Promise<Uint8Array> => {
   const { pdf } = await initializeCommonPdfImports(language as "sl" | "en");
 
   let blob: Blob = new Blob();
@@ -54,9 +54,14 @@ const renderPDFInWorker = async (
 
       const statsData: StatsExportProps = JSON.parse(props);
 
-      blob = await pdf(
-        <StatsExport statistics={statsData.statistics} />
-      ).toBlob();
+      try {
+        blob = await pdf(
+          <StatsExport statistics={statsData.statistics} />
+        ).toBlob();
+      } catch (e) {
+        throw e;
+      }
+
       break;
     case "catalogForBuyers":
       const { CatalogueExportForBuyers } = await import(
@@ -65,12 +70,17 @@ const renderPDFInWorker = async (
 
       const data: CatalogueExportForBuyersProps = JSON.parse(props);
 
-      blob = await pdf(
-        <CatalogueExportForBuyers
-          woodPiecesData={data.woodPiecesData}
-          statistics={data.statistics}
-        />
-      ).toBlob();
+      try {
+        blob = await pdf(
+          <CatalogueExportForBuyers
+            woodPiecesData={data.woodPiecesData}
+            statistics={data.statistics}
+          />
+        ).toBlob();
+      } catch (e) {
+        throw e;
+      }
+
       break;
     case "catalogWithPrices":
       const { CatalogueExportWithPrices } = await import(
@@ -79,12 +89,16 @@ const renderPDFInWorker = async (
 
       const dataPrices: CatalogueExportWithPricesProps = JSON.parse(props);
 
-      blob = await pdf(
-        <CatalogueExportWithPrices
-          woodPiecesData={dataPrices.woodPiecesData}
-          statistics={dataPrices.statistics}
-        />
-      ).toBlob();
+      try {
+        blob = await pdf(
+          <CatalogueExportWithPrices
+            woodPiecesData={dataPrices.woodPiecesData}
+            statistics={dataPrices.statistics}
+          />
+        ).toBlob();
+      } catch (e) {
+        throw e;
+      }
 
       break;
     case "sellerPieces":
@@ -94,12 +108,16 @@ const renderPDFInWorker = async (
 
       const dataSellerPieces: SellerPiecesExportProps = JSON.parse(props);
 
-      blob = await pdf(
-        <SellerPiecesExport
-          woodPiecesData={dataSellerPieces.woodPiecesData}
-          seller={dataSellerPieces.seller}
-        />
-      ).toBlob();
+      try {
+        blob = await pdf(
+          <SellerPiecesExport
+            woodPiecesData={dataSellerPieces.woodPiecesData}
+            seller={dataSellerPieces.seller}
+          />
+        ).toBlob();
+      } catch (e) {
+        throw e;
+      }
 
       break;
     case "soldPieces":
@@ -109,14 +127,18 @@ const renderPDFInWorker = async (
 
       const dataSoldPieces: SoldPiecesExportProps = JSON.parse(props);
 
-      blob = await pdf(
-        <SoldPiecesExport
-          woodPiecesData={dataSoldPieces.woodPiecesData}
-          rowsSummary={dataSoldPieces.rowsSummary}
-          colsSummary={dataSoldPieces.colsSummary}
-          seller={dataSoldPieces.seller}
-        />
-      ).toBlob();
+      try {
+        blob = await pdf(
+          <SoldPiecesExport
+            woodPiecesData={dataSoldPieces.woodPiecesData}
+            rowsSummary={dataSoldPieces.rowsSummary}
+            colsSummary={dataSoldPieces.colsSummary}
+            seller={dataSoldPieces.seller}
+          />
+        ).toBlob();
+      } catch (e) {
+        throw e;
+      }
 
       break;
     case "boughtPieces":
@@ -126,20 +148,29 @@ const renderPDFInWorker = async (
 
       const dataBoughtPieces: BoughtPiecesExportProps = JSON.parse(props);
 
-      blob = await pdf(
-        <BoughtPiecesExport
-          woodPiecesData={dataBoughtPieces.woodPiecesData}
-          rowsSummary={dataBoughtPieces.rowsSummary}
-          colsSummary={dataBoughtPieces.colsSummary}
-          buyer={dataBoughtPieces.buyer}
-          woodPiecesGroupedData={dataBoughtPieces.woodPiecesGroupedData}
-        />
-      ).toBlob();
+      try {
+        blob = await pdf(
+          <BoughtPiecesExport
+            woodPiecesData={dataBoughtPieces.woodPiecesData}
+            rowsSummary={dataBoughtPieces.rowsSummary}
+            colsSummary={dataBoughtPieces.colsSummary}
+            buyer={dataBoughtPieces.buyer}
+            woodPiecesGroupedData={dataBoughtPieces.woodPiecesGroupedData}
+          />
+        ).toBlob();
+      } catch (e) {
+        throw e;
+      }
 
       break;
   }
 
-  return blob;
+  // Convert Blob to ArrayBuffer
+  const arrayBuffer = await blob.arrayBuffer();
+
+  const uint8Array = new Uint8Array(arrayBuffer);
+
+  return uint8Array;
 };
 
 const onProgress = (cb: typeof info) => {

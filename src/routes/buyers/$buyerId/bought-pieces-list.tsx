@@ -358,17 +358,22 @@ function BoughtPiecesList() {
         />
       </div>
       <table className="mt-5">
-        {rows_summary.map((row, index) => {
-          return (
-            <tr className="border-b" key={index}>
-              {columns_summary.map((col) => (
-                <td className={`px-2 py-2 ${row.bold ? "font-bold" : ""}`}>
-                  {(row as any)[col.accessorKey]}
-                </td>
-              ))}
-            </tr>
-          );
-        })}
+        <tbody>
+          {rows_summary.map((row, index) => {
+            return (
+              <tr className="border-b" key={index}>
+                {columns_summary.map((col, innerIndex) => (
+                  <td
+                    className={`px-2 py-2 ${row.bold ? "font-bold" : ""}`}
+                    key={innerIndex}
+                  >
+                    {(row as any)[col.accessorKey]}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
       </table>
     </div>
   );

@@ -25,16 +25,13 @@ export const saveToPDF = async (
   language: string
 ) => {
   try {
-    const blob = await pdfWorker.renderPDFInWorker(
-      JSON.stringify(props),
+    const stringifiedData = JSON.stringify(props);
+    const uint8Array = await pdfWorker.renderPDFInWorker(
+      stringifiedData,
+      // transfer(stringifiedData, [stringifiedData]), // TODO
       type,
       language
     );
-
-    // Convert Blob to ArrayBuffer
-    const arrayBuffer = await blob.arrayBuffer();
-
-    const uint8Array = new Uint8Array(arrayBuffer);
 
     // Write the PDF file to the file system
     await writeFile(path, uint8Array);
