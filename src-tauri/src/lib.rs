@@ -13,34 +13,38 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     // Open the input CSV file
     println!("Current working directory: {:?}", std::env::current_dir()?);
 
-    // Prepare the output SQL statement
-    let sql_statement = String::from(
+    let sql_statement_tree_species = String::from(
         "INSERT INTO tree_species (tree_species_name, latin_name, tree_species_name_slo) VALUES 
-        ('Sessile oak', 'Quercus petraea', 'Hrast graden'),
-        ('Pedunculate oak', 'Quercus robur', 'Hrast dob'),
-        ('Beech', 'Fagus sylvatica', 'Bukev'),
-        ('Black locust', 'Robinia pseudoacacia', 'Robinija'),
-        ('European ash', 'Fraxinus excelsior', 'Veliki jesen'),
-        ('Linden', 'Tilia spp.', 'Lipa'),
-        ('Wild cherry', 'Prunus avium', 'Divja češnja'),
-        ('Sharp-leaved ash', 'Fraxinus angustifolia', 'Ostrolistni jesen'),
-        ('Black alder', 'Alnus glutinosa', 'Črna jelša'),
-        ('Walnut', 'Juglans regia', 'Domači oreh'),
-        ('Black poplar', 'Populus nigra', 'Črni topol'),
-        ('Pear', 'Pyrus spp.', 'Hruška'),
-        ('Sweet chestnut', 'Castanea sativa', 'Pravi kostanj'),
-        ('Douglas fir', 'Pseudotsuga menziesii', 'Duglazija'),
-        ('Northern red oak', 'Quercus rubra', 'Rdeči hrast'),
-        ('European white elm', 'Ulmus laevis', 'Vezi'),
-        ('Eastern white pine', 'Pinus strobus', 'Zeleni bor'),
-        ('Scots pine', 'Pinus sylvestris', 'Rdeči bor'),
-        ('Spruce', 'Picea abies', 'Smreka'),
-        ('Sycamore maple', 'Acer pseudoplatanus', 'Gorski javor');
+            ('Sessile oak', 'Quercus petraea', 'Hrast graden'),
+            ('Pedunculate oak', 'Quercus robur', 'Hrast dob'),
+            ('Beech', 'Fagus sylvatica', 'Bukev'),
+            ('Black locust', 'Robinia pseudoacacia', 'Robinija'),
+            ('European ash', 'Fraxinus excelsior', 'Veliki jesen'),
+            ('Linden', 'Tilia spp.', 'Lipa'),
+            ('Wild cherry', 'Prunus avium', 'Divja češnja'),
+            ('Sharp-leaved ash', 'Fraxinus angustifolia', 'Ostrolistni jesen'),
+            ('Black alder', 'Alnus glutinosa', 'Črna jelša'),
+            ('Walnut', 'Juglans regia', 'Domači oreh'),
+            ('Black poplar', 'Populus nigra', 'Črni topol'),
+            ('Pear', 'Pyrus spp.', 'Hruška'),
+            ('Sweet chestnut', 'Castanea sativa', 'Pravi kostanj'),
+            ('Douglas fir', 'Pseudotsuga menziesii', 'Duglazija'),
+            ('Northern red oak', 'Quercus rubra', 'Rdeči hrast'),
+            ('European white elm', 'Ulmus laevis', 'Vezi'),
+            ('Eastern white pine', 'Pinus strobus', 'Zeleni bor'),
+            ('Scots pine', 'Pinus sylvestris', 'Rdeči bor'),
+            ('Spruce', 'Picea abies', 'Smreka'),
+            ('Sycamore maple', 'Acer pseudoplatanus', 'Gorski javor');
         \n",
     );
 
-    // Use Box::leak to ensure sql_statement has a 'static lifetime
-    let sql_statement_static: &'static str = Box::leak(sql_statement.into_boxed_str());
+    let sql_statement_settings = String::from(
+        "INSERT INTO settings (licitator_fixed_cost, licitator_percentage, bundle_cost) VALUES (22.0, 0.06, 7.0);",
+    );
+
+    // Use Box::leak to ensure sql statements have a 'static lifetime
+    let sql_statement_tree_species_static: &'static str = Box::leak(sql_statement_tree_species.into_boxed_str());
+    let sql_statement_settings_static: &'static str = Box::leak(sql_statement_settings.into_boxed_str());
 
     // Define tables
     let tables = vec![
@@ -49,6 +53,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         "tree_species",
         "wood_pieces",
         "wood_piece_offers",
+        "settings"
     ];
 
     // Migrations with triggers for all tables
@@ -66,71 +71,79 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     for (i, table) in tables.iter().enumerate() {
         // Base table creation SQL
         let table_creation_sql = match *table {
+            "settings" => {
+                "CREATE TABLE IF NOT EXISTS settings (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    licitator_fixed_cost REAL, 
+                    licitator_percentage REAL,
+                    bundle_cost REAL
+                );"
+            }
             "buyers" => {
                 "CREATE TABLE IF NOT EXISTS buyers (
-                id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                buyer_name VARCHAR, 
-                address_line1 VARCHAR, 
-                address_line2 VARCHAR,
-                additional_costs REAL,
-                is_vat_liable INTEGER DEFAULT 1,
-                used_bundle INTEGER DEFAULT 1,
-                used_loading INTEGER DEFAULT 1,
-                loading_costs REAL DEFAULT 5.00,
-                ident VARCHAR DEFAULT \"\"
-            );"
+                    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    buyer_name VARCHAR, 
+                    address_line1 VARCHAR, 
+                    address_line2 VARCHAR,
+                    additional_costs REAL,
+                    is_vat_liable INTEGER DEFAULT 1,
+                    used_bundle INTEGER DEFAULT 1,
+                    used_loading INTEGER DEFAULT 1,
+                    loading_costs REAL DEFAULT 5.00,
+                    ident VARCHAR DEFAULT \"\"
+                );"
             }
             "sellers" => {
                 "CREATE TABLE IF NOT EXISTS sellers (
-                id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                seller_name VARCHAR, 
-                address_line1 VARCHAR, 
-                address_line2 VARCHAR,
-                iban VARCHAR,
-                ident VARCHAR,
-                is_flat_rate INTEGER,
-                is_vat_liable INTEGER,
-                used_transport INTEGER,
-                used_logging INTEGER,
-                used_logging_non_woods INTEGER,
-                additional_costs REAL,
-                transport_costs REAL,
-                logging_costs REAL
-            );"
+                    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    seller_name VARCHAR, 
+                    address_line1 VARCHAR, 
+                    address_line2 VARCHAR,
+                    iban VARCHAR,
+                    ident VARCHAR,
+                    is_flat_rate INTEGER,
+                    is_vat_liable INTEGER,
+                    used_transport INTEGER,
+                    used_logging INTEGER,
+                    used_logging_non_woods INTEGER,
+                    additional_costs REAL,
+                    transport_costs REAL,
+                    logging_costs REAL
+                );"
             }
             "tree_species" => {
                 "CREATE TABLE IF NOT EXISTS tree_species (
-                id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                tree_species_name VARCHAR, 
-                latin_name VARCHAR,
-                tree_species_name_slo VARCHAR
-            );"
+                    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    tree_species_name VARCHAR, 
+                    latin_name VARCHAR,
+                    tree_species_name_slo VARCHAR
+                );"
             }
             "wood_pieces" => {
                 "CREATE TABLE IF NOT EXISTS wood_pieces (
-                id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                length REAL,
-                sequence_no INTEGER,
-                width REAL, 
-                volume REAL AS (round(3.14159265359 * width * 0.5 * 0.01 * width * 0.5 * 0.01 * length, 2)) STORED, 
-                plate_no VARCHAR,
-                seller_id INTEGER,
-                tree_species_id INTEGER,
-                min_price REAL, 
-                bypass_min_price INTEGER,
-                FOREIGN KEY(seller_id) REFERENCES sellers(id) ON DELETE RESTRICT,
-                FOREIGN KEY(tree_species_id) REFERENCES tree_species(id)
-            );"
+                    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    length REAL,
+                    sequence_no INTEGER,
+                    width REAL, 
+                    volume REAL AS (round(3.14159265359 * width * 0.5 * 0.01 * width * 0.5 * 0.01 * length, 2)) STORED, 
+                    plate_no VARCHAR,
+                    seller_id INTEGER,
+                    tree_species_id INTEGER,
+                    min_price REAL, 
+                    bypass_min_price INTEGER,
+                    FOREIGN KEY(seller_id) REFERENCES sellers(id) ON DELETE RESTRICT,
+                    FOREIGN KEY(tree_species_id) REFERENCES tree_species(id)
+                );"
             }
             "wood_piece_offers" => {
                 "CREATE TABLE IF NOT EXISTS wood_piece_offers (
-                id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                offered_price REAL, 
-                wood_piece_id INTEGER,
-                buyer_id INTEGER,
-                FOREIGN KEY(buyer_id) REFERENCES buyers(id) ON DELETE RESTRICT,
-                FOREIGN KEY(wood_piece_id) REFERENCES wood_pieces(id) ON DELETE RESTRICT
-            );"
+                    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    offered_price REAL, 
+                    wood_piece_id INTEGER,
+                    buyer_id INTEGER,
+                    FOREIGN KEY(buyer_id) REFERENCES buyers(id) ON DELETE RESTRICT,
+                    FOREIGN KEY(wood_piece_id) REFERENCES wood_pieces(id) ON DELETE RESTRICT
+                );"
             }
             _ => "",
         };
@@ -193,7 +206,14 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     migrations.push(Migration {
         version: (200) as i64,
         description: "insert_tree_species_data",
-        sql: sql_statement_static,
+        sql: sql_statement_tree_species_static,
+        kind: MigrationKind::Up,
+    });
+    // Add settings insertion
+    migrations.push(Migration {
+        version: (201) as i64,
+        description: "insert_settings_data",
+        sql: sql_statement_settings_static,
         kind: MigrationKind::Up,
     });
 
@@ -210,7 +230,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(
             tauri_plugin_sql::Builder::default()
-                .add_migrations("sqlite:main_database_v5.db", migrations)
+                .add_migrations("sqlite:main_database_v9.db", migrations)
                 .build(),
         )
         .invoke_handler(tauri::generate_handler![
@@ -240,7 +260,7 @@ fn event_handler(window: &Window, event: &WindowEvent) {
             match window.path().app_data_dir() {
                 Ok(app_data_dir) => {
                     // Construct the path to the SQLite database file
-                    let sqlite_file = app_data_dir.join("main_database_v5.db");
+                    let sqlite_file = app_data_dir.join("main_database_v9.db");
 
                     // Attempt to remove the file
                     if sqlite_file.exists() {
@@ -274,7 +294,7 @@ fn on_setup(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
         .map_err(|e| format!("Failed to resolve app data directory: {}", e))?;
 
     // Construct the path to the SQLite database file
-    let sqlite_file = app_data_dir.join("main_database_v5.db");
+    let sqlite_file = app_data_dir.join("main_database_v9.db");
 
     // Attempt to remove the file
     if sqlite_file.exists() {
@@ -295,6 +315,7 @@ fn get_column_names(table: &str) -> &str {
         "tree_species" => "tree_species_name, latin_name, tree_species_name_slo",
         "wood_pieces" => "length, sequence_no, width, volume, plate_no, seller_id, tree_species_id, min_price, bypass_min_price",
         "wood_piece_offers" => "offered_price, wood_piece_id, buyer_id",
+        "settings" => "licitator_fixed_cost, licitator_percentage, bundle_cost",
         _ => "",
     }
 }

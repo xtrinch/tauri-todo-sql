@@ -13,6 +13,7 @@ fn export_to_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn Erro
         "tree_species",
         "wood_pieces",
         "wood_piece_offers",
+        "settings",
     ];
     let mut json_map = Map::new();
 
@@ -64,6 +65,7 @@ fn get_column_names(table: &str) -> &str {
         "tree_species" => "id, tree_species_name, latin_name, tree_species_name_slo",
         "wood_pieces" => "id, length, sequence_no, width, plate_no, seller_id, tree_species_id, min_price, bypass_min_price",
         "wood_piece_offers" => "id, offered_price, wood_piece_id, buyer_id",
+        "settings" => "id, licitator_fixed_cost, licitator_percentage, bundle_cost",
         _ => "",
     }
 }
@@ -77,7 +79,7 @@ pub fn get_connection(app_handle: tauri::AppHandle) -> Result<Connection, String
         .map_err(|e| format!("Failed to resolve app data directory: {}", e))?;
 
     // Construct the path to the SQLite database file
-    let sqlite_file = app_data_dir.join("main_database_v5.db");
+    let sqlite_file = app_data_dir.join("main_database_v9.db");
 
     // Open the SQLite connection
     Connection::open(sqlite_file).map_err(|e| e.to_string())

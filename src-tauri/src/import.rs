@@ -23,6 +23,7 @@ fn import_from_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn st
 
     // Define the specific import sequence
     let import_sequence = vec![
+        "settings",
         "buyers",
         "sellers",
         "tree_species",
@@ -30,10 +31,12 @@ fn import_from_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn st
         "wood_piece_offers",
     ];
 
-    // Truncate all tables in the import sequence
-    for table in import_sequence.iter().rev() {
-        let truncate_query = format!("DELETE FROM {};", table);
-        conn.execute(&truncate_query, [])?;
+    // Truncate tables that are present in the JSON data
+    for table in &import_sequence {
+        if data.contains_key(*table) {
+            let truncate_query = format!("DELETE FROM {};", table);
+            conn.execute(&truncate_query, [])?;
+        }
     }
 
     // Iterate over tables in the JSON
@@ -100,7 +103,7 @@ pub fn get_connection(app_handle: tauri::AppHandle) -> Result<Connection, String
         .map_err(|e| format!("Failed to resolve app data directory: {}", e))?;
 
     // Construct the path to the SQLite database file
-    let sqlite_file = app_data_dir.join("main_database_v5.db");
+    let sqlite_file = app_data_dir.join("main_database_v9.db");
 
     // Open the SQLite connection
     Connection::open(sqlite_file).map_err(|e| e.to_string())

@@ -14,6 +14,7 @@ import { CustomTable } from "../components/CustomTable";
 import { DynamicStatsTable } from "../components/DynamicStatsTable";
 import { TableCellReadonly } from "../components/TableCellReadonly";
 import { PdfTypeEnum, saveToPDF } from "../utils/pdf";
+import { settingsQueryOptions } from "../utils/settingsService";
 import { statsQueryOptions } from "../utils/statsService";
 
 export const Route = createFileRoute("/statistics")({
@@ -29,6 +30,14 @@ function StatisticsComponent() {
       language: i18n.language as "en" | "sl",
     })
   );
+
+  const settingsQuery = useSuspenseQuery(
+    settingsQueryOptions({
+      ...Route.useLoaderDeps(),
+      language: i18n.language as "en" | "sl",
+    })
+  );
+  const settingsData = settingsQuery.data;
 
   const columns = useMemo<ColumnDef<unknown, any>[]>(
     () => [
@@ -85,12 +94,12 @@ function StatisticsComponent() {
           unit: "EUR",
         },
         {
-          label: t("costsTo350"),
+          label: `${t("costsTo350")} (${settingsData.licitator_fixed_cost} EUR / m3)`,
           value: `${(statisticsQuery.data.costs_below_350 || 0).toFixed(2)}`,
           unit: "EUR",
         },
         {
-          label: t("costsAbove350"),
+          label: `${t("costsAbove350")} (${settingsData.licitator_percentage * 100}%)`,
           value: `${(statisticsQuery.data.costs_above_350 || 0).toFixed(2)}`,
           unit: "EUR",
         },

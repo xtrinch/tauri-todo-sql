@@ -14,12 +14,9 @@ import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
 import { PdfTableCol } from "../../../components/PdfTable";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
-import {
-  LICITATOR_350_PERCENTAGE,
-  LICITATOR_FIXED_COST,
-} from "../../../utils/constants";
 import { PdfTypeEnum, saveToPDF } from "../../../utils/pdf";
 import { sellerQueryOptions } from "../../../utils/sellerService";
+import { settingsQueryOptions } from "../../../utils/settingsService";
 import {
   WoodPiece,
   woodPiecesQueryOptions,
@@ -45,6 +42,14 @@ function SoldPiecesList() {
     })
   );
   const woodPieces = woodPiecesQuery.data;
+
+  const settingsQuery = useSuspenseQuery(
+    settingsQueryOptions({
+      ...Route.useLoaderDeps(),
+      language: i18n.language as "en" | "sl",
+    })
+  );
+  const settingsData = settingsQuery.data;
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
@@ -157,7 +162,7 @@ function SoldPiecesList() {
           .reduce(
             (sum, row) =>
               sum.plus(
-                new Big(LICITATOR_FIXED_COST).mul(
+                new Big(settingsData.licitator_fixed_cost).mul(
                   row.getValue("volume") as number
                 )
               ),
@@ -173,7 +178,7 @@ function SoldPiecesList() {
               row.getValue("offered_total_price") as number
             ).minus(new Big(350).mul(row.getValue("volume")));
             return sum.plus(
-              new Big(LICITATOR_350_PERCENTAGE).mul(totalAbove350)
+              new Big(settingsData.licitator_percentage).mul(totalAbove350)
             );
           }, new Big(0))
           .round(2),
@@ -289,7 +294,7 @@ function SoldPiecesList() {
             value: `${costsBelow350.toFixed(2)} EUR`,
           },
           {
-            label: t("costsAbove350"),
+            label: `${t("costsAbove350")} (${settingsData.licitator_percentage * 100}%)`,
             value: `${costsAbove350.toFixed(2)} EUR`,
           },
           {

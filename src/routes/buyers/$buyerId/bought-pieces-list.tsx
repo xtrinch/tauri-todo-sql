@@ -16,8 +16,8 @@ import { CustomTable } from "../../../components/CustomTable";
 import { PdfTableCol } from "../../../components/PdfTable";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { buyerQueryOptions } from "../../../utils/buyerService";
-import { BUNDLE_PER_M3_COST } from "../../../utils/constants";
 import { PdfTypeEnum, saveToPDF } from "../../../utils/pdf";
+import { settingsQueryOptions } from "../../../utils/settingsService";
 import {
   WoodPiece,
   woodPiecesQueryOptions,
@@ -56,6 +56,14 @@ function BoughtPiecesList() {
     })
   );
   const woodPiecesGrouped = woodPiecesQueryGrouped.data;
+
+  const settingsQuery = useSuspenseQuery(
+    settingsQueryOptions({
+      ...Route.useLoaderDeps(),
+      language: i18n.language as "en" | "sl",
+    })
+  );
+  const settingsData = settingsQuery.data;
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
@@ -195,7 +203,7 @@ function BoughtPiecesList() {
   const bundleCosts = useMemo(
     () =>
       (buyer.used_bundle
-        ? totalVolume.mul(BUNDLE_PER_M3_COST || 0)
+        ? totalVolume.mul(settingsData.bundle_cost || 0)
         : new Big(0)
       ).round(2),
     [totalVolume, buyer]
@@ -251,7 +259,7 @@ function BoughtPiecesList() {
           { label: t("totalVolume"), value: `${totalVolume.toFixed(2)} m3` },
           { label: t("totalPrice"), value: `${totalPrice.toFixed(2)} EUR` },
           buyer.used_bundle > 0 && {
-            label: `${t("bundleCosts")} (${(BUNDLE_PER_M3_COST || 0).toFixed(2)} EUR / m3)`,
+            label: `${t("bundleCosts")} (${(settingsData.bundle_cost || 0).toFixed(2)} EUR / m3)`,
             value: `${bundleCosts.toFixed(2)} EUR`,
           },
           buyer.used_loading > 0 && {

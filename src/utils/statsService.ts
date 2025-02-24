@@ -1,8 +1,8 @@
 import { queryOptions } from "@tanstack/react-query";
 import { info } from "@tauri-apps/plugin-log";
 import { groupBy, keyBy } from "lodash";
-import { LICITATOR_350_PERCENTAGE, LICITATOR_FIXED_COST } from "./constants";
 import { getDatabase } from "./database";
+import { Settings } from "./settingsService";
 import { ensureTreeSpecies, TreeSpecies } from "./treeSpeciesService";
 import { WoodPiece } from "./woodPieceService";
 
@@ -34,86 +34,6 @@ interface ListOptions {
 const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
   const db = await getDatabase();
 
-  // TODO: cleanup
-  // let sql = `
-  //   SELECT
-  //     COUNT(*) as "num_wood_pieces",
-  //     SUM("volume") as "total_volume",
-  //     MAX("offered_max_price") as "offered_max_price"
-  //   FROM (
-  //     SELECT
-  //       *,
-  //       MAX("wood_piece_offers"."offered_price") as "offered_max_price"
-  //     FROM "wood_pieces"
-  //     LEFT JOIN "wood_piece_offers" ON "wood_pieces"."id" = "wood_piece_offers"."wood_piece_id"
-  //     GROUP BY "wood_pieces"."id"
-  //   )`;
-
-  // let totalResult: Statistics[] = [];
-  // try {
-  //   totalResult = (await db.select(sql, [])) as Statistics[];
-  // } catch (e) {
-  //   info(JSON.stringify(e));
-  //   throw e;
-  // }
-
-  // let sellers = await ensureSellers({});
-
-  // const woodPieces = await ensureWoodPieces({});
-
-  // const groupedWoodPieces = groupBy(woodPieces, "seller_id");
-
-  // let costsBelow350 = new Big(0);
-  // let costsAbove350 = new Big(0);
-  // let transportCosts = new Big(0);
-  // let loggingCosts = new Big(0);
-
-  // for (let seller of sellers) {
-  //   const sellerWoodPieces = groupedWoodPieces[seller.id] || [];
-
-  //   const totalVolume = sellerWoodPieces
-  //     .reduce((sum: Big, row) => sum.plus(row.volume as number), new Big(0))
-  //     .round(2);
-  //   // sum transport costs
-  //   const sellerTransportCosts = (
-  //     seller.used_transport
-  //       ? totalVolume.mul(seller.transport_costs || 0)
-  //       : new Big(0)
-  //   ).round(2);
-
-  //   // sum logging costs
-  //   const sellerLoggingCosts = (
-  //     seller.used_logging || seller.used_logging_non_woods
-  //       ? totalVolume.mul(seller.logging_costs || 0)
-  //       : new Big(0)
-  //   ).round(2);
-
-  //   // sum auction costs
-  //   const sellerCostsBelow350 = sellerWoodPieces
-  //     .reduce(
-  //       (sum, row) => sum.plus(new Big(LICITATOR_FIXED_COST).mul(row.volume as number)),
-  //       new Big(0)
-  //     )
-  //     .round(2);
-  //   const sellerCostsAbove350 = sellerWoodPieces
-  //     .reduce(
-  //       (sum, row) =>
-  //         sum.plus(new Big(LICITATOR_350_PERCENTAGE).mul((row.offered_total_price as number) || 0)),
-  //       new Big(0)
-  //     )
-  //     .round(2);
-
-  //   costsBelow350 = costsBelow350.add(sellerCostsBelow350);
-  //   costsAbove350 = costsAbove350.add(sellerCostsAbove350);
-  //   transportCosts = transportCosts.add(sellerTransportCosts);
-  //   loggingCosts = loggingCosts.add(sellerLoggingCosts);
-  // }
-
-  // const licitatorIncome = costsBelow350
-  //   .add(costsAbove350)
-  //   .add(loggingCosts)
-  //   .add(transportCosts);
-
   const woodPiecesSql = `
     SELECT --- this one selects all wood pieces flattened
       *,
@@ -134,6 +54,16 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     )
   `;
 
+  const sqlStats = `
+    SELECT 
+      *
+    FROM "settings" 
+  `;
+  const result = await db.select(sqlStats, []);
+
+  const settingsArray = result as Settings[];
+  let settings = settingsArray[0];
+
   const sellersSql = `
     SELECT --- just selects some additional stuff on top of one row per seller
       *,
@@ -145,8 +75,8 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
         THEN ROUND("sellers"."logging_costs" * "sellers"."total_volume", 2)
         ELSE 0
       END AS "total_logging_costs",
-      ROUND("sellers"."total_volume" * ${LICITATOR_FIXED_COST}, 2) AS "costs_below_350",
-      ROUND("costs_above_350_per_seller" * ${LICITATOR_350_PERCENTAGE}, 2) AS "costs_above_350"
+      ROUND("sellers"."total_volume" * ${settings.licitator_fixed_cost}, 2) AS "costs_below_350",
+      ROUND("costs_above_350_per_seller" * ${settings.licitator_percentage}, 2) AS "costs_above_350"
     FROM (
       SELECT  -- this one selects one row per seller, so already summed values
         *,

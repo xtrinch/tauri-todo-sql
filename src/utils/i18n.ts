@@ -1,6 +1,5 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import { LICITATOR_350_PERCENTAGE, LICITATOR_FIXED_COST } from "./constants";
 
 // the translations
 // (tip move them in a JSON file and import them,
@@ -68,8 +67,8 @@ const resources = {
       isFlatRate: "Flat rate",
       isVatLiable: "VAT liable",
       totalGross: "Total gross",
-      costsTo350: `Auction costs for wood pieces valued up to 350 EUR / m3 (${LICITATOR_FIXED_COST} EUR / m3)`,
-      costsAbove350: `Auction costs for wood pieces valued above 350 EUR / m3 (${LICITATOR_350_PERCENTAGE * 100}% total)`,
+      costsTo350: `Auction costs for wood pieces valued up to 350 EUR / m3`,
+      costsAbove350: `Auction costs for wood pieces valued above 350 EUR / m3`,
       sellerIncome: "Seller income",
       sellerIncomeGross: "Seller gross income",
       flatRate: "Flat rate (8%)",
@@ -149,6 +148,10 @@ const resources = {
       exportStatistics: "Export statistics",
       statisticsPDFName: "statistics",
       preparingUpdate: "Preparing update...",
+      settings: "Settings",
+      licitatorPercentage: "Percentage cost for licitator / m3",
+      bundleCost: "Bundle cost / m3",
+      licitatorFixedCost: "Fixed cost for licitator / m3",
     },
   },
   sl: {
@@ -213,8 +216,8 @@ const resources = {
       isFlatRate: "Pavšalist",
       isVatLiable: "DDV zavezanec",
       totalGross: "Skupaj bruto",
-      costsTo350: `Stroški licitacije za vrednost hlodov do 350 EUR / m3 (${LICITATOR_FIXED_COST} EUR / m3)`,
-      costsAbove350: `Stroški licitacije za vrednost hlodov nad 350 EUR / m3 (${LICITATOR_350_PERCENTAGE * 100}% vrednosti)`,
+      costsTo350: `Stroški licitacije za vrednost hlodov do 350 EUR / m3`,
+      costsAbove350: `Stroški licitacije za vrednost hlodov nad 350 EUR / m3`,
       sellerIncome: "Dohodek lastnika hlodov",
       sellerIncomeGross: "Dohodek lastnika hlodov bruto",
       flatRate: "Pavšal (8%)",
@@ -295,6 +298,10 @@ const resources = {
       exportStatistics: "Izvozi statistiko",
       statisticsPDFName: "statistika",
       preparingUpdate: "Pripravljam posodobitve...",
+      settings: "Nastavitve",
+      licitatorPercentage: "Stroški licitacije / skupna cena (%)",
+      bundleCost: "Stroški zložaja / m3",
+      licitatorFixedCost: "Stroški licitacije / m3 (EUR / m3)",
     },
   },
 };
