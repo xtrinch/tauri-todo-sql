@@ -46,10 +46,10 @@ function RootComponent() {
 
   const [appVersion, setAppVersion] = useState<string>("");
   const [changes, setChanges] = useState<boolean | null>(
-    localStorage.getItem("unsaved_changes_v4") === "true"
+    localStorage.getItem("unsaved_changes_v5") === "true"
   );
   const [filePath, setFilePath] = useState<string | null>(
-    localStorage.getItem("save_file_path_v4")
+    localStorage.getItem("save_file_path_v5")
   );
   const [fileMenuOpen, setFileMenuOpen] = useState<boolean>(false);
   const [languageMenuOpen, setLanguageMenuOpen] = useState<boolean>(false);
@@ -74,7 +74,7 @@ function RootComponent() {
 
   const saveOnly = async (path?: string) => {
     await savePath(path || filePath!);
-    localStorage.setItem("unsaved_changes_v4", "false");
+    localStorage.setItem("unsaved_changes_v5", "false");
     window.dispatchEvent(new Event("storage"));
     toast.success(t("saveSuccess"));
   };
@@ -86,7 +86,7 @@ function RootComponent() {
       info(JSON.stringify(e));
       throw e;
     }
-    localStorage.setItem("unsaved_changes_v4", "false");
+    localStorage.setItem("unsaved_changes_v5", "false");
     window.dispatchEvent(new Event("storage"));
     unsetDatabase();
     await queryClient.invalidateQueries();
@@ -100,8 +100,8 @@ function RootComponent() {
 
   const resetApplicationData = async () => {
     if (await confirm({ confirmation: t("areYouSure") })) {
-      localStorage.removeItem("save_file_path_v4");
-      localStorage.setItem("unsaved_changes_v4", "false");
+      localStorage.removeItem("save_file_path_v5");
+      localStorage.setItem("unsaved_changes_v5", "false");
       window.dispatchEvent(new Event("storage"));
 
       try {
@@ -124,7 +124,7 @@ function RootComponent() {
       info(JSON.stringify(e));
       throw e;
     }
-    localStorage.setItem("unsaved_changes_v4", "false");
+    localStorage.setItem("unsaved_changes_v5", "false");
   };
 
   const saveAs = async () => {
@@ -235,18 +235,18 @@ function RootComponent() {
 
   useEffect(() => {
     if (filePath) {
-      localStorage.setItem("save_file_path_v4", filePath);
+      localStorage.setItem("save_file_path_v5", filePath);
     } else {
-      localStorage.removeItem("save_file_path_v4");
+      localStorage.removeItem("save_file_path_v5");
     }
   }, [filePath]);
 
   useEffect(() => {
     function checkUserData() {
       const localStorageChanges =
-        localStorage.getItem("unsaved_changes_v4") === "true";
+        localStorage.getItem("unsaved_changes_v5") === "true";
       setChanges(localStorageChanges);
-      const localStorageFilePath = localStorage.getItem("save_file_path_v4");
+      const localStorageFilePath = localStorage.getItem("save_file_path_v5");
       setFilePath(localStorageFilePath);
     }
 

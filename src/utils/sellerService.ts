@@ -28,7 +28,7 @@ export const ensureSellers = async (opts: {
 }) => {
   const db = await getDatabase();
   const result = await db.select(
-    `SELECT * from "sellers" ${opts.filterBy ? `WHERE lower("seller_name") LIKE lower($1)` : ""} 
+    `SELECT * from "sellers" ${opts.filterBy ? `WHERE (lower("seller_name") LIKE lower($1) OR lower("ident") LIKE lower($1))` : ""} 
     ORDER BY ${opts.sortBy || "seller_name"} ${opts.sortDirection || "DESC"}`,
     [opts.filterBy ? `%${opts.filterBy.replace(/š|č|ž/g, "")}%` : undefined]
   );

@@ -14,7 +14,6 @@ import { useTranslation } from "react-i18next";
 import { FaPlus } from "react-icons/fa6";
 import Select, { Options } from "react-select";
 import { z } from "zod";
-import { Spinner } from "../components/Spinner";
 import {
   Buyer,
   buyersQueryOptions,
@@ -128,7 +127,7 @@ function BuyersComponent() {
 
   return (
     <div className="flex-1 flex">
-      <div className="divide-y h-[calc(100vh-53px)] overflow-auto min-w-[280px]">
+      <div className="divide-y h-[calc(100vh-53px)] overflow-auto min-w-[320px]">
         <div className="py-2 px-3 flex gap-2 items-center bg-gray-100">
           <div>{t("sort")}:</div>
           <Select
@@ -175,7 +174,8 @@ function BuyersComponent() {
                   }}
                 >
                   <div className="text-m">
-                    {buyer.buyer_name || t("noName")}
+                    {buyer.buyer_name || t("noName")}{" "}
+                    {buyer.ident ? `(${buyer.ident})` : ""}
                     <MatchRoute
                       to="/buyers/$buyerId"
                       search={{
@@ -185,9 +185,7 @@ function BuyersComponent() {
                         buyerId: buyer.id,
                       }}
                       pending
-                    >
-                      {(match) => <Spinner show={!!match} wait="delay-50" />}
-                    </MatchRoute>
+                    ></MatchRoute>
                   </div>
                 </Link>
               </div>

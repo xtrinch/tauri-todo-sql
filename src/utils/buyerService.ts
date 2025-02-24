@@ -15,6 +15,7 @@ export type Buyer = {
   used_bundle: number;
   used_loading: number;
   loading_costs: number;
+  ident: string;
 };
 
 const ensureBuyers = async (opts: {
@@ -24,7 +25,7 @@ const ensureBuyers = async (opts: {
 }) => {
   const db = await getDatabase();
   const result = await db.select(
-    `SELECT * from "buyers" ${opts.filterBy ? `WHERE "buyer_name" LIKE lower($1)` : ""} 
+    `SELECT * from "buyers" ${opts.filterBy ? `WHERE ("buyer_name" LIKE lower($1) OR lower("ident") LIKE lower($1))` : ""} 
     ORDER BY ${opts.sortBy || "buyer_name"} ${opts.sortDirection || "DESC"}`,
     [opts.filterBy ? `%${opts.filterBy.replace(/š|č|ž/g, "")}%` : undefined]
   );
@@ -72,7 +73,8 @@ export async function patchBuyer({
         "is_vat_liable" = COALESCE($5, "is_vat_liable"),
         "loading_costs" = COALESCE($6, "loading_costs"),
         "used_bundle" = COALESCE($7, "used_bundle"),
-        "used_loading" = COALESCE($8, "used_loading")
+        "used_loading" = COALESCE($8, "used_loading"),
+        "ident" = COALESCE($9, "ident")
     WHERE id=$1`,
     [
       id,
@@ -83,6 +85,7 @@ export async function patchBuyer({
       updatedBuyer.loading_costs,
       updatedBuyer.used_bundle,
       updatedBuyer.used_loading,
+      updatedBuyer.ident,
     ]
   );
 }

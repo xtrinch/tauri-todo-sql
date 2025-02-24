@@ -88,6 +88,12 @@ function BuyerComponent() {
         size: 310,
       },
       {
+        accessorKey: "ident",
+        header: () => t("ident"),
+        meta: {},
+        size: 100,
+      },
+      {
         id: "1",
         header: () => "",
         accessorFn: () => 1,

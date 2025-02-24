@@ -148,6 +148,7 @@ export const BoughtPiecesExport = (params: BoughtPiecesExportProps) => {
     []
   );
 
+  // TODO: non-chunked version does not work, figure out why
   const chunkedWoodData: WoodPiece[][] = useMemo(() => {
     return chunk(params.woodPiecesData, 32);
   }, [params.woodPiecesData]);
