@@ -75,6 +75,7 @@ export const PdfTable = (params: {
   columns: PdfTableCol[];
   data: any[];
   hasFooter?: boolean;
+  hideHeaderOnSubsequentPages?: boolean;
 }) => {
   const { columns, hasFooter } = params;
 
@@ -95,7 +96,10 @@ export const PdfTable = (params: {
 
   return (
     <View style={styles.tableStyle}>
-      <View style={styles.tableRowStyle} fixed>
+      <View
+        style={styles.tableRowStyle}
+        fixed={!params.hideHeaderOnSubsequentPages}
+      >
         {columns.map((col, idx) => (
           <View
             style={compact([

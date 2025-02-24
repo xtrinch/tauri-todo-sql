@@ -149,7 +149,7 @@ export const BoughtPiecesExport = (params: BoughtPiecesExportProps) => {
   );
 
   const chunkedWoodData: WoodPiece[][] = useMemo(() => {
-    return chunk(params.woodPiecesData, 33);
+    return chunk(params.woodPiecesData, 32);
   }, [params.woodPiecesData]);
 
   return (
@@ -168,7 +168,13 @@ export const BoughtPiecesExport = (params: BoughtPiecesExportProps) => {
       <Page size="A4" style={styles.page}>
         <View style={styles.topTable}>
           {chunkedWoodData.map((chunk) => (
-            <PdfTable data={chunk} columns={columns} />
+            <View wrap={false}>
+              <PdfTable
+                data={chunk}
+                columns={columns}
+                hideHeaderOnSubsequentPages
+              />
+            </View>
           ))}
           {/* <PdfTable
             data={
