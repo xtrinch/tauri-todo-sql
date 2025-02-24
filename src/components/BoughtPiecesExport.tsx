@@ -149,7 +149,7 @@ export const BoughtPiecesExport = (params: BoughtPiecesExportProps) => {
   );
 
   const chunkedWoodData: WoodPiece[][] = useMemo(() => {
-    return chunk(params.woodPiecesData, 31);
+    return chunk(params.woodPiecesData, 33);
   }, [params.woodPiecesData]);
 
   return (
