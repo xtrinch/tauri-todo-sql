@@ -17,6 +17,7 @@ interface ListOptions {
   language?: "en" | "sl";
 }
 
+// @ts-ignore
 export const ensureSettings = async (opts: ListOptions): Promise<Settings> => {
   const db = await getDatabase();
   const params: string[] = [];
