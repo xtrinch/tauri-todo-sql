@@ -22,6 +22,8 @@ export interface Statistics {
   costs_below_350: number;
   total_logging_costs: number;
   total_transport_costs: number;
+  total_bundle_costs: number; // from buyers
+  total_loading_costs: number; // from buyers
   costs_above_350: number;
   top_logs_by_species: TreeSpeciesWithStats[];
   top_logs: WoodPieceStats;
@@ -40,8 +42,8 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
       ROUND(COALESCE("offered_price", 0) * "volume", 2) as "total_price",
       "wood_pieces"."id" as "wp_id",
       "wood_piece_offers"."id" as "wpo_id"
-    FROM "sellers"
-    LEFT JOIN "wood_pieces" ON "wood_pieces"."seller_id" = "sellers"."id"
+    FROM "wood_pieces"
+    LEFT JOIN "sellers" ON "wood_pieces"."seller_id" = "sellers"."id"
     LEFT JOIN ( --- left join with max offer
       SELECT 
         *, 
@@ -52,6 +54,7 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
       AND "wood_piece_offers"."seq_num" = 1
       AND ("wood_piece_offers"."offered_price" >= "wood_pieces"."min_price" OR "wood_pieces"."bypass_min_price" = 1)
     )
+    LEFT JOIN "buyers" ON "wood_piece_offers"."buyer_id" = "buyers"."id"
   `;
 
   const sqlStats = `
@@ -93,6 +96,28 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     ) AS "sellers"
   `;
 
+  const buyersSql = `
+    SELECT --- just selects some additional stuff on top of one row per buyer
+      *,
+      CASE WHEN "buyers"."used_loading" = 1
+        THEN ROUND("buyers"."total_volume" * "buyers"."loading_costs", 2)
+        ELSE 0
+      END AS "total_loading_costs",
+      CASE WHEN ("buyers"."used_bundle" = 1)
+        THEN ROUND("buyers"."total_volume" * ${settings.bundle_cost}, 2)
+        ELSE 0
+      END AS "total_bundle_costs"
+    FROM (
+      SELECT  -- this one selects one row per buyer, so already summed values
+        *,
+        SUM("volume") AS "total_volume"
+      FROM (
+        ${woodPiecesSql}
+      )
+      GROUP BY "buyer_id"
+    ) AS "buyers"
+  `;
+
   const priceSql = `
     SELECT --- sum up the total income
       *,
@@ -101,6 +126,8 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
           + ROUND("total_logging_costs", 2) 
           + ROUND("costs_below_350", 2) 
           + ROUND("costs_above_350", 2)
+          + ROUND("total_loading_costs", 2)
+          + ROUND("total_bundle_costs", 2)
         ) AS "total_income"
     FROM (
       SELECT --- this one also does the grouping of all rows
@@ -111,12 +138,39 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
         ROUND(SUM("total_volume"), 2) AS "total_volume",
         MAX("offered_price") AS "offered_max_price",
         SUM("num_pieces") AS "num_wood_pieces",
-        SUM("num_unsold_pieces") AS "num_unsold_wood_pieces"
-      FROM (
-        ${sellersSql}
-      )
+        SUM("num_unsold_pieces") AS "num_unsold_wood_pieces",
+        ROUND(SUM("total_loading_costs"), 2) AS "total_loading_costs",
+        ROUND(SUM("total_bundle_costs"), 2) AS "total_bundle_costs"
+      FROM ( --- some data from sellers, some data from buyers
+        SELECT 
+          "total_transport_costs", 
+          "total_logging_costs",
+          "costs_below_350",
+          "costs_above_350",
+          "total_volume",
+          "offered_price",
+          "num_pieces",
+          "num_unsold_pieces",
+          NULL AS "total_loading_costs",
+          NULL AS "total_bundle_costs"
+        FROM (${sellersSql})
+        UNION ALL 
+        SELECT 
+          NULL AS "total_transport_costs", 
+          NULL AS "total_logging_costs",
+          NULL AS "costs_below_350",
+          NULL AS "costs_above_350",
+          NULL AS "total_volume",
+          NULL AS "offered_price",
+          NULL AS "num_pieces",
+          NULL AS "num_unsold_pieces",
+          "total_loading_costs",
+          "total_bundle_costs"
+        FROM (${buyersSql})
+      ) 
     )
   `;
+
   let priceResult: Statistics[] = [];
   try {
     priceResult = (await db.select(priceSql, [])) as Statistics[];
@@ -238,6 +292,8 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     costs_above_350: priceResult[0].costs_above_350,
     total_logging_costs: priceResult[0].total_logging_costs,
     total_transport_costs: priceResult[0].total_transport_costs,
+    total_bundle_costs: priceResult[0].total_bundle_costs,
+    total_loading_costs: priceResult[0].total_loading_costs,
     top_logs_by_species: treeSpecies,
     top_logs: topLogs,
 

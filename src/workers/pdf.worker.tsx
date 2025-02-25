@@ -55,9 +55,7 @@ const renderPDFInWorker = async (
       const statsData: StatsExportProps = JSON.parse(props);
 
       try {
-        blob = await pdf(
-          <StatsExport statistics={statsData.statistics} />
-        ).toBlob();
+        blob = await pdf(<StatsExport {...statsData} />).toBlob();
       } catch (e) {
         throw e;
       }
@@ -71,12 +69,7 @@ const renderPDFInWorker = async (
       const data: CatalogueExportForBuyersProps = JSON.parse(props);
 
       try {
-        blob = await pdf(
-          <CatalogueExportForBuyers
-            woodPiecesData={data.woodPiecesData}
-            statistics={data.statistics}
-          />
-        ).toBlob();
+        blob = await pdf(<CatalogueExportForBuyers {...data} />).toBlob();
       } catch (e) {
         throw e;
       }
@@ -91,10 +84,7 @@ const renderPDFInWorker = async (
 
       try {
         blob = await pdf(
-          <CatalogueExportWithPrices
-            woodPiecesData={dataPrices.woodPiecesData}
-            statistics={dataPrices.statistics}
-          />
+          <CatalogueExportWithPrices {...dataPrices} />
         ).toBlob();
       } catch (e) {
         throw e;
@@ -109,12 +99,7 @@ const renderPDFInWorker = async (
       const dataSellerPieces: SellerPiecesExportProps = JSON.parse(props);
 
       try {
-        blob = await pdf(
-          <SellerPiecesExport
-            woodPiecesData={dataSellerPieces.woodPiecesData}
-            seller={dataSellerPieces.seller}
-          />
-        ).toBlob();
+        blob = await pdf(<SellerPiecesExport {...dataSellerPieces} />).toBlob();
       } catch (e) {
         throw e;
       }
@@ -128,14 +113,7 @@ const renderPDFInWorker = async (
       const dataSoldPieces: SoldPiecesExportProps = JSON.parse(props);
 
       try {
-        blob = await pdf(
-          <SoldPiecesExport
-            woodPiecesData={dataSoldPieces.woodPiecesData}
-            rowsSummary={dataSoldPieces.rowsSummary}
-            colsSummary={dataSoldPieces.colsSummary}
-            seller={dataSoldPieces.seller}
-          />
-        ).toBlob();
+        blob = await pdf(<SoldPiecesExport {...dataSoldPieces} />).toBlob();
       } catch (e) {
         throw e;
       }
@@ -149,15 +127,7 @@ const renderPDFInWorker = async (
       const dataBoughtPieces: BoughtPiecesExportProps = JSON.parse(props);
 
       try {
-        blob = await pdf(
-          <BoughtPiecesExport
-            woodPiecesData={dataBoughtPieces.woodPiecesData}
-            rowsSummary={dataBoughtPieces.rowsSummary}
-            colsSummary={dataBoughtPieces.colsSummary}
-            buyer={dataBoughtPieces.buyer}
-            woodPiecesGroupedData={dataBoughtPieces.woodPiecesGroupedData}
-          />
-        ).toBlob();
+        blob = await pdf(<BoughtPiecesExport {...dataBoughtPieces} />).toBlob();
       } catch (e) {
         throw e;
       }

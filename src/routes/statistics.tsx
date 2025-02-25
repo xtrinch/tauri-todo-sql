@@ -104,6 +104,16 @@ function StatisticsComponent() {
           unit: "EUR",
         },
         {
+          label: `${t("bundleCosts")} (${settingsData.bundle_cost} EUR / m3)`,
+          value: `${(statisticsQuery.data.total_bundle_costs || 0).toFixed(2)}`,
+          unit: "EUR",
+        },
+        {
+          label: `${t("loadingCosts")} (x EUR / m3)`,
+          value: `${(statisticsQuery.data.total_loading_costs || 0).toFixed(2)}`,
+          unit: "EUR",
+        },
+        {
           label: t("totalIncome"),
           value: `${(statisticsQuery.data.total_income || 0).toFixed(2)}`,
           unit: "EUR",
@@ -142,6 +152,7 @@ function StatisticsComponent() {
           path,
           {
             statistics: statisticsQuery.data,
+            overallData: data,
           },
           PdfTypeEnum.statistics,
           i18n.language
@@ -160,6 +171,7 @@ function StatisticsComponent() {
       toast.success(t("success"));
     }
   };
+
   return (
     <>
       <div className="p-3 flex flex-col space-y-5 overflow-auto max-h-[calc(100vh-55px)]">

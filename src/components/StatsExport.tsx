@@ -51,10 +51,32 @@ const styles = StyleSheet.create({
 
 export interface StatsExportProps {
   statistics: Statistics;
+  overallData: { label: string; value: string; unit: string; bold?: boolean }[];
 }
 
 export const StatsExport = (params: StatsExportProps) => {
   const { t } = useTranslation();
+
+  const columnsOverall = useMemo<PdfTableCol[]>(
+    () => [
+      {
+        accessorKey: "label",
+        size: 70,
+        header: () => t("summary"),
+      },
+      {
+        accessorKey: "value",
+        size: 20,
+        header: () => t("value"),
+      },
+      {
+        accessorKey: "unit",
+        size: 14,
+        header: () => t("unit"),
+      },
+    ],
+    []
+  );
 
   const columnsTopThreeAllSpecies = useMemo<PdfTableCol[]>(
     () => [
@@ -179,6 +201,12 @@ export const StatsExport = (params: StatsExportProps) => {
     <Document>
       <Page size="A4" style={styles.page} break={true}>
         <View style={styles.statView}>
+          <View style={styles.statView} wrap={false}>
+            <View style={styles.subheader}>
+              <Text>{t("statistics")}</Text>
+            </View>
+            <PdfTable data={params.overallData} columns={columnsOverall} />
+          </View>
           <View style={styles.subheader}>
             <Text>{t("topThreeOffers")}</Text>
           </View>
@@ -243,7 +271,7 @@ export const StatsExport = (params: StatsExportProps) => {
         ))}
         <Text
           render={({ pageNumber, totalPages }) =>
-            `${pageNumber - 1} / ${totalPages - 1}`
+            `${pageNumber} / ${totalPages}`
           }
           fixed
           style={styles.pageNumbers}
