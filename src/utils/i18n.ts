@@ -152,6 +152,10 @@ const resources = {
       licitatorPercentage: "Percentage cost for licitator / m3",
       bundleCost: "Bundle cost / m3",
       licitatorFixedCost: "Fixed cost for licitator / m3",
+      incomeLicitator: "Licitator income",
+      balance: "Balance",
+      sellersNetValue: "Sellers net",
+      buyersNetValue: "Buyers net",
     },
   },
   sl: {
@@ -302,6 +306,10 @@ const resources = {
       licitatorPercentage: "Stroški licitacije / skupna cena (%)",
       bundleCost: "Stroški zložaja / m3",
       licitatorFixedCost: "Stroški licitacije / m3 (EUR / m3)",
+      incomeLicitator: "Prihodki licitatorja",
+      balance: "Bilanca",
+      sellersNetValue: "Prodajalci neto",
+      buyersNetValue: "Kupci neto",
     },
   },
 };

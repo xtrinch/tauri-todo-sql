@@ -83,47 +83,99 @@ function StatisticsComponent() {
           value: `${(statisticsQuery.data.offered_max_price || 0).toFixed(2)}`,
           unit: "EUR / m3",
         },
-        {
-          label: t("loggingCosts"),
-          value: `${(statisticsQuery.data.total_logging_costs || 0).toFixed(2)}`,
-          unit: "EUR",
-        },
-        {
-          label: t("transportCosts"),
-          value: `${(statisticsQuery.data.total_transport_costs || 0).toFixed(2)}`,
-          unit: "EUR",
-        },
-        {
-          label: `${t("costsTo350")} (${settingsData.licitator_fixed_cost} EUR / m3)`,
-          value: `${(statisticsQuery.data.costs_below_350 || 0).toFixed(2)}`,
-          unit: "EUR",
-        },
-        {
-          label: `${t("costsAbove350")} (${settingsData.licitator_percentage * 100}%)`,
-          value: `${(statisticsQuery.data.costs_above_350 || 0).toFixed(2)}`,
-          unit: "EUR",
-        },
-        {
-          label: `${t("bundleCosts")} (${settingsData.bundle_cost} EUR / m3)`,
-          value: `${(statisticsQuery.data.total_bundle_costs || 0).toFixed(2)}`,
-          unit: "EUR",
-        },
-        {
-          label: `${t("loadingCosts")} (x EUR / m3)`,
-          value: `${(statisticsQuery.data.total_loading_costs || 0).toFixed(2)}`,
-          unit: "EUR",
-        },
-        {
-          label: t("totalIncome"),
-          value: `${(statisticsQuery.data.total_income || 0).toFixed(2)}`,
-          unit: "EUR",
-        },
       ],
       [i18n.language, statisticsQuery.data]
     );
 
-  const table = useReactTable({
+  const dataIncoming: {
+    label: string;
+    value: string;
+    unit: string;
+    bold?: boolean;
+  }[] = useMemo(
+    () => [
+      {
+        label: t("loggingCosts"),
+        value: `${(statisticsQuery.data.total_logging_costs || 0).toFixed(2)}`,
+        unit: "EUR",
+      },
+      {
+        label: t("transportCosts"),
+        value: `${(statisticsQuery.data.total_transport_costs || 0).toFixed(2)}`,
+        unit: "EUR",
+      },
+      {
+        label: `${t("costsTo350")} (${settingsData.licitator_fixed_cost} EUR / m3)`,
+        value: `${(statisticsQuery.data.costs_below_350 || 0).toFixed(2)}`,
+        unit: "EUR",
+      },
+      {
+        label: `${t("costsAbove350")} (${settingsData.licitator_percentage * 100}%)`,
+        value: `${(statisticsQuery.data.costs_above_350 || 0).toFixed(2)}`,
+        unit: "EUR",
+      },
+      {
+        label: `${t("bundleCosts")} (${settingsData.bundle_cost} EUR / m3)`,
+        value: `${(statisticsQuery.data.total_bundle_costs || 0).toFixed(2)}`,
+        unit: "EUR",
+      },
+      {
+        label: `${t("loadingCosts")} (x EUR / m3)`,
+        value: `${(statisticsQuery.data.total_loading_costs || 0).toFixed(2)}`,
+        unit: "EUR",
+      },
+      {
+        label: t("totalIncome"),
+        value: `${(statisticsQuery.data.total_income || 0).toFixed(2)}`,
+        unit: "EUR",
+      },
+    ],
+    [i18n.language, statisticsQuery.data]
+  );
+
+  const dataBalance: {
+    label: string;
+    value: string;
+    unit: string;
+    bold?: boolean;
+  }[] = useMemo(
+    () => [
+      {
+        label: t("sellersNetValue"),
+        value: `-${(statisticsQuery.data.sellers_net || 0).toFixed(2)}`,
+        unit: "EUR",
+      },
+      {
+        label: t("buyersNetValue"),
+        value: `${(statisticsQuery.data.buyers_net || 0).toFixed(2)}`,
+        unit: "EUR",
+      },
+    ],
+    [i18n.language, statisticsQuery.data]
+  );
+
+  const tableData = useReactTable({
     data: data,
+    columns: columns,
+    getCoreRowModel: getCoreRowModel(),
+    defaultColumn: {
+      cell: TableCellReadonly,
+    },
+    meta: {},
+  });
+
+  const tableDataIncoming = useReactTable({
+    data: dataIncoming,
+    columns: columns,
+    getCoreRowModel: getCoreRowModel(),
+    defaultColumn: {
+      cell: TableCellReadonly,
+    },
+    meta: {},
+  });
+
+  const tableBalance = useReactTable({
+    data: dataBalance,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     defaultColumn: {
@@ -184,9 +236,26 @@ function StatisticsComponent() {
             {t("exportStatistics")}
           </button>
         </div>
+        <h3 className="font-bold text-lg">{t("total")}</h3>
         <CustomTable
           sizeEstimate={45}
-          table={table}
+          table={tableData}
+          trClassName="border-b"
+          trhClassName="border-b"
+          containerClassName="!overflow-visible"
+        />
+        <h3 className="font-bold text-lg">{t("incomeLicitator")}</h3>
+        <CustomTable
+          sizeEstimate={45}
+          table={tableDataIncoming}
+          trClassName="border-b"
+          trhClassName="border-b"
+          containerClassName="!overflow-visible"
+        />
+        <h3 className="font-bold text-lg">{t("balance")}</h3>
+        <CustomTable
+          sizeEstimate={45}
+          table={tableBalance}
           trClassName="border-b"
           trhClassName="border-b"
           containerClassName="!overflow-visible"

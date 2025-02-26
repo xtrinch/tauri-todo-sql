@@ -121,6 +121,7 @@ export const SoldPiecesExport = (params: SoldPiecesExportProps) => {
         </View>
         <View style={styles.address}>
           <Text style={styles.addressName}>{params.seller.seller_name}</Text>
+          <Text>{params.seller.ident}</Text>
           <Text>
             {params.seller.address_line1}, {params.seller.address_line2}
           </Text>

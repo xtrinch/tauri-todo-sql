@@ -25,6 +25,8 @@ export interface Statistics {
   total_bundle_costs: number; // from buyers
   total_loading_costs: number; // from buyers
   costs_above_350: number;
+  sellers_net: number;
+  buyers_net: number;
   top_logs_by_species: TreeSpeciesWithStats[];
   top_logs: WoodPieceStats;
 }
@@ -110,7 +112,8 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     FROM (
       SELECT  -- this one selects one row per buyer, so already summed values
         *,
-        SUM("volume") AS "total_volume"
+        SUM("volume") AS "total_volume",
+        SUM("total_price") AS "total_price1"
       FROM (
         ${woodPiecesSql}
       )
@@ -140,7 +143,10 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
         SUM("num_pieces") AS "num_wood_pieces",
         SUM("num_unsold_pieces") AS "num_unsold_wood_pieces",
         ROUND(SUM("total_loading_costs"), 2) AS "total_loading_costs",
-        ROUND(SUM("total_bundle_costs"), 2) AS "total_bundle_costs"
+        ROUND(SUM("total_bundle_costs"), 2) AS "total_bundle_costs",
+        ROUND(SUM("total_bundle_costs"), 2) AS "total_bundle_costs",
+        ROUND(SUM("buyer_net"), 2) AS "buyers_net",
+        ROUND(SUM("seller_net"), 2) AS "sellers_net"
       FROM ( --- some data from sellers, some data from buyers
         SELECT 
           "total_transport_costs", 
@@ -152,7 +158,9 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
           "num_pieces",
           "num_unsold_pieces",
           NULL AS "total_loading_costs",
-          NULL AS "total_bundle_costs"
+          NULL AS "total_bundle_costs",
+          "total_price1" AS "seller_net",
+          0 AS "buyer_net"
         FROM (${sellersSql})
         UNION ALL 
         SELECT 
@@ -161,11 +169,13 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
           NULL AS "costs_below_350",
           NULL AS "costs_above_350",
           NULL AS "total_volume",
-          NULL AS "offered_price",
+          "offered_price",
           NULL AS "num_pieces",
           NULL AS "num_unsold_pieces",
           "total_loading_costs",
-          "total_bundle_costs"
+          "total_bundle_costs",
+          0 AS "seller_net",
+          "total_price1" AS "buyer_net"
         FROM (${buyersSql})
       ) 
     )
@@ -294,6 +304,8 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     total_transport_costs: priceResult[0].total_transport_costs,
     total_bundle_costs: priceResult[0].total_bundle_costs,
     total_loading_costs: priceResult[0].total_loading_costs,
+    sellers_net: priceResult[0].sellers_net,
+    buyers_net: priceResult[0].buyers_net,
     top_logs_by_species: treeSpecies,
     top_logs: topLogs,
 

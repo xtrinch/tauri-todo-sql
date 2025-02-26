@@ -288,7 +288,7 @@ function SoldPiecesList() {
       () =>
         compact([
           { label: t("totalVolume"), value: `${totalVolume.toFixed(2)} m3` },
-          { label: t("totalGross"), value: `${totalPrice.toFixed(2)} EUR` },
+          { label: t("total"), value: `${totalPrice.toFixed(2)} EUR` },
           {
             label: t("costsTo350"),
             value: `${costsBelow350.toFixed(2)} EUR`,
