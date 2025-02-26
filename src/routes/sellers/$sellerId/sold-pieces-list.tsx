@@ -290,7 +290,7 @@ function SoldPiecesList() {
           { label: t("totalVolume"), value: `${totalVolume.toFixed(2)} m3` },
           { label: t("total"), value: `${totalPrice.toFixed(2)} EUR` },
           {
-            label: t("costsTo350"),
+            label: `${t("costsTo350")} (${settingsData.licitator_fixed_cost} EUR / m3)`,
             value: `${costsBelow350.toFixed(2)} EUR`,
           },
           {
