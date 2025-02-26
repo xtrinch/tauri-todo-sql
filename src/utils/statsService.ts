@@ -29,6 +29,8 @@ export interface Statistics {
   buyers_net: number;
   top_logs_by_species: TreeSpeciesWithStats[];
   top_logs: WoodPieceStats;
+  seller_costs: number;
+  buyer_costs: number;
 }
 
 interface ListOptions {
@@ -131,7 +133,17 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
           + ROUND("costs_above_350", 2)
           + ROUND("total_loading_costs", 2)
           + ROUND("total_bundle_costs", 2)
-        ) AS "total_income"
+        ) AS "total_income",
+      SUM(
+          ROUND("total_transport_costs", 2) 
+          + ROUND("total_logging_costs", 2) 
+          + ROUND("costs_below_350", 2) 
+          + ROUND("costs_above_350", 2)
+        ) AS "seller_costs",
+      SUM(
+          + ROUND("total_loading_costs", 2)
+          + ROUND("total_bundle_costs", 2)
+        ) AS "buyer_costs"
     FROM (
       SELECT --- this one also does the grouping of all rows
         ROUND(SUM("total_transport_costs"), 2) AS total_transport_costs,
@@ -306,6 +318,9 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     total_loading_costs: priceResult[0].total_loading_costs,
     sellers_net: priceResult[0].sellers_net,
     buyers_net: priceResult[0].buyers_net,
+    seller_costs: priceResult[0].seller_costs,
+    buyer_costs: priceResult[0].buyer_costs,
+
     top_logs_by_species: treeSpecies,
     top_logs: topLogs,
 

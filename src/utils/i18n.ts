@@ -156,6 +156,8 @@ const resources = {
       balance: "Balance",
       sellersNetValue: "Sellers net",
       buyersNetValue: "Buyers net",
+      sellersCosts: "Seller costs",
+      buyersCosts: "Buyer costs",
     },
   },
   sl: {
@@ -310,6 +312,8 @@ const resources = {
       balance: "Bilanca",
       sellersNetValue: "Prodajalci neto",
       buyersNetValue: "Kupci neto",
+      sellersCosts: "Stroški prodajalca",
+      buyersCosts: "Stroški kupca",
     },
   },
 };

@@ -150,6 +150,21 @@ function StatisticsComponent() {
         value: `${(statisticsQuery.data.buyers_net || 0).toFixed(2)}`,
         unit: "EUR",
       },
+      {
+        label: t("sellersCosts"),
+        value: `${(statisticsQuery.data.seller_costs || 0).toFixed(2)}`,
+        unit: "EUR",
+      },
+      {
+        label: t("buyersCosts"),
+        value: `${(statisticsQuery.data.buyer_costs || 0).toFixed(2)}`,
+        unit: "EUR",
+      },
+      {
+        label: t("totalIncome"),
+        value: `${(statisticsQuery.data.total_income || 0).toFixed(2)}`,
+        unit: "EUR",
+      },
     ],
     [i18n.language, statisticsQuery.data]
   );
