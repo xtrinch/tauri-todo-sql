@@ -210,7 +210,7 @@ export const StatsExport = (params: StatsExportProps) => {
           <View style={styles.subheader}>
             <Text>{t("topThreeOffers")}</Text>
           </View>
-          {params.statistics.top_logs?.top_logs_total?.length > 0 && (
+          {params.statistics.top_logs?.top_logs_total?.length && (
             <View style={styles.statsTable} wrap={false}>
               <View style={styles.subsubheader}>
                 <Text> {t("topThreeOffersPerTotalPrice")}</Text>
@@ -221,7 +221,7 @@ export const StatsExport = (params: StatsExportProps) => {
               />
             </View>
           )}
-          {params.statistics.top_logs?.top_logs_per_volume?.length > 0 && (
+          {params.statistics.top_logs?.top_logs_per_volume?.length && (
             <View style={styles.statsTable} wrap={false}>
               <View style={styles.subsubheader}>
                 <Text>{t("topThreeOffersPerVolumePrice")}</Text>
@@ -235,38 +235,37 @@ export const StatsExport = (params: StatsExportProps) => {
         </View>
         {params.statistics.top_logs_by_species?.map((ts) => (
           <>
-            {ts.top_logs_per_volume?.length > 0 &&
-              ts.top_logs_total?.length > 0 && (
-                <View style={styles.statView}>
-                  <View style={styles.subheader}>
-                    <Text>{ts.tree_species_name}</Text>
-                  </View>
-                  {ts.top_logs_per_volume?.length > 0 && (
-                    <View style={styles.statsTable} wrap={false}>
-                      <View style={styles.subsubheader}>
-                        <Text>{t("topThreeOffersPerTotalPrice")}</Text>
-                      </View>
-                      <PdfTable
-                        columns={columnsTopThreePerSpecies}
-                        key={ts.id}
-                        data={ts.top_logs_per_volume || []}
-                      />
-                    </View>
-                  )}
-                  {ts.top_logs_total?.length > 0 && (
-                    <View style={styles.statsTable} wrap={false}>
-                      <View style={styles.subsubheader}>
-                        <Text>{t("topThreeOffersPerVolumePrice")}</Text>
-                      </View>
-                      <PdfTable
-                        columns={columnsTopThreePerSpecies}
-                        key={ts.id}
-                        data={ts.top_logs_total || []}
-                      />
-                    </View>
-                  )}
+            {ts.top_logs_per_volume?.length && ts.top_logs_total?.length && (
+              <View style={styles.statView}>
+                <View style={styles.subheader}>
+                  <Text>{ts.tree_species_name}</Text>
                 </View>
-              )}
+                {ts.top_logs_per_volume?.length > 0 && (
+                  <View style={styles.statsTable} wrap={false}>
+                    <View style={styles.subsubheader}>
+                      <Text>{t("topThreeOffersPerTotalPrice")}</Text>
+                    </View>
+                    <PdfTable
+                      columns={columnsTopThreePerSpecies}
+                      key={ts.id}
+                      data={ts.top_logs_per_volume || []}
+                    />
+                  </View>
+                )}
+                {ts.top_logs_total?.length > 0 && (
+                  <View style={styles.statsTable} wrap={false}>
+                    <View style={styles.subsubheader}>
+                      <Text>{t("topThreeOffersPerVolumePrice")}</Text>
+                    </View>
+                    <PdfTable
+                      columns={columnsTopThreePerSpecies}
+                      key={ts.id}
+                      data={ts.top_logs_total || []}
+                    />
+                  </View>
+                )}
+              </View>
+            )}
           </>
         ))}
         <Text
