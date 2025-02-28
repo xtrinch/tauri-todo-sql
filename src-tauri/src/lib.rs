@@ -1,9 +1,10 @@
 // use csv::ReaderBuilder;
 use std::error::Error;
 use tauri_plugin_sql::{Migration, MigrationKind};
-mod commands;
-mod export;
-mod import;
+pub mod commands;
+pub mod export;
+pub mod import;
+pub mod shared;
 use std::fs;
 use tauri::Manager;
 use tauri::{Window, WindowEvent};
@@ -13,38 +14,17 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     // Open the input CSV file
     println!("Current working directory: {:?}", std::env::current_dir()?);
 
-    let sql_statement_tree_species = String::from(
-        "INSERT INTO tree_species (tree_species_name, latin_name, tree_species_name_slo) VALUES 
-            ('Sessile oak', 'Quercus petraea', 'Hrast graden'),
-            ('Pedunculate oak', 'Quercus robur', 'Hrast dob'),
-            ('Beech', 'Fagus sylvatica', 'Bukev'),
-            ('Black locust', 'Robinia pseudoacacia', 'Robinija'),
-            ('European ash', 'Fraxinus excelsior', 'Veliki jesen'),
-            ('Linden', 'Tilia spp.', 'Lipa'),
-            ('Wild cherry', 'Prunus avium', 'Divja češnja'),
-            ('Sharp-leaved ash', 'Fraxinus angustifolia', 'Ostrolistni jesen'),
-            ('Black alder', 'Alnus glutinosa', 'Črna jelša'),
-            ('Walnut', 'Juglans regia', 'Domači oreh'),
-            ('Black poplar', 'Populus nigra', 'Črni topol'),
-            ('Pear', 'Pyrus spp.', 'Hruška'),
-            ('Sweet chestnut', 'Castanea sativa', 'Pravi kostanj'),
-            ('Douglas fir', 'Pseudotsuga menziesii', 'Duglazija'),
-            ('Northern red oak', 'Quercus rubra', 'Rdeči hrast'),
-            ('European white elm', 'Ulmus laevis', 'Vezi'),
-            ('Eastern white pine', 'Pinus strobus', 'Zeleni bor'),
-            ('Scots pine', 'Pinus sylvestris', 'Rdeči bor'),
-            ('Spruce', 'Picea abies', 'Smreka'),
-            ('Sycamore maple', 'Acer pseudoplatanus', 'Gorski javor');
-        \n",
+    let SQL_STATEMENT_TREE_SPECIES = String::from(
+        shared::SQL_STATEMENT_TREE_SPECIES
     );
 
-    let sql_statement_settings = String::from(
-        "INSERT INTO settings (licitator_fixed_cost, licitator_percentage, bundle_cost) VALUES (22.0, 0.06, 7.0);",
+    let SQL_STATEMENT_SETTINGS = String::from(
+        shared::SQL_STATEMENT_SETTINGS
     );
 
     // Use Box::leak to ensure sql statements have a 'static lifetime
-    let sql_statement_tree_species_static: &'static str = Box::leak(sql_statement_tree_species.into_boxed_str());
-    let sql_statement_settings_static: &'static str = Box::leak(sql_statement_settings.into_boxed_str());
+    let SQL_STATEMENT_TREE_SPECIES_static: &'static str = Box::leak(SQL_STATEMENT_TREE_SPECIES.into_boxed_str());
+    let SQL_STATEMENT_SETTINGS_static: &'static str = Box::leak(SQL_STATEMENT_SETTINGS.into_boxed_str());
 
     // Define tables
     let tables = vec![
@@ -206,14 +186,14 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     migrations.push(Migration {
         version: (200) as i64,
         description: "insert_tree_species_data",
-        sql: sql_statement_tree_species_static,
+        sql: SQL_STATEMENT_TREE_SPECIES_static,
         kind: MigrationKind::Up,
     });
     // Add settings insertion
     migrations.push(Migration {
         version: (201) as i64,
         description: "insert_settings_data",
-        sql: sql_statement_settings_static,
+        sql: SQL_STATEMENT_SETTINGS_static,
         kind: MigrationKind::Up,
     });
 
@@ -230,7 +210,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(
             tauri_plugin_sql::Builder::default()
-                .add_migrations("sqlite:main_database_v9.db", migrations)
+                .add_migrations("sqlite:main_database_v10.db", migrations)
                 .build(),
         )
         .invoke_handler(tauri::generate_handler![
@@ -260,7 +240,7 @@ fn event_handler(window: &Window, event: &WindowEvent) {
             match window.path().app_data_dir() {
                 Ok(app_data_dir) => {
                     // Construct the path to the SQLite database file
-                    let sqlite_file = app_data_dir.join("main_database_v9.db");
+                    let sqlite_file = app_data_dir.join("main_database_v10.db");
 
                     // Attempt to remove the file
                     if sqlite_file.exists() {
@@ -294,7 +274,7 @@ fn on_setup(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
         .map_err(|e| format!("Failed to resolve app data directory: {}", e))?;
 
     // Construct the path to the SQLite database file
-    let sqlite_file = app_data_dir.join("main_database_v9.db");
+    let sqlite_file = app_data_dir.join("main_database_v10.db");
 
     // Attempt to remove the file
     if sqlite_file.exists() {

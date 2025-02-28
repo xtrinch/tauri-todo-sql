@@ -4,6 +4,7 @@ use std::error::Error;
 use std::fs::File;
 use std::io::Write;
 use tauri::Manager;
+use crate::shared::{get_connection};
 
 fn export_to_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn Error>> {
     // Define the list of tables to export
@@ -68,21 +69,6 @@ fn get_column_names(table: &str) -> &str {
         "settings" => "id, licitator_fixed_cost, licitator_percentage, bundle_cost",
         _ => "",
     }
-}
-
-// TODO: don't copy paste around
-pub fn get_connection(app_handle: tauri::AppHandle) -> Result<Connection, String> {
-    // Get the app data directory path
-    let app_data_dir = app_handle
-        .path()
-        .app_data_dir()
-        .map_err(|e| format!("Failed to resolve app data directory: {}", e))?;
-
-    // Construct the path to the SQLite database file
-    let sqlite_file = app_data_dir.join("main_database_v9.db");
-
-    // Open the SQLite connection
-    Connection::open(sqlite_file).map_err(|e| e.to_string())
 }
 
 #[tauri::command]

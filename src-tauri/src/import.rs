@@ -2,6 +2,7 @@ use rusqlite::{Connection, Result, ToSql};
 use serde_json::{Map, Value};
 use std::fs;
 use tauri::Manager;
+use crate::shared::{SQL_STATEMENT_TREE_SPECIES, SQL_STATEMENT_SETTINGS, get_connection};
 
 fn truncate_db(conn: &Connection) -> Result<(), Box<dyn std::error::Error>> {
     // Define the specific import sequence
@@ -11,6 +12,26 @@ fn truncate_db(conn: &Connection) -> Result<(), Box<dyn std::error::Error>> {
     for table in import_sequence.iter().rev() {
         let truncate_query = format!("DELETE FROM {};", table);
         conn.execute(&truncate_query, [])?;
+    }
+
+    // Check if we have any tree species
+    let tree_species_count: i32 = conn.query_row(
+        "SELECT COUNT(*) FROM tree_species;",
+        [],
+        |row| row.get(0),
+    )?;
+    if tree_species_count == 0 {
+        conn.execute_batch(SQL_STATEMENT_TREE_SPECIES)?;
+    }
+
+    // Check if we have settings
+    let settings_count: i32 = conn.query_row(
+        "SELECT COUNT(*) FROM settings;",
+        [],
+        |row| row.get(0),
+    )?;
+    if settings_count == 0 {
+        conn.execute_batch(SQL_STATEMENT_SETTINGS)?;
     }
 
     Ok(())
@@ -32,7 +53,7 @@ fn import_from_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn st
     ];
 
     // Truncate tables that are present in the JSON data
-    for table in &import_sequence {
+    for table in import_sequence.iter().rev() {
         if data.contains_key(*table) {
             let truncate_query = format!("DELETE FROM {};", table);
             conn.execute(&truncate_query, [])?;
@@ -93,20 +114,6 @@ fn import_from_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn st
     }
 
     Ok(())
-}
-
-pub fn get_connection(app_handle: tauri::AppHandle) -> Result<Connection, String> {
-    // Get the app data directory path
-    let app_data_dir = app_handle
-        .path()
-        .app_data_dir()
-        .map_err(|e| format!("Failed to resolve app data directory: {}", e))?;
-
-    // Construct the path to the SQLite database file
-    let sqlite_file = app_data_dir.join("main_database_v9.db");
-
-    // Open the SQLite connection
-    Connection::open(sqlite_file).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
