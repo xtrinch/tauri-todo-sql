@@ -46,10 +46,10 @@ function RootComponent() {
 
   const [appVersion, setAppVersion] = useState<string>("");
   const [changes, setChanges] = useState<boolean | null>(
-    localStorage.getItem("unsaved_changes_v9") === "true"
+    localStorage.getItem("unsaved_changes_v10") === "true"
   );
   const [filePath, setFilePath] = useState<string | null>(
-    localStorage.getItem("save_file_path_v9")
+    localStorage.getItem("save_file_path_v10")
   );
   const [fileMenuOpen, setFileMenuOpen] = useState<boolean>(false);
   const [languageMenuOpen, setLanguageMenuOpen] = useState<boolean>(false);
@@ -74,22 +74,28 @@ function RootComponent() {
 
   const saveOnly = async (path?: string) => {
     await savePath(path || filePath!);
-    localStorage.setItem("unsaved_changes_v9", "false");
+    localStorage.setItem("unsaved_changes_v10", "false");
     window.dispatchEvent(new Event("storage"));
     toast.success(t("saveSuccess"));
   };
 
   const loadOnly = async (path?: string) => {
+    const toastId = toast.loading(t("loading"));
     try {
       await invoke("read_json", { filePath: path || filePath });
     } catch (e) {
+      let error = e as Error;
       info(JSON.stringify(e));
+      toast.dismiss(toastId);
+      toast.error(`${t("error")} ${JSON.stringify(error)}`);
       throw e;
     }
-    localStorage.setItem("unsaved_changes_v9", "false");
+    localStorage.setItem("unsaved_changes_v10", "false");
     window.dispatchEvent(new Event("storage"));
     unsetDatabase();
     await queryClient.invalidateQueries();
+    toast.dismiss(toastId);
+    toast.success(t("success"));
   };
 
   const resetToSaved = async () => {
@@ -100,8 +106,8 @@ function RootComponent() {
 
   const resetApplicationData = async () => {
     if (await confirm({ confirmation: t("areYouSure") })) {
-      localStorage.removeItem("save_file_path_v9");
-      localStorage.setItem("unsaved_changes_v9", "false");
+      localStorage.removeItem("save_file_path_v10");
+      localStorage.setItem("unsaved_changes_v10", "false");
       window.dispatchEvent(new Event("storage"));
 
       try {
@@ -124,7 +130,7 @@ function RootComponent() {
       info(JSON.stringify(e));
       throw e;
     }
-    localStorage.setItem("unsaved_changes_v9", "false");
+    localStorage.setItem("unsaved_changes_v10", "false");
   };
 
   const saveAs = async () => {
@@ -235,18 +241,18 @@ function RootComponent() {
 
   useEffect(() => {
     if (filePath) {
-      localStorage.setItem("save_file_path_v9", filePath);
+      localStorage.setItem("save_file_path_v10", filePath);
     } else {
-      localStorage.removeItem("save_file_path_v9");
+      localStorage.removeItem("save_file_path_v10");
     }
   }, [filePath]);
 
   useEffect(() => {
     function checkUserData() {
       const localStorageChanges =
-        localStorage.getItem("unsaved_changes_v9") === "true";
+        localStorage.getItem("unsaved_changes_v10") === "true";
       setChanges(localStorageChanges);
-      const localStorageFilePath = localStorage.getItem("save_file_path_v9");
+      const localStorageFilePath = localStorage.getItem("save_file_path_v10");
       setFilePath(localStorageFilePath);
     }
 
