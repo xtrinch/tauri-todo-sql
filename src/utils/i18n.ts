@@ -162,6 +162,7 @@ const resources = {
       error: "Error",
       statsPerSpecies: "Statistics per species",
       averageOfferedPrice: "Average offered price",
+      checkingForUpdates: "Checking for updates...",
     },
   },
   sl: {
@@ -322,6 +323,7 @@ const resources = {
       error: "Napaka",
       statsPerSpecies: "Statistika po drevesnih vrstah",
       averageOfferedPrice: "Povprečna ponujena cena",
+      checkingForUpdates: "Preverjam posodobitve...",
     },
   },
 };

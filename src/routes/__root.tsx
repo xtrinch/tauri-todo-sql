@@ -14,7 +14,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { info } from "@tauri-apps/plugin-log";
 import { relaunch } from "@tauri-apps/plugin-process";
-import { check } from "@tauri-apps/plugin-updater";
+import { Update, check } from "@tauri-apps/plugin-updater";
 import { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -80,7 +80,9 @@ function RootComponent() {
   };
 
   const loadOnly = async (path?: string) => {
-    const toastId = toast.loading(t("loading"));
+    const toastId = toast.loading(t("loading"), {
+      position: "top-center",
+    });
     try {
       await invoke("read_json", { filePath: path || filePath });
     } catch (e) {
@@ -164,7 +166,19 @@ function RootComponent() {
   };
 
   const checkForUpdates = async () => {
-    const update = await check();
+    const toastId = toast.loading(t("checkingForUpdates"), {
+      position: "top-center",
+    });
+    let update: Update | null = null;
+    try {
+      update = await check();
+    } catch (e) {
+      info(JSON.stringify(e));
+      toast.dismiss(toastId);
+      toast.error(t("error"));
+    }
+    toast.dismiss(toastId);
+
     if (update) {
       console.log(
         `found update ${update.version} from ${update.date} with notes ${update.body}`
