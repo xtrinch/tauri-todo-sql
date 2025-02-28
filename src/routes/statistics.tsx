@@ -276,21 +276,29 @@ function StatisticsComponent() {
           containerClassName="!overflow-visible"
         />
         <DynamicStatsTable
-          title={t("topThreeOffers")}
+          title={t("statsPerSpecies")}
           woodPieces={statisticsQuery.data.top_logs.top_logs_per_volume || []}
           woodPiecesTotal={statisticsQuery.data.top_logs.top_logs_total || []}
           includeTreeSpecies
           volume={statisticsQuery.data.total_volume || 0}
         />
-        {statisticsQuery.data.top_logs_by_species.map((ts) => (
-          <DynamicStatsTable
-            key={ts.id}
-            title={ts.tree_species_name}
-            woodPieces={ts.top_logs_per_volume || []}
-            woodPiecesTotal={ts.top_logs_total || []}
-            volume={ts.volume}
-          />
-        ))}
+        {statisticsQuery.data.top_logs_by_species.map((ts) => {
+          if (!ts.top_logs_per_volume?.length) {
+            return <></>;
+          }
+          return (
+            <DynamicStatsTable
+              key={ts.id}
+              title={ts.tree_species_name}
+              woodPieces={ts.top_logs_per_volume || []}
+              woodPiecesTotal={ts.top_logs_total || []}
+              volume={ts.volume}
+              averageOfferedPrice={
+                statisticsQuery.data.stats_by_species[ts.id]?.avg_offered_price
+              }
+            />
+          );
+        })}
       </div>
     </>
   );

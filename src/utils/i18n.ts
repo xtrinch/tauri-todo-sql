@@ -160,6 +160,8 @@ const resources = {
       buyersCosts: "Buyer costs",
       loading: "Loading...",
       error: "Error",
+      statsPerSpecies: "Statistics per species",
+      averageOfferedPrice: "Average offered price",
     },
   },
   sl: {
@@ -318,6 +320,8 @@ const resources = {
       buyersCosts: "Stroški kupca",
       loading: "Nalagam...",
       error: "Napaka",
+      statsPerSpecies: "Statistika po drevesnih vrstah",
+      averageOfferedPrice: "Povprečna ponujena cena",
     },
   },
 };

@@ -15,6 +15,7 @@ export function DynamicStatsTable(props: {
   title: string;
   volume?: number;
   includeTreeSpecies?: boolean;
+  averageOfferedPrice?: number;
 }) {
   const { t } = useTranslation();
 
@@ -164,6 +165,11 @@ export function DynamicStatsTable(props: {
       {props.volume && (
         <div>
           {t("totalVolume")}: {props.volume || 0} m3
+        </div>
+      )}
+      {props.averageOfferedPrice && (
+        <div>
+          {t("averageOfferedPrice")}: {props.averageOfferedPrice || 0} EUR / m3
         </div>
       )}
       <div className="flex flex-row space-x-5">

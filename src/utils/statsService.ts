@@ -7,9 +7,10 @@ import { ensureTreeSpecies, TreeSpecies } from "./treeSpeciesService";
 import { WoodPiece } from "./woodPieceService";
 
 interface WoodPieceStats {
-  top_logs_per_volume: WoodPiece[];
-  top_logs_total: WoodPiece[];
+  top_logs_per_volume?: WoodPiece[];
+  top_logs_total?: WoodPiece[];
   volume?: number;
+  avg_offered_price?: number;
 }
 type TreeSpeciesWithStats = TreeSpecies & WoodPieceStats;
 
@@ -28,6 +29,7 @@ export interface Statistics {
   sellers_net: number;
   buyers_net: number;
   top_logs_by_species: TreeSpeciesWithStats[];
+  stats_by_species: { [key: string]: TreeSpeciesWithStats };
   top_logs: WoodPieceStats;
   seller_costs: number;
   buyer_costs: number;
@@ -220,14 +222,20 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     ORDER BY "total_price" DESC
   `;
 
-  let topLogsResult: WoodPiece[] = [];
+  let topLogsPerVolumeSpeciesResult: WoodPiece[] = [];
   try {
-    topLogsResult = (await db.select(topLogStatsSql, [])) as WoodPiece[];
+    topLogsPerVolumeSpeciesResult = (await db.select(
+      topLogStatsSql,
+      []
+    )) as WoodPiece[];
   } catch (e) {
     info(JSON.stringify(e));
     throw e;
   }
-  const topLogsGrouped = groupBy(topLogsResult, "tree_species_id");
+  const topLogsPerVolumeSpeciesGrouped = groupBy(
+    topLogsPerVolumeSpeciesResult,
+    "tree_species_id"
+  );
 
   const topLogTotalStatsSql = `
     SELECT 
@@ -248,9 +256,9 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     ORDER BY "total_price" DESC
   `;
 
-  let topLogsTotalResult: WoodPiece[] = [];
+  let topLogsTotalSpeciesResult: WoodPiece[] = [];
   try {
-    topLogsTotalResult = (await db.select(
+    topLogsTotalSpeciesResult = (await db.select(
       topLogTotalStatsSql,
       []
     )) as WoodPiece[];
@@ -258,7 +266,10 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
     info(JSON.stringify(e));
     throw e;
   }
-  const topLogsTotalGrouped = groupBy(topLogsTotalResult, "tree_species_id");
+  const topLogsTotalSpeciesGrouped = groupBy(
+    topLogsTotalSpeciesResult,
+    "tree_species_id"
+  );
 
   const treeSpeciesCubatureStatsSql = `
   SELECT 
@@ -293,16 +304,46 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
   })) as any;
 
   treeSpecies = treeSpecies.map((ts) => {
-    ts.top_logs_per_volume = topLogsGrouped[ts.id];
-    ts.top_logs_total = topLogsTotalGrouped[ts.id];
+    ts.top_logs_per_volume = topLogsPerVolumeSpeciesGrouped[ts.id];
+    ts.top_logs_total = topLogsTotalSpeciesGrouped[ts.id];
     ts.volume = treeSpeciesCubatureGrouped[ts.id]?.total_volume;
     return ts;
   });
 
   const topLogs: WoodPieceStats = {
-    top_logs_per_volume: topLogsResult.slice(0, 3),
-    top_logs_total: topLogsTotalResult.slice(0, 3),
+    top_logs_per_volume: topLogsPerVolumeSpeciesResult.slice(0, 3), // reuse the top logs per species result and take the first three
+    top_logs_total: topLogsTotalSpeciesResult.slice(0, 3), // reuse the top logs per species result and take the first three
   };
+
+  const averagePerSpeciesSql = `
+    SELECT 
+      *,
+      ROUND(AVG("offered_price"), 2) as "avg_offered_price",
+      ${opts.language === "sl" ? "tree_species_name_slo" : "tree_species_name"} as "tree_species_name"
+    FROM (
+      SELECT 
+        *,
+        "wpo"."offered_price" * "volume" as "offered_total_price"
+      FROM (
+        ${woodPiecesSql}
+      ) as wpo
+    ) AS wp
+    LEFT JOIN "tree_species" ON "wp"."tree_species_id" = "tree_species"."id"
+    WHERE "offered_price" > 0
+    GROUP BY "tree_species"."id"
+  `;
+
+  let averagePerSpeciesResult: TreeSpeciesWithStats[] = [];
+  try {
+    averagePerSpeciesResult = (await db.select(
+      averagePerSpeciesSql,
+      []
+    )) as TreeSpeciesWithStats[];
+  } catch (e) {
+    info(JSON.stringify(e));
+    throw e;
+  }
+  const averagePerSpeciesKeyed = keyBy(averagePerSpeciesResult, "id");
 
   const statistics: Statistics = {
     num_wood_pieces: priceResult[0].num_wood_pieces,
@@ -323,15 +364,7 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
 
     top_logs_by_species: treeSpecies,
     top_logs: topLogs,
-
-    // num_wood_pieces: totalResult[0].num_wood_pieces,
-    // offered_max_price: totalResult[0].offered_max_price,
-    // total_volume: totalResult[0].total_volume,
-    // total_income: licitatorIncome.toNumber(),
-    // costs_below_350: costsBelow350.toNumber(),
-    // costs_above_350: costsAbove350.toNumber(),
-    // total_logging_costs: loggingCosts.toNumber(),
-    // total_transport_costs: transportCosts.toNumber(),
+    stats_by_species: averagePerSpeciesKeyed,
   };
   return statistics;
 };
