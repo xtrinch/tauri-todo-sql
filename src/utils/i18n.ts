@@ -163,6 +163,7 @@ const resources = {
       statsPerSpecies: "Statistics per species",
       averageOfferedPrice: "Average offered price",
       checkingForUpdates: "Checking for updates...",
+      unsavedChangesFound: "Unsaved changes found. Proceed anyway?",
     },
   },
   sl: {
@@ -324,6 +325,7 @@ const resources = {
       statsPerSpecies: "Statistika po drevesnih vrstah",
       averageOfferedPrice: "Povprečna ponujena cena",
       checkingForUpdates: "Preverjam posodobitve...",
+      unsavedChangesFound: "Najdene neshranjene spremembe. Vseeno nadaljujem?",
     },
   },
 };

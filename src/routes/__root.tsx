@@ -45,6 +45,7 @@ function RootComponent() {
   getVersion().then((version) => setAppVersion(version));
 
   const [appVersion, setAppVersion] = useState<string>("");
+  // whether app has unsaved changes
   const [changes, setChanges] = useState<boolean | null>(
     localStorage.getItem("unsaved_changes_v10") === "true"
   );
@@ -166,6 +167,16 @@ function RootComponent() {
   };
 
   const checkForUpdates = async () => {
+    if (changes) {
+      const confirmed = await confirm({
+        confirmation: t("unsavedChangesFound"),
+        title: t("info"),
+      });
+      if (!confirmed) {
+        return;
+      }
+    }
+
     const toastId = toast.loading(t("checkingForUpdates"), {
       position: "top-center",
     });
@@ -179,62 +190,62 @@ function RootComponent() {
     }
     toast.dismiss(toastId);
 
-    if (update) {
-      console.log(
-        `found update ${update.version} from ${update.date} with notes ${update.body}`
-      );
-
-      if (
-        await confirm({
-          confirmation: `${t("foundUpdate")} ${update.version}. ${t("shouldRelaunch")}`,
-          title: t("info"),
-        })
-      ) {
-        let downloaded = 0;
-        let contentLength = 0;
-        let toastId: string;
-        const prepareToastId = toast.loading(t("preparingUpdate"), {
-          position: "top-center",
-        });
-        // alternatively we could also call update.download() and update.install() separately
-        await update.downloadAndInstall((event) => {
-          try {
-            // we do not want this to throw under any circumstance
-            toast.dismiss(prepareToastId);
-          } catch (e) {}
-          switch (event.event) {
-            case "Started":
-              contentLength = event.data.contentLength!;
-              info(`started downloading ${event.data.contentLength} bytes`);
-              toastId = toast.loading(t("downloading"), {
-                position: "top-center",
-              });
-              break;
-            case "Progress":
-              downloaded += event.data.chunkLength;
-              info(`downloaded ${downloaded} from ${contentLength}`);
-              break;
-            case "Finished":
-              info("download finished");
-              toast.dismiss(toastId);
-              break;
-          }
-        });
-
-        toast.success(t("updateInstalled"));
-        try {
-          await relaunch();
-        } catch (e) {
-          toast.error(t("failedToRelaunch"));
-          info(JSON.stringify(e));
-        }
-      }
-    } else {
+    if (!update) {
       await confirm({
         confirmation: t("noUpdatesFound"),
         title: t("info"),
         hideCancel: true,
       });
+      return;
+    }
+    console.log(
+      `found update ${update.version} from ${update.date} with notes ${update.body}`
+    );
+
+    if (
+      await confirm({
+        confirmation: `${t("foundUpdate")} ${update.version}. ${t("shouldRelaunch")}`,
+        title: t("info"),
+      })
+    ) {
+      let downloaded = 0;
+      let contentLength = 0;
+      let toastId: string;
+      const prepareToastId = toast.loading(t("preparingUpdate"), {
+        position: "top-center",
+      });
+      // alternatively we could also call update.download() and update.install() separately
+      await update.downloadAndInstall((event) => {
+        try {
+          // we do not want this to throw under any circumstance
+          toast.dismiss(prepareToastId);
+        } catch (e) {}
+        switch (event.event) {
+          case "Started":
+            contentLength = event.data.contentLength!;
+            info(`started downloading ${event.data.contentLength} bytes`);
+            toastId = toast.loading(t("downloading"), {
+              position: "top-center",
+            });
+            break;
+          case "Progress":
+            downloaded += event.data.chunkLength;
+            info(`downloaded ${downloaded} from ${contentLength}`);
+            break;
+          case "Finished":
+            info("download finished");
+            toast.dismiss(toastId);
+            break;
+        }
+      });
+
+      toast.success(t("updateInstalled"));
+      try {
+        await relaunch();
+      } catch (e) {
+        toast.error(t("failedToRelaunch"));
+        info(JSON.stringify(e));
+      }
     }
   };
 
@@ -283,6 +294,7 @@ function RootComponent() {
 
   useEffect(() => {
     function disableContextMenu(e: Event) {
+      // do not show any default context menus on right click
       if (window.location.hostname !== "tauri.localhost") {
         return;
       }
