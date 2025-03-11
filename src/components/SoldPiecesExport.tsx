@@ -34,10 +34,15 @@ const styles = StyleSheet.create({
   address: {
     fontSize: 14,
     marginBottom: 14,
+    width: "100%",
   },
   addressName: {
     fontSize: 16,
     fontWeight: "bold",
+  },
+  info: {
+    display: "flex",
+    flexDirection: "row",
   },
 });
 
@@ -119,13 +124,16 @@ export const SoldPiecesExport = (params: SoldPiecesExportProps) => {
         <View style={styles.header}>
           <Text>{t("soldPieces")}</Text>
         </View>
-        <View style={styles.address}>
-          <Text style={styles.addressName}>{params.seller.seller_name}</Text>
-          <Text>{params.seller.ident}</Text>
-          <Text>
-            {params.seller.address_line1}, {params.seller.address_line2}
-          </Text>
-          <Text>{params.seller.iban}</Text>
+        <View style={styles.info}>
+          <View style={styles.address}>
+            <Text style={styles.addressName}>{params.seller.seller_name}</Text>
+            <Text>{params.seller.address_line1}</Text>
+            <Text>{params.seller.address_line2}</Text>
+          </View>
+          <View style={styles.address}>
+            <Text>{params.seller.ident}</Text>
+            <Text>{params.seller.iban}</Text>
+          </View>
         </View>
         <View style={styles.topTable}>
           <PdfTable data={params.woodPiecesData} columns={columns} />

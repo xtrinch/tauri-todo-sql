@@ -7,7 +7,9 @@ import { proxy, wrap } from "comlink";
 import { WorkerType } from "../workers/pdf.worker";
 import Worker from "../workers/pdf.worker?worker";
 
-export const pdfWorker = wrap<WorkerType>(new Worker({ name: "pdf-worker" }));
+export const pdfWorker = wrap<WorkerType>(
+  new Worker({ name: `pdf-worker-${Math.random()}` })
+);
 pdfWorker.onProgress(proxy((data: any) => info(data)));
 export enum PdfTypeEnum {
   catalogForBuyers = "catalogForBuyers",

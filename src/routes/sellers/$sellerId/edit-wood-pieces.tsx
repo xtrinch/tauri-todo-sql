@@ -113,7 +113,7 @@ function WoodPiecesList() {
       {
         accessorKey: "min_price",
         header: () => t("minPrice"),
-        size: 80,
+        size: 100,
         meta: {
           type: "float",
         },
