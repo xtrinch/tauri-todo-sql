@@ -21,6 +21,8 @@ import {
   WoodPiece,
   woodPiecesQueryOptions,
 } from "../../../utils/woodPieceService";
+import sanitize from "sanitize-filename";
+
 export const Route = createFileRoute("/sellers/$sellerId/sold-pieces-list")({
   component: SoldPiecesList,
 });
@@ -364,7 +366,7 @@ function SoldPiecesList() {
           extensions: ["pdf"],
         },
       ],
-      defaultPath: t("soldPiecesPDFName"),
+      defaultPath: `${t("soldPiecesPDFName")}-${sanitize(seller.seller_name)}`,
     });
     if (path) {
       await saveToPDF(

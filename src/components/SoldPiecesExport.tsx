@@ -1,6 +1,7 @@
 import {
   Document,
   Font,
+  Image,
   Page,
   StyleSheet,
   Text,
@@ -12,6 +13,7 @@ import font from "../assets/fonts/Roboto-Regular.ttf";
 import { Seller } from "../utils/sellerService";
 import { WoodPiece } from "../utils/woodPieceService";
 import { PdfTable, PdfTableCol } from "./PdfTable";
+import headerImage from "../assets/images/header-image.png";
 
 Font.register({ family: "Roboto", src: font });
 
@@ -22,6 +24,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: "30px",
     fontSize: 12,
+  },
+  image: {
+    width: 450, // Set the width of the image
+    height: "auto", // Maintain aspect ratio
+    borderWidth: "2px",
+    borderColor: "black",
+    borderStyle: "solid",
+    marginBottom: 40,
+    marginLeft: "auto",
+    marginRight: "auto",
   },
   topTable: {
     marginBottom: 15,
@@ -121,6 +133,9 @@ export const SoldPiecesExport = (params: SoldPiecesExportProps) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
+        <View>
+          <Image src={headerImage} style={styles.image} />
+        </View>
         <View style={styles.header}>
           <Text>{t("soldPieces")}</Text>
         </View>
