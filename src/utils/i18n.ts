@@ -164,6 +164,8 @@ const resources = {
       averageOfferedPrice: "Average offered price",
       checkingForUpdates: "Checking for updates...",
       unsavedChangesFound: "Unsaved changes found. Proceed anyway?",
+      generalStatistics: "General statistics",
+      statisticsForBuyers: "Statistics for buyers",
     },
   },
   sl: {
@@ -289,6 +291,7 @@ const resources = {
       totalPrice: "Skupna cena",
       success: "Uspešno",
       generating: "Generiranje...",
+      generalStatistics: "Splošna statistika",
       companyName: "Ime podjetja",
       address: "Naslov",
       stamp: "Žig",
@@ -326,6 +329,7 @@ const resources = {
       averageOfferedPrice: "Povprečna ponujena cena",
       checkingForUpdates: "Preverjam posodobitve...",
       unsavedChangesFound: "Najdene neshranjene spremembe. Vseeno nadaljujem?",
+      statisticsForBuyers: "Statistika za kupce",
     },
   },
 };
