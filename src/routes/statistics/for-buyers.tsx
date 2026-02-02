@@ -1,243 +1,243 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+// import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import {
-    ColumnDef,
-    getCoreRowModel,
-    useReactTable,
-} from "@tanstack/react-table";
-import { save } from "@tauri-apps/plugin-dialog";
-import { openPath } from "@tauri-apps/plugin-opener";
-import { useMemo } from "react";
-import toast from "react-hot-toast";
-import { useTranslation } from "react-i18next";
-import { CustomTable } from "../../components/CustomTable";
-import { DynamicStatsTable } from "../../components/DynamicStatsTable";
-import { TableCellReadonly } from "../../components/TableCellReadonly";
-import { PdfTypeEnum, saveToPDF } from "../../utils/pdf";
-import { settingsQueryOptions } from "../../utils/settingsService";
-import { statsQueryOptions } from "../../utils/statsService";
+// import {
+//     ColumnDef,
+//     getCoreRowModel,
+//     useReactTable,
+// } from "@tanstack/react-table";
+// import { save } from "@tauri-apps/plugin-dialog";
+// import { openPath } from "@tauri-apps/plugin-opener";
+// import { useMemo } from "react";
+// import toast from "react-hot-toast";
+// import { useTranslation } from "react-i18next";
+// import { CustomTable } from "../../components/CustomTable";
+// import { DynamicStatsTable } from "../../components/DynamicStatsTable";
+// import { TableCellReadonly } from "../../components/TableCellReadonly";
+// import { PdfTypeEnum, saveToPDF } from "../../utils/pdf";
+// import { settingsQueryOptions } from "../../utils/settingsService";
+// import { statsQueryOptions } from "../../utils/statsService";
 
 export const Route = createFileRoute("/statistics/for-buyers")({
     component: StatisticsForBuyersComponent,
 });
 
 function StatisticsForBuyersComponent() {
-    const { t, i18n } = useTranslation();
+    // const { t, i18n } = useTranslation();
 
-    const statisticsQuery = useSuspenseQuery(
-        statsQueryOptions({
-            ...Route.useLoaderDeps(),
-            language: i18n.language as "en" | "sl",
-        })
-    );
+    // const statisticsQuery = useSuspenseQuery(
+    //     statsQueryOptions({
+    //         ...Route.useLoaderDeps(),
+    //         language: i18n.language as "en" | "sl",
+    //     })
+    // );
 
-    const settingsQuery = useSuspenseQuery(
-        settingsQueryOptions({
-            ...Route.useLoaderDeps(),
-            language: i18n.language as "en" | "sl",
-        })
-    );
-    const settingsData = settingsQuery.data;
+    // const settingsQuery = useSuspenseQuery(
+    //     settingsQueryOptions({
+    //         ...Route.useLoaderDeps(),
+    //         language: i18n.language as "en" | "sl",
+    //     })
+    // );
+    // const settingsData = settingsQuery.data;
 
-    const columns = useMemo<ColumnDef<unknown, any>[]>(
-        () => [
-            {
-                accessorKey: "label",
-                size: 650,
-                header: () => t("summary"),
-            },
-            {
-                accessorKey: "value",
-                size: 100,
-                header: () => t("value"),
-            },
-            {
-                accessorKey: "unit",
-                size: 90,
-                header: () => t("unit"),
-            },
-        ],
-        []
-    );
+    // const columns = useMemo<ColumnDef<unknown, any>[]>(
+    //     () => [
+    //         {
+    //             accessorKey: "label",
+    //             size: 650,
+    //             header: () => t("summary"),
+    //         },
+    //         {
+    //             accessorKey: "value",
+    //             size: 100,
+    //             header: () => t("value"),
+    //         },
+    //         {
+    //             accessorKey: "unit",
+    //             size: 90,
+    //             header: () => t("unit"),
+    //         },
+    //     ],
+    //     []
+    // );
 
-    const data: { label: string; value: string; unit: string; bold?: boolean }[] =
-        useMemo(
-            () => [
-                {
-                    label: t("numWoodPieces"),
-                    value: `${statisticsQuery.data.num_wood_pieces || 0}`,
-                    unit: "",
-                },
-                {
-                    label: t("numUnsoldWoodPieces"),
-                    value: `${statisticsQuery.data.num_unsold_wood_pieces || 0}`,
-                    unit: "",
-                },
-                {
-                    label: t("totalVolume"),
-                    value: `${(statisticsQuery.data.total_volume || 0).toFixed(2)}`,
-                    unit: "m3",
-                },
-                {
-                    label: t("offeredMaxPrice"),
-                    value: `${(statisticsQuery.data.offered_max_price || 0).toFixed(2)}`,
-                    unit: "EUR / m3",
-                },
-            ],
-            [i18n.language, statisticsQuery.data]
-        );
+    // const data: { label: string; value: string; unit: string; bold?: boolean }[] =
+    //     useMemo(
+    //         () => [
+    //             {
+    //                 label: t("numWoodPieces"),
+    //                 value: `${statisticsQuery.data.num_wood_pieces || 0}`,
+    //                 unit: "",
+    //             },
+    //             {
+    //                 label: t("numUnsoldWoodPieces"),
+    //                 value: `${statisticsQuery.data.num_unsold_wood_pieces || 0}`,
+    //                 unit: "",
+    //             },
+    //             {
+    //                 label: t("totalVolume"),
+    //                 value: `${(statisticsQuery.data.total_volume || 0).toFixed(2)}`,
+    //                 unit: "m3",
+    //             },
+    //             {
+    //                 label: t("offeredMaxPrice"),
+    //                 value: `${(statisticsQuery.data.offered_max_price || 0).toFixed(2)}`,
+    //                 unit: "EUR / m3",
+    //             },
+    //         ],
+    //         [i18n.language, statisticsQuery.data]
+    //     );
 
-    const dataIncoming: {
-        label: string;
-        value: string;
-        unit: string;
-        bold?: boolean;
-    }[] = useMemo(
-        () => [
-            {
-                label: t("loggingCosts"),
-                value: `${(statisticsQuery.data.total_logging_costs || 0).toFixed(2)}`,
-                unit: "EUR",
-            },
-            {
-                label: t("transportCosts"),
-                value: `${(statisticsQuery.data.total_transport_costs || 0).toFixed(2)}`,
-                unit: "EUR",
-            },
-            {
-                label: `${t("costsTo350")} (${settingsData.licitator_fixed_cost} EUR / m3)`,
-                value: `${(statisticsQuery.data.costs_below_350 || 0).toFixed(2)}`,
-                unit: "EUR",
-            },
-            {
-                label: `${t("costsAbove350")} (${settingsData.licitator_percentage * 100}%)`,
-                value: `${(statisticsQuery.data.costs_above_350 || 0).toFixed(2)}`,
-                unit: "EUR",
-            },
-            {
-                label: `${t("bundleCosts")} (${settingsData.bundle_cost} EUR / m3)`,
-                value: `${(statisticsQuery.data.total_bundle_costs || 0).toFixed(2)}`,
-                unit: "EUR",
-            },
-            {
-                label: `${t("loadingCosts")} (x EUR / m3)`,
-                value: `${(statisticsQuery.data.total_loading_costs || 0).toFixed(2)}`,
-                unit: "EUR",
-            },
-            {
-                label: t("totalIncome"),
-                value: `${(statisticsQuery.data.total_income || 0).toFixed(2)}`,
-                unit: "EUR",
-            },
-        ],
-        [i18n.language, statisticsQuery.data]
-    );
+    // const dataIncoming: {
+    //     label: string;
+    //     value: string;
+    //     unit: string;
+    //     bold?: boolean;
+    // }[] = useMemo(
+    //     () => [
+    //         {
+    //             label: t("loggingCosts"),
+    //             value: `${(statisticsQuery.data.total_logging_costs || 0).toFixed(2)}`,
+    //             unit: "EUR",
+    //         },
+    //         {
+    //             label: t("transportCosts"),
+    //             value: `${(statisticsQuery.data.total_transport_costs || 0).toFixed(2)}`,
+    //             unit: "EUR",
+    //         },
+    //         {
+    //             label: `${t("costsTo350")} (${settingsData.licitator_fixed_cost} EUR / m3)`,
+    //             value: `${(statisticsQuery.data.costs_below_350 || 0).toFixed(2)}`,
+    //             unit: "EUR",
+    //         },
+    //         {
+    //             label: `${t("costsAbove350")} (${settingsData.licitator_percentage * 100}%)`,
+    //             value: `${(statisticsQuery.data.costs_above_350 || 0).toFixed(2)}`,
+    //             unit: "EUR",
+    //         },
+    //         {
+    //             label: `${t("bundleCosts")} (${settingsData.bundle_cost} EUR / m3)`,
+    //             value: `${(statisticsQuery.data.total_bundle_costs || 0).toFixed(2)}`,
+    //             unit: "EUR",
+    //         },
+    //         {
+    //             label: `${t("loadingCosts")} (x EUR / m3)`,
+    //             value: `${(statisticsQuery.data.total_loading_costs || 0).toFixed(2)}`,
+    //             unit: "EUR",
+    //         },
+    //         {
+    //             label: t("totalIncome"),
+    //             value: `${(statisticsQuery.data.total_income || 0).toFixed(2)}`,
+    //             unit: "EUR",
+    //         },
+    //     ],
+    //     [i18n.language, statisticsQuery.data]
+    // );
 
-    const dataBalance: {
-        label: string;
-        value: string;
-        unit: string;
-        bold?: boolean;
-    }[] = useMemo(
-        () => [
-            {
-                label: t("sellersNetValue"),
-                value: `-${(statisticsQuery.data.sellers_net || 0).toFixed(2)}`,
-                unit: "EUR",
-            },
-            {
-                label: t("buyersNetValue"),
-                value: `${(statisticsQuery.data.buyers_net || 0).toFixed(2)}`,
-                unit: "EUR",
-            },
-            {
-                label: t("sellersCosts"),
-                value: `${(statisticsQuery.data.seller_costs || 0).toFixed(2)}`,
-                unit: "EUR",
-            },
-            {
-                label: t("buyersCosts"),
-                value: `${(statisticsQuery.data.buyer_costs || 0).toFixed(2)}`,
-                unit: "EUR",
-            },
-            {
-                label: t("totalIncome"),
-                value: `${(statisticsQuery.data.total_income || 0).toFixed(2)}`,
-                unit: "EUR",
-            },
-        ],
-        [i18n.language, statisticsQuery.data]
-    );
+    // const dataBalance: {
+    //     label: string;
+    //     value: string;
+    //     unit: string;
+    //     bold?: boolean;
+    // }[] = useMemo(
+    //     () => [
+    //         {
+    //             label: t("sellersNetValue"),
+    //             value: `-${(statisticsQuery.data.sellers_net || 0).toFixed(2)}`,
+    //             unit: "EUR",
+    //         },
+    //         {
+    //             label: t("buyersNetValue"),
+    //             value: `${(statisticsQuery.data.buyers_net || 0).toFixed(2)}`,
+    //             unit: "EUR",
+    //         },
+    //         {
+    //             label: t("sellersCosts"),
+    //             value: `${(statisticsQuery.data.seller_costs || 0).toFixed(2)}`,
+    //             unit: "EUR",
+    //         },
+    //         {
+    //             label: t("buyersCosts"),
+    //             value: `${(statisticsQuery.data.buyer_costs || 0).toFixed(2)}`,
+    //             unit: "EUR",
+    //         },
+    //         {
+    //             label: t("totalIncome"),
+    //             value: `${(statisticsQuery.data.total_income || 0).toFixed(2)}`,
+    //             unit: "EUR",
+    //         },
+    //     ],
+    //     [i18n.language, statisticsQuery.data]
+    // );
 
-    const tableData = useReactTable({
-        data: data,
-        columns: columns,
-        getCoreRowModel: getCoreRowModel(),
-        defaultColumn: {
-            cell: TableCellReadonly,
-        },
-        meta: {},
-    });
+    // const tableData = useReactTable({
+    //     data: data,
+    //     columns: columns,
+    //     getCoreRowModel: getCoreRowModel(),
+    //     defaultColumn: {
+    //         cell: TableCellReadonly,
+    //     },
+    //     meta: {},
+    // });
 
-    const tableDataIncoming = useReactTable({
-        data: dataIncoming,
-        columns: columns,
-        getCoreRowModel: getCoreRowModel(),
-        defaultColumn: {
-            cell: TableCellReadonly,
-        },
-        meta: {},
-    });
+    // const tableDataIncoming = useReactTable({
+    //     data: dataIncoming,
+    //     columns: columns,
+    //     getCoreRowModel: getCoreRowModel(),
+    //     defaultColumn: {
+    //         cell: TableCellReadonly,
+    //     },
+    //     meta: {},
+    // });
 
-    const tableBalance = useReactTable({
-        data: dataBalance,
-        columns: columns,
-        getCoreRowModel: getCoreRowModel(),
-        defaultColumn: {
-            cell: TableCellReadonly,
-        },
-        meta: {},
-    });
+    // const tableBalance = useReactTable({
+    //     data: dataBalance,
+    //     columns: columns,
+    //     getCoreRowModel: getCoreRowModel(),
+    //     defaultColumn: {
+    //         cell: TableCellReadonly,
+    //     },
+    //     meta: {},
+    // });
 
-    const exportToFile = async () => {
-        const path = await save({
-            filters: [
-                {
-                    name: "pdf",
-                    extensions: ["pdf"],
-                },
-            ],
-            defaultPath: t("statisticsPDFName"),
-        });
-        let toastId: string;
-        if (path) {
-            toastId = toast.loading(t("generating"), {
-                position: "top-center",
-            });
-            try {
-                await saveToPDF(
-                    path,
-                    {
-                        statistics: statisticsQuery.data,
-                        overallData: data,
-                    },
-                    PdfTypeEnum.statistics,
-                    i18n.language
-                );
-            } catch (e) {
-                let error = e as Error;
-                toast.error(`${error.message}`, {
-                    duration: 10000,
-                });
-                throw e;
-            } finally {
-                toast.dismiss(toastId);
-            }
+    // const exportToFile = async () => {
+    //     const path = await save({
+    //         filters: [
+    //             {
+    //                 name: "pdf",
+    //                 extensions: ["pdf"],
+    //             },
+    //         ],
+    //         defaultPath: t("statisticsPDFName"),
+    //     });
+    //     let toastId: string;
+    //     if (path) {
+    //         toastId = toast.loading(t("generating"), {
+    //             position: "top-center",
+    //         });
+    //         try {
+    //             await saveToPDF(
+    //                 path,
+    //                 {
+    //                     statistics: statisticsQuery.data,
+    //                     overallData: data,
+    //                 },
+    //                 PdfTypeEnum.statistics,
+    //                 i18n.language
+    //             );
+    //         } catch (e) {
+    //             let error = e as Error;
+    //             toast.error(`${error.message}`, {
+    //                 duration: 10000,
+    //             });
+    //             throw e;
+    //         } finally {
+    //             toast.dismiss(toastId);
+    //         }
 
-            await openPath(path);
-            toast.success(t("success"));
-        }
-    };
+    //         await openPath(path);
+    //         toast.success(t("success"));
+    //     }
+    // };
 
     return (
         <>
