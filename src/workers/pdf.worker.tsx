@@ -3,6 +3,7 @@ import { expose } from "comlink";
 import { BoughtPiecesExportProps } from "../components/BoughtPiecesExport";
 import { CatalogueExportForBuyersProps } from "../components/CatalogueExportForBuyers";
 import { CatalogueExportWithPricesProps } from "../components/CatalogueExportWithPrices";
+import { StatsForBuyersExportProps } from "../components/StatsForBuyersExport";
 import { SellerPiecesExportProps } from "../components/SellerPiecesExport";
 import { SoldPiecesExportProps } from "../components/SoldPiecesExport";
 import { StatsExportProps } from "../components/StatsExport";
@@ -128,6 +129,22 @@ const renderPDFInWorker = async (
 
       try {
         blob = await pdf(<BoughtPiecesExport {...dataBoughtPieces} />).toBlob();
+      } catch (e) {
+        throw e;
+      }
+
+      break;
+    case "statisticsForBuyers":
+      const { StatsForBuyersExport } = await import(
+        "../components/StatsForBuyersExport"
+      );
+
+      const statsForBuyersData: StatsForBuyersExportProps = JSON.parse(props);
+
+      try {
+        blob = await pdf(
+          <StatsForBuyersExport {...statsForBuyersData} />
+        ).toBlob();
       } catch (e) {
         throw e;
       }

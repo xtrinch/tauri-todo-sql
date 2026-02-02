@@ -1,304 +1,210 @@
-// import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-// import {
-//     ColumnDef,
-//     getCoreRowModel,
-//     useReactTable,
-// } from "@tanstack/react-table";
-// import { save } from "@tauri-apps/plugin-dialog";
-// import { openPath } from "@tauri-apps/plugin-opener";
-// import { useMemo } from "react";
-// import toast from "react-hot-toast";
-// import { useTranslation } from "react-i18next";
-// import { CustomTable } from "../../components/CustomTable";
-// import { DynamicStatsTable } from "../../components/DynamicStatsTable";
-// import { TableCellReadonly } from "../../components/TableCellReadonly";
-// import { PdfTypeEnum, saveToPDF } from "../../utils/pdf";
-// import { settingsQueryOptions } from "../../utils/settingsService";
-// import { statsQueryOptions } from "../../utils/statsService";
+import {
+  ColumnDef,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { CustomTable } from "../../components/CustomTable";
+import { TableCellReadonly } from "../../components/TableCellReadonly";
+import { PdfTypeEnum, saveToPDF } from "../../utils/pdf";
+import { statsForBuyersQueryOptions } from "../../utils/statsForBuyersService";
+import { WoodPiece } from "../../utils/woodPieceService";
+import { save } from "@tauri-apps/plugin-dialog";
+import { openPath } from "@tauri-apps/plugin-opener";
+import toast from "react-hot-toast";
 
 export const Route = createFileRoute("/statistics/for-buyers")({
-    component: StatisticsForBuyersComponent,
+  component: StatisticsForBuyersComponent,
 });
 
+const defaultLimit = 20;
+const limitDebounceMs = 350;
+
 function StatisticsForBuyersComponent() {
-    // const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [limitInput, setLimitInput] = useState<string>(String(defaultLimit));
+  const [limit, setLimit] = useState<number>(defaultLimit);
 
-    // const statisticsQuery = useSuspenseQuery(
-    //     statsQueryOptions({
-    //         ...Route.useLoaderDeps(),
-    //         language: i18n.language as "en" | "sl",
-    //     })
-    // );
+  useEffect(() => {
+    const trimmed = limitInput.trim();
+    const parsed = Number(trimmed);
+    if (!trimmed || Number.isNaN(parsed)) {
+      return;
+    }
+    const nextLimit = Math.max(1, Math.floor(parsed));
+    const handle = window.setTimeout(() => {
+      setLimit(nextLimit);
+    }, limitDebounceMs);
+    return () => window.clearTimeout(handle);
+  }, [limitInput]);
 
-    // const settingsQuery = useSuspenseQuery(
-    //     settingsQueryOptions({
-    //         ...Route.useLoaderDeps(),
-    //         language: i18n.language as "en" | "sl",
-    //     })
-    // );
-    // const settingsData = settingsQuery.data;
+  const statisticsQuery = useSuspenseQuery(
+    statsForBuyersQueryOptions({
+      ...Route.useLoaderDeps(),
+      language: i18n.language as "en" | "sl",
+      limit,
+    })
+  );
 
-    // const columns = useMemo<ColumnDef<unknown, any>[]>(
-    //     () => [
-    //         {
-    //             accessorKey: "label",
-    //             size: 650,
-    //             header: () => t("summary"),
-    //         },
-    //         {
-    //             accessorKey: "value",
-    //             size: 100,
-    //             header: () => t("value"),
-    //         },
-    //         {
-    //             accessorKey: "unit",
-    //             size: 90,
-    //             header: () => t("unit"),
-    //         },
-    //     ],
-    //     []
-    // );
+  const speciesStats = statisticsQuery.data.top_pieces_by_species;
 
-    // const data: { label: string; value: string; unit: string; bold?: boolean }[] =
-    //     useMemo(
-    //         () => [
-    //             {
-    //                 label: t("numWoodPieces"),
-    //                 value: `${statisticsQuery.data.num_wood_pieces || 0}`,
-    //                 unit: "",
-    //             },
-    //             {
-    //                 label: t("numUnsoldWoodPieces"),
-    //                 value: `${statisticsQuery.data.num_unsold_wood_pieces || 0}`,
-    //                 unit: "",
-    //             },
-    //             {
-    //                 label: t("totalVolume"),
-    //                 value: `${(statisticsQuery.data.total_volume || 0).toFixed(2)}`,
-    //                 unit: "m3",
-    //             },
-    //             {
-    //                 label: t("offeredMaxPrice"),
-    //                 value: `${(statisticsQuery.data.offered_max_price || 0).toFixed(2)}`,
-    //                 unit: "EUR / m3",
-    //             },
-    //         ],
-    //         [i18n.language, statisticsQuery.data]
-    //     );
+  const exportToFile = async () => {
+    const path = await save({
+      filters: [
+        {
+          name: "pdf",
+          extensions: ["pdf"],
+        },
+      ],
+      defaultPath: t("statisticsForBuyersPDFName"),
+    });
+    let toastId: string;
+    if (path) {
+      toastId = toast.loading(t("generating"), {
+        position: "top-center",
+      });
+      try {
+        await saveToPDF(
+          path,
+          {
+            statistics: statisticsQuery.data,
+            limit,
+          },
+          PdfTypeEnum.statisticsForBuyers,
+          i18n.language
+        );
+      } catch (e) {
+        let error = e as Error;
+        toast.error(`${error.message}`, {
+          duration: 10000,
+        });
+        throw e;
+      } finally {
+        toast.dismiss(toastId);
+      }
 
-    // const dataIncoming: {
-    //     label: string;
-    //     value: string;
-    //     unit: string;
-    //     bold?: boolean;
-    // }[] = useMemo(
-    //     () => [
-    //         {
-    //             label: t("loggingCosts"),
-    //             value: `${(statisticsQuery.data.total_logging_costs || 0).toFixed(2)}`,
-    //             unit: "EUR",
-    //         },
-    //         {
-    //             label: t("transportCosts"),
-    //             value: `${(statisticsQuery.data.total_transport_costs || 0).toFixed(2)}`,
-    //             unit: "EUR",
-    //         },
-    //         {
-    //             label: `${t("costsTo350")} (${settingsData.licitator_fixed_cost} EUR / m3)`,
-    //             value: `${(statisticsQuery.data.costs_below_350 || 0).toFixed(2)}`,
-    //             unit: "EUR",
-    //         },
-    //         {
-    //             label: `${t("costsAbove350")} (${settingsData.licitator_percentage * 100}%)`,
-    //             value: `${(statisticsQuery.data.costs_above_350 || 0).toFixed(2)}`,
-    //             unit: "EUR",
-    //         },
-    //         {
-    //             label: `${t("bundleCosts")} (${settingsData.bundle_cost} EUR / m3)`,
-    //             value: `${(statisticsQuery.data.total_bundle_costs || 0).toFixed(2)}`,
-    //             unit: "EUR",
-    //         },
-    //         {
-    //             label: `${t("loadingCosts")} (x EUR / m3)`,
-    //             value: `${(statisticsQuery.data.total_loading_costs || 0).toFixed(2)}`,
-    //             unit: "EUR",
-    //         },
-    //         {
-    //             label: t("totalIncome"),
-    //             value: `${(statisticsQuery.data.total_income || 0).toFixed(2)}`,
-    //             unit: "EUR",
-    //         },
-    //     ],
-    //     [i18n.language, statisticsQuery.data]
-    // );
+      await openPath(path);
+      toast.success(t("success"));
+    }
+  };
 
-    // const dataBalance: {
-    //     label: string;
-    //     value: string;
-    //     unit: string;
-    //     bold?: boolean;
-    // }[] = useMemo(
-    //     () => [
-    //         {
-    //             label: t("sellersNetValue"),
-    //             value: `-${(statisticsQuery.data.sellers_net || 0).toFixed(2)}`,
-    //             unit: "EUR",
-    //         },
-    //         {
-    //             label: t("buyersNetValue"),
-    //             value: `${(statisticsQuery.data.buyers_net || 0).toFixed(2)}`,
-    //             unit: "EUR",
-    //         },
-    //         {
-    //             label: t("sellersCosts"),
-    //             value: `${(statisticsQuery.data.seller_costs || 0).toFixed(2)}`,
-    //             unit: "EUR",
-    //         },
-    //         {
-    //             label: t("buyersCosts"),
-    //             value: `${(statisticsQuery.data.buyer_costs || 0).toFixed(2)}`,
-    //             unit: "EUR",
-    //         },
-    //         {
-    //             label: t("totalIncome"),
-    //             value: `${(statisticsQuery.data.total_income || 0).toFixed(2)}`,
-    //             unit: "EUR",
-    //         },
-    //     ],
-    //     [i18n.language, statisticsQuery.data]
-    // );
+  return (
+    <div className="p-3 flex flex-col space-y-5">
+      <div className="relative">
+        <button
+          className="absolute right-0 top-0 bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+          onClick={exportToFile}
+        >
+          {t("exportStatisticsForBuyers")}
+        </button>
+        <div className="flex flex-wrap items-center gap-3 min-w-0">
+          <h3 className="font-bold text-lg">{t("topPiecesByThickness")}</h3>
+          <label className="flex items-center gap-2">
+            <span className="text-sm text-gray-700">{t("topPiecesLimit")}</span>
+            <input
+              type="number"
+              className="border rounded px-2 py-1 w-24"
+              min={1}
+              value={limitInput}
+              onChange={(event) => {
+                setLimitInput(event.target.value);
+              }}
+              onBlur={() => {
+                const trimmed = limitInput.trim();
+                const parsed = Number(trimmed);
+                if (!trimmed || Number.isNaN(parsed)) {
+                  setLimitInput(String(limit));
+                  return;
+                }
+                const nextLimit = Math.max(1, Math.floor(parsed));
+                setLimit(nextLimit);
+                setLimitInput(String(nextLimit));
+              }}
+            />
+          </label>
+        </div>
+      </div>
+      {speciesStats.map((ts) => (
+        <SpeciesStatsTable
+          key={ts.id}
+          title={ts.tree_species_name}
+          woodPieces={ts.top_pieces_by_thickness || []}
+        />
+      ))}
+    </div>
+  );
+}
 
-    // const tableData = useReactTable({
-    //     data: data,
-    //     columns: columns,
-    //     getCoreRowModel: getCoreRowModel(),
-    //     defaultColumn: {
-    //         cell: TableCellReadonly,
-    //     },
-    //     meta: {},
-    // });
+function SpeciesStatsTable(props: { title: string; woodPieces: WoodPiece[] }) {
+  const { t } = useTranslation();
 
-    // const tableDataIncoming = useReactTable({
-    //     data: dataIncoming,
-    //     columns: columns,
-    //     getCoreRowModel: getCoreRowModel(),
-    //     defaultColumn: {
-    //         cell: TableCellReadonly,
-    //     },
-    //     meta: {},
-    // });
+  const columns = useMemo<ColumnDef<unknown, any>[]>(
+    () => [
+      {
+        accessorKey: "sequence_no",
+        size: 70,
+        header: () => t("seqNo"),
+        meta: {
+          type: "integer",
+        },
+      },
+      {
+        accessorKey: "plate_no",
+        size: 100,
+        header: () => t("plateNo"),
+      },
+      {
+        accessorKey: "width",
+        size: 90,
+        header: () => t("widthCm"),
+        meta: {
+          type: "integer",
+        },
+      },
+      {
+        accessorKey: "length",
+        size: 90,
+        header: () => t("lengthM"),
+        meta: {
+          type: "float",
+          decimalPlaces: 1,
+        },
+      },
+      {
+        accessorKey: "volume",
+        size: 90,
+        header: () => t("volumeM3"),
+        meta: {
+          type: "float",
+        },
+      },
+    ],
+    []
+  );
 
-    // const tableBalance = useReactTable({
-    //     data: dataBalance,
-    //     columns: columns,
-    //     getCoreRowModel: getCoreRowModel(),
-    //     defaultColumn: {
-    //         cell: TableCellReadonly,
-    //     },
-    //     meta: {},
-    // });
+  const table = useReactTable({
+    data: props.woodPieces,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    defaultColumn: {
+      cell: TableCellReadonly,
+    },
+    meta: {},
+  });
 
-    // const exportToFile = async () => {
-    //     const path = await save({
-    //         filters: [
-    //             {
-    //                 name: "pdf",
-    //                 extensions: ["pdf"],
-    //             },
-    //         ],
-    //         defaultPath: t("statisticsPDFName"),
-    //     });
-    //     let toastId: string;
-    //     if (path) {
-    //         toastId = toast.loading(t("generating"), {
-    //             position: "top-center",
-    //         });
-    //         try {
-    //             await saveToPDF(
-    //                 path,
-    //                 {
-    //                     statistics: statisticsQuery.data,
-    //                     overallData: data,
-    //                 },
-    //                 PdfTypeEnum.statistics,
-    //                 i18n.language
-    //             );
-    //         } catch (e) {
-    //             let error = e as Error;
-    //             toast.error(`${error.message}`, {
-    //                 duration: 10000,
-    //             });
-    //             throw e;
-    //         } finally {
-    //             toast.dismiss(toastId);
-    //         }
-
-    //         await openPath(path);
-    //         toast.success(t("success"));
-    //     }
-    // };
-
-    return (
-        <>
-            <div className="p-3 flex flex-col space-y-5 overflow-auto max-h-[calc(100vh-55px)]">
-                {/* <div>
-                    <button
-                        className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
-                        onClick={exportToFile}
-                    >
-                        {t("exportStatistics")}
-                    </button>
-                </div>
-                <h3 className="font-bold text-lg">{t("total")}</h3>
-                <CustomTable
-                    sizeEstimate={45}
-                    table={tableData}
-                    trClassName="border-b"
-                    trhClassName="border-b"
-                    containerClassName="!overflow-visible"
-                />
-                <h3 className="font-bold text-lg">{t("incomeLicitator")}</h3>
-                <CustomTable
-                    sizeEstimate={45}
-                    table={tableDataIncoming}
-                    trClassName="border-b"
-                    trhClassName="border-b"
-                    containerClassName="!overflow-visible"
-                />
-                <h3 className="font-bold text-lg">{t("balance")}</h3>
-                <CustomTable
-                    sizeEstimate={45}
-                    table={tableBalance}
-                    trClassName="border-b"
-                    trhClassName="border-b"
-                    containerClassName="!overflow-visible"
-                />
-                <DynamicStatsTable
-                    title={t("statsPerSpecies")}
-                    woodPieces={statisticsQuery.data.top_logs.top_logs_per_volume || []}
-                    woodPiecesTotal={statisticsQuery.data.top_logs.top_logs_total || []}
-                    includeTreeSpecies
-                    volume={statisticsQuery.data.total_volume || 0}
-                />
-                {statisticsQuery.data.top_logs_by_species.map((ts) => {
-                    if (!ts.top_logs_per_volume?.length) {
-                        return <></>;
-                    }
-                    return (
-                        <DynamicStatsTable
-                            key={ts.id}
-                            title={ts.tree_species_name}
-                            woodPieces={ts.top_logs_per_volume || []}
-                            woodPiecesTotal={ts.top_logs_total || []}
-                            volume={ts.volume}
-                            averageOfferedPrice={
-                                statisticsQuery.data.stats_by_species[ts.id]?.avg_offered_price
-                            }
-                        />
-                    );
-                })} */}
-            </div>
-        </>
-    );
+  return (
+    <div className="flex flex-col space-y-2">
+      <h4 className="font-bold">{props.title}</h4>
+      <CustomTable
+        sizeEstimate={45}
+        table={table}
+        trClassName="border-b"
+        trhClassName="border-b"
+        containerClassName="!overflow-visible"
+      />
+    </div>
+  );
 }

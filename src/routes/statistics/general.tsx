@@ -241,10 +241,10 @@ function StatisticsComponent() {
 
     return (
         <>
-            <div className="p-3 flex flex-col space-y-5 overflow-auto max-h-[calc(100vh-55px)]">
-                <div>
+            <div className="p-3 flex flex-col space-y-5">
+                <div className="relative">
                     <button
-                        className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+                        className="absolute right-0 top-0 bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
                         onClick={exportToFile}
                     >
                         {t("exportStatistics")}
