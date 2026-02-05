@@ -111,7 +111,8 @@ export const StatsForBuyersExport = (params: StatsForBuyersExportProps) => {
               <View style={styles.subheader}>
                 <Text>
                   {ts.tree_species_name} • {t("totalPieces")}:{" "}
-                  {ts.total_pieces || 0}
+                  {ts.total_pieces || 0} • {t("totalVolume")}:{" "}
+                  {ts.total_volume || 0} m3
                 </Text>
               </View>
               <View style={styles.statsTable}>

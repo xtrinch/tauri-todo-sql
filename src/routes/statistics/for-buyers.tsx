@@ -152,6 +152,7 @@ function StatisticsForBuyersComponent() {
           key={ts.id}
           title={ts.tree_species_name}
           totalPieces={ts.total_pieces || 0}
+          totalVolume={ts.total_volume || 0}
           woodPieces={ts.top_pieces_by_thickness || []}
         />
       ))}
@@ -162,6 +163,7 @@ function StatisticsForBuyersComponent() {
 function SpeciesStatsTable(props: {
   title: string;
   totalPieces: number;
+  totalVolume: number;
   woodPieces: WoodPiece[];
 }) {
   const { t } = useTranslation();
@@ -226,6 +228,9 @@ function SpeciesStatsTable(props: {
         <h4 className="font-bold">{props.title}</h4>
         <div className="text-sm text-gray-700">
           {t("totalPieces")}: {props.totalPieces}
+        </div>
+        <div className="text-sm text-gray-700">
+          {t("totalVolume")}: {props.totalVolume} m3
         </div>
       </div>
       <CustomTable

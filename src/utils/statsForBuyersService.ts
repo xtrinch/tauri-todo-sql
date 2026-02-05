@@ -8,6 +8,7 @@ import { WoodPiece } from "./woodPieceService";
 interface TreeSpeciesWithStats extends TreeSpecies {
   top_pieces_by_thickness?: WoodPiece[];
   total_pieces?: number;
+  total_volume?: number;
 }
 
 export interface BuyersStatistics {
@@ -63,6 +64,7 @@ const ensureStatsForBuyers = async (opts: ListOptions): Promise<BuyersStatistics
   const totalPiecesSql = `
     SELECT 
       COUNT(*) as "total_pieces",
+      ROUND(SUM("volume"), 2) as "total_volume",
       "tree_species_id"
     FROM (
       ${woodPiecesSql}
@@ -81,11 +83,15 @@ const ensureStatsForBuyers = async (opts: ListOptions): Promise<BuyersStatistics
     throw e;
   }
 
-  let totalPiecesResult: { total_pieces: number; tree_species_id: number }[] =
-    [];
+  let totalPiecesResult: {
+    total_pieces: number;
+    total_volume: number;
+    tree_species_id: number;
+  }[] = [];
   try {
     totalPiecesResult = (await db.select(totalPiecesSql, [])) as {
       total_pieces: number;
+      total_volume: number;
       tree_species_id: number;
     }[];
   } catch (e) {
@@ -107,6 +113,7 @@ const ensureStatsForBuyers = async (opts: ListOptions): Promise<BuyersStatistics
     .map((ts) => {
       ts.top_pieces_by_thickness = topByThicknessGrouped[ts.id] || [];
       ts.total_pieces = totalPiecesGrouped[ts.id]?.[0]?.total_pieces || 0;
+      ts.total_volume = totalPiecesGrouped[ts.id]?.[0]?.total_volume || 0;
       return ts;
     })
     .filter((ts) => ts.top_pieces_by_thickness?.length);
