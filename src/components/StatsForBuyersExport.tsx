@@ -1,7 +1,10 @@
 import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { BuyersStatistics } from "../utils/statsForBuyersService";
+import {
+  BuyersStatistics,
+  BuyersTopMeasure,
+} from "../utils/statsForBuyersService";
 import { PdfTable, PdfTableCol } from "./PdfTable";
 
 const styles = StyleSheet.create({
@@ -40,6 +43,7 @@ const styles = StyleSheet.create({
 export interface StatsForBuyersExportProps {
   statistics: BuyersStatistics;
   limit: number;
+  measure: BuyersTopMeasure;
 }
 
 export const StatsForBuyersExport = (params: StatsForBuyersExportProps) => {
@@ -95,13 +99,20 @@ export const StatsForBuyersExport = (params: StatsForBuyersExportProps) => {
           </View>
           <View style={styles.subheader}>
             <Text>
-              {t("topPiecesByThickness")} (N = {params.limit})
+              {t("topPiecesTitle")} ({t("topPiecesMeasure")}:{" "}
+              {params.measure === "volume"
+                ? t("topPiecesMeasureVolume")
+                : t("topPiecesMeasureThickness")}
+              , N = {params.limit})
             </Text>
           </View>
           {params.statistics.top_pieces_by_species.map((ts) => (
             <View key={ts.id} style={styles.statView} wrap={false}>
               <View style={styles.subheader}>
-                <Text>{ts.tree_species_name}</Text>
+                <Text>
+                  {ts.tree_species_name} • {t("totalPieces")}:{" "}
+                  {ts.total_pieces || 0}
+                </Text>
               </View>
               <View style={styles.statsTable}>
                 <PdfTable

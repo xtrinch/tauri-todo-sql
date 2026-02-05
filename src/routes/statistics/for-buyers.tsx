@@ -10,7 +10,10 @@ import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../components/CustomTable";
 import { TableCellReadonly } from "../../components/TableCellReadonly";
 import { PdfTypeEnum, saveToPDF } from "../../utils/pdf";
-import { statsForBuyersQueryOptions } from "../../utils/statsForBuyersService";
+import {
+  BuyersTopMeasure,
+  statsForBuyersQueryOptions,
+} from "../../utils/statsForBuyersService";
 import { WoodPiece } from "../../utils/woodPieceService";
 import { save } from "@tauri-apps/plugin-dialog";
 import { openPath } from "@tauri-apps/plugin-opener";
@@ -22,11 +25,13 @@ export const Route = createFileRoute("/statistics/for-buyers")({
 
 const defaultLimit = 20;
 const limitDebounceMs = 350;
+const defaultMeasure: BuyersTopMeasure = "thickness";
 
 function StatisticsForBuyersComponent() {
   const { t, i18n } = useTranslation();
   const [limitInput, setLimitInput] = useState<string>(String(defaultLimit));
   const [limit, setLimit] = useState<number>(defaultLimit);
+  const [measure, setMeasure] = useState<BuyersTopMeasure>(defaultMeasure);
 
   useEffect(() => {
     const trimmed = limitInput.trim();
@@ -46,6 +51,7 @@ function StatisticsForBuyersComponent() {
       ...Route.useLoaderDeps(),
       language: i18n.language as "en" | "sl",
       limit,
+      measure,
     })
   );
 
@@ -72,6 +78,7 @@ function StatisticsForBuyersComponent() {
           {
             statistics: statisticsQuery.data,
             limit,
+            measure,
           },
           PdfTypeEnum.statisticsForBuyers,
           i18n.language
@@ -101,7 +108,20 @@ function StatisticsForBuyersComponent() {
           {t("exportStatisticsForBuyers")}
         </button>
         <div className="flex flex-wrap items-center gap-3 min-w-0">
-          <h3 className="font-bold text-lg">{t("topPiecesByThickness")}</h3>
+          <h3 className="font-bold text-lg">{t("topPiecesTitle")}</h3>
+          <label className="flex items-center gap-2">
+            <span className="text-sm text-gray-700">{t("topPiecesMeasure")}</span>
+            <select
+              className="border rounded px-2 py-1"
+              value={measure}
+              onChange={(event) =>
+                setMeasure(event.target.value as BuyersTopMeasure)
+              }
+            >
+              <option value="thickness">{t("topPiecesMeasureThickness")}</option>
+              <option value="volume">{t("topPiecesMeasureVolume")}</option>
+            </select>
+          </label>
           <label className="flex items-center gap-2">
             <span className="text-sm text-gray-700">{t("topPiecesLimit")}</span>
             <input
@@ -131,6 +151,7 @@ function StatisticsForBuyersComponent() {
         <SpeciesStatsTable
           key={ts.id}
           title={ts.tree_species_name}
+          totalPieces={ts.total_pieces || 0}
           woodPieces={ts.top_pieces_by_thickness || []}
         />
       ))}
@@ -138,7 +159,11 @@ function StatisticsForBuyersComponent() {
   );
 }
 
-function SpeciesStatsTable(props: { title: string; woodPieces: WoodPiece[] }) {
+function SpeciesStatsTable(props: {
+  title: string;
+  totalPieces: number;
+  woodPieces: WoodPiece[];
+}) {
   const { t } = useTranslation();
 
   const columns = useMemo<ColumnDef<unknown, any>[]>(
@@ -197,7 +222,12 @@ function SpeciesStatsTable(props: { title: string; woodPieces: WoodPiece[] }) {
 
   return (
     <div className="flex flex-col space-y-2">
-      <h4 className="font-bold">{props.title}</h4>
+      <div className="flex items-baseline gap-3 flex-wrap">
+        <h4 className="font-bold">{props.title}</h4>
+        <div className="text-sm text-gray-700">
+          {t("totalPieces")}: {props.totalPieces}
+        </div>
+      </div>
       <CustomTable
         sizeEstimate={45}
         table={table}
