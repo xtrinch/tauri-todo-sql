@@ -5,6 +5,8 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { save } from "@tauri-apps/plugin-dialog";
+import { openPath } from "@tauri-apps/plugin-opener";
 import { useMemo } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -20,6 +22,7 @@ import {
   useUpdateTreeSpeciesMutation,
 } from "../../utils/treeSpeciesService";
 import { WoodPiece } from "../../utils/woodPieceService";
+import { PdfTypeEnum, saveToPDF } from "../../utils/pdf";
 
 export const Route = createFileRoute("/treeSpecies/edit")({
   component: TreeSpeciesEdit,
@@ -106,11 +109,56 @@ function TreeSpeciesEdit() {
     },
   });
 
+  const exportToFile = async () => {
+    const path = await save({
+      filters: [
+        {
+          name: "pdf",
+          extensions: ["pdf"],
+        },
+      ],
+      defaultPath: t("treeSpeciesPDFName"),
+    });
+    let toastId: string;
+    if (path) {
+      toastId = toast.loading(t("generating"), {
+        position: "top-center",
+      });
+      try {
+        await saveToPDF(
+          path,
+          { treeSpecies: treeSpeciesData },
+          PdfTypeEnum.treeSpecies,
+          i18n.language
+        );
+      } catch (e) {
+        let error = e as Error;
+        toast.error(`${error.message}`, {
+          duration: 10000,
+        });
+        throw e;
+      } finally {
+        toast.dismiss(toastId);
+      }
+
+      await openPath(path);
+      toast.success(t("success"));
+    }
+  };
+
   return (
-    <div className="">
+    <div className="p-3 h-[calc(100vh-53px)] flex flex-col">
+      <div className="relative">
+        <button
+          className="absolute right-6 top-0 z-10 bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+          onClick={exportToFile}
+        >
+          {t("exportTreeSpecies")}
+        </button>
+      </div>
       <CustomTable
         table={table}
-        containerClassName="p-3 h-[calc(100vh-53px)] overflow-auto"
+        containerClassName="flex-1 min-h-0 relative z-0"
         hasFooter={true}
       />
     </div>

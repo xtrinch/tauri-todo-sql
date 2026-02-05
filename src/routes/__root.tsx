@@ -377,7 +377,7 @@ function RootComponent() {
               {fileMenuOpen && (
                 <div
                   ref={dropdownRefFile}
-                  className="absolute right-20 z-10 mt-2 w-60 origin-top-right rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none overflow-hidden"
+                  className="absolute right-20 z-30 mt-2 w-60 origin-top-right rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none overflow-hidden"
                   role="menu"
                   aria-orientation="vertical"
                   aria-labelledby="menu-button"
@@ -432,7 +432,7 @@ function RootComponent() {
               {languageMenuOpen && (
                 <div
                   ref={dropdownRefLanguage}
-                  className="absolute right-0 z-10 mt-2 w-30 origin-top-right rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none overflow-hidden"
+                  className="absolute right-0 z-30 mt-2 w-30 origin-top-right rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none overflow-hidden"
                   role="menu"
                   aria-orientation="vertical"
                   aria-labelledby="menu-button"

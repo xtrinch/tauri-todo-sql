@@ -7,6 +7,7 @@ import { StatsForBuyersExportProps } from "../components/StatsForBuyersExport";
 import { SellerPiecesExportProps } from "../components/SellerPiecesExport";
 import { SoldPiecesExportProps } from "../components/SoldPiecesExport";
 import { StatsExportProps } from "../components/StatsExport";
+import { TreeSpeciesExportProps } from "../components/TreeSpeciesExport";
 import { PdfTypeEnum } from "../utils/pdf";
 import "./workerShim";
 // @ts-ignore
@@ -144,6 +145,22 @@ const renderPDFInWorker = async (
       try {
         blob = await pdf(
           <StatsForBuyersExport {...statsForBuyersData} />
+        ).toBlob();
+      } catch (e) {
+        throw e;
+      }
+
+      break;
+    case "treeSpecies":
+      const { TreeSpeciesExport } = await import(
+        "../components/TreeSpeciesExport"
+      );
+
+      const treeSpeciesData: TreeSpeciesExportProps = JSON.parse(props);
+
+      try {
+        blob = await pdf(
+          <TreeSpeciesExport {...treeSpeciesData} />
         ).toBlob();
       } catch (e) {
         throw e;
