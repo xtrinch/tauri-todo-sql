@@ -8,6 +8,7 @@ import {
 import { save } from "@tauri-apps/plugin-dialog";
 import { openPath } from "@tauri-apps/plugin-opener";
 import { useMemo } from "react";
+import { FaFilePdf } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../components/CustomTable";
@@ -153,7 +154,10 @@ function TreeSpeciesEdit() {
           className="absolute right-6 top-0 z-10 bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
           onClick={exportToFile}
         >
-          {t("exportTreeSpecies")}
+          <span className="inline-flex items-center gap-2">
+            <FaFilePdf aria-hidden />
+            {t("exportTreeSpecies")}
+          </span>
         </button>
       </div>
       <CustomTable

@@ -10,6 +10,7 @@ import { openPath } from "@tauri-apps/plugin-opener";
 import Big from "big.js";
 import { compact } from "lodash";
 import { useMemo } from "react";
+import { FaFilePdf } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
 import { PdfTableCol } from "../../../components/PdfTable";
@@ -391,7 +392,10 @@ function SoldPiecesList() {
         className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
         onClick={exportToFile}
       >
-        {t("exportInvoice")}
+        <span className="inline-flex items-center gap-2">
+          <FaFilePdf aria-hidden />
+          {t("exportInvoice")}
+        </span>
       </button>
       <CustomTable
         table={table}

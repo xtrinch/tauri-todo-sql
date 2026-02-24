@@ -6,6 +6,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
+import { FaFilePdf } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../components/CustomTable";
 import { TableCellReadonly } from "../../components/TableCellReadonly";
@@ -105,7 +106,10 @@ function StatisticsForBuyersComponent() {
           className="absolute right-0 top-0 bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
           onClick={exportToFile}
         >
-          {t("exportStatisticsForBuyers")}
+          <span className="inline-flex items-center gap-2">
+            <FaFilePdf aria-hidden />
+            {t("exportStatisticsForBuyers")}
+          </span>
         </button>
         <div className="flex flex-wrap items-center gap-3 min-w-0">
           <h3 className="font-bold text-lg">{t("topPiecesTitle")}</h3>
