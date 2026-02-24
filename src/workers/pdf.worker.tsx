@@ -1,6 +1,7 @@
 import { info } from "@tauri-apps/plugin-log";
 import { expose } from "comlink";
 import { BoughtPiecesExportProps } from "../components/BoughtPiecesExport";
+import { BoughtPiecesPreviewExportProps } from "../components/BoughtPiecesPreviewExport";
 import { CatalogueExportForBuyersProps } from "../components/CatalogueExportForBuyers";
 import { CatalogueExportWithPricesProps } from "../components/CatalogueExportWithPrices";
 import { StatsForBuyersExportProps } from "../components/StatsForBuyersExport";
@@ -130,6 +131,23 @@ const renderPDFInWorker = async (
 
       try {
         blob = await pdf(<BoughtPiecesExport {...dataBoughtPieces} />).toBlob();
+      } catch (e) {
+        throw e;
+      }
+
+      break;
+    case "boughtPiecesPreview":
+      const { BoughtPiecesPreviewExport } = await import(
+        "../components/BoughtPiecesPreviewExport"
+      );
+
+      const dataBoughtPiecesPreview: BoughtPiecesPreviewExportProps =
+        JSON.parse(props);
+
+      try {
+        blob = await pdf(
+          <BoughtPiecesPreviewExport {...dataBoughtPiecesPreview} />
+        ).toBlob();
       } catch (e) {
         throw e;
       }

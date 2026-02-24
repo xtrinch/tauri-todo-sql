@@ -31,6 +31,7 @@ import { Route as SellersSellerIdSoldPiecesListImport } from './routes/sellers/$
 import { Route as SellersSellerIdInvoicePreviewImport } from './routes/sellers/$sellerId/invoice-preview'
 import { Route as SellersSellerIdEditWoodPiecesImport } from './routes/sellers/$sellerId/edit-wood-pieces'
 import { Route as BuyersBuyerIdWoodPieceOffersListImport } from './routes/buyers/$buyerId/wood-piece-offers-list'
+import { Route as BuyersBuyerIdBoughtPiecesPreviewImport } from './routes/buyers/$buyerId/bought-pieces-preview'
 import { Route as BuyersBuyerIdBoughtPiecesListImport } from './routes/buyers/$buyerId/bought-pieces-list'
 
 // Create/Update Routes
@@ -162,6 +163,13 @@ const BuyersBuyerIdWoodPieceOffersListRoute =
     getParentRoute: () => BuyersBuyerIdRoute,
   } as any)
 
+const BuyersBuyerIdBoughtPiecesPreviewRoute =
+  BuyersBuyerIdBoughtPiecesPreviewImport.update({
+    id: '/bought-pieces-preview',
+    path: '/bought-pieces-preview',
+    getParentRoute: () => BuyersBuyerIdRoute,
+  } as any)
+
 const BuyersBuyerIdBoughtPiecesListRoute =
   BuyersBuyerIdBoughtPiecesListImport.update({
     id: '/bought-pieces-list',
@@ -285,6 +293,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyersBuyerIdBoughtPiecesListImport
       parentRoute: typeof BuyersBuyerIdImport
     }
+    '/buyers/$buyerId/bought-pieces-preview': {
+      id: '/buyers/$buyerId/bought-pieces-preview'
+      path: '/bought-pieces-preview'
+      fullPath: '/buyers/$buyerId/bought-pieces-preview'
+      preLoaderRoute: typeof BuyersBuyerIdBoughtPiecesPreviewImport
+      parentRoute: typeof BuyersBuyerIdImport
+    }
     '/buyers/$buyerId/wood-piece-offers-list': {
       id: '/buyers/$buyerId/wood-piece-offers-list'
       path: '/wood-piece-offers-list'
@@ -327,11 +342,13 @@ declare module '@tanstack/react-router' {
 
 interface BuyersBuyerIdRouteChildren {
   BuyersBuyerIdBoughtPiecesListRoute: typeof BuyersBuyerIdBoughtPiecesListRoute
+  BuyersBuyerIdBoughtPiecesPreviewRoute: typeof BuyersBuyerIdBoughtPiecesPreviewRoute
   BuyersBuyerIdWoodPieceOffersListRoute: typeof BuyersBuyerIdWoodPieceOffersListRoute
 }
 
 const BuyersBuyerIdRouteChildren: BuyersBuyerIdRouteChildren = {
   BuyersBuyerIdBoughtPiecesListRoute: BuyersBuyerIdBoughtPiecesListRoute,
+  BuyersBuyerIdBoughtPiecesPreviewRoute: BuyersBuyerIdBoughtPiecesPreviewRoute,
   BuyersBuyerIdWoodPieceOffersListRoute: BuyersBuyerIdWoodPieceOffersListRoute,
 }
 
@@ -428,6 +445,7 @@ export interface FileRoutesByFullPath {
   '/statistics/general': typeof StatisticsGeneralRoute
   '/treeSpecies/edit': typeof TreeSpeciesEditRoute
   '/buyers/$buyerId/bought-pieces-list': typeof BuyersBuyerIdBoughtPiecesListRoute
+  '/buyers/$buyerId/bought-pieces-preview': typeof BuyersBuyerIdBoughtPiecesPreviewRoute
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
   '/sellers/$sellerId/edit-wood-pieces': typeof SellersSellerIdEditWoodPiecesRoute
   '/sellers/$sellerId/invoice-preview': typeof SellersSellerIdInvoicePreviewRoute
@@ -452,6 +470,7 @@ export interface FileRoutesByTo {
   '/statistics/general': typeof StatisticsGeneralRoute
   '/treeSpecies/edit': typeof TreeSpeciesEditRoute
   '/buyers/$buyerId/bought-pieces-list': typeof BuyersBuyerIdBoughtPiecesListRoute
+  '/buyers/$buyerId/bought-pieces-preview': typeof BuyersBuyerIdBoughtPiecesPreviewRoute
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
   '/sellers/$sellerId/edit-wood-pieces': typeof SellersSellerIdEditWoodPiecesRoute
   '/sellers/$sellerId/invoice-preview': typeof SellersSellerIdInvoicePreviewRoute
@@ -477,6 +496,7 @@ export interface FileRoutesById {
   '/statistics/general': typeof StatisticsGeneralRoute
   '/treeSpecies/edit': typeof TreeSpeciesEditRoute
   '/buyers/$buyerId/bought-pieces-list': typeof BuyersBuyerIdBoughtPiecesListRoute
+  '/buyers/$buyerId/bought-pieces-preview': typeof BuyersBuyerIdBoughtPiecesPreviewRoute
   '/buyers/$buyerId/wood-piece-offers-list': typeof BuyersBuyerIdWoodPieceOffersListRoute
   '/sellers/$sellerId/edit-wood-pieces': typeof SellersSellerIdEditWoodPiecesRoute
   '/sellers/$sellerId/invoice-preview': typeof SellersSellerIdInvoicePreviewRoute
@@ -503,6 +523,7 @@ export interface FileRouteTypes {
     | '/statistics/general'
     | '/treeSpecies/edit'
     | '/buyers/$buyerId/bought-pieces-list'
+    | '/buyers/$buyerId/bought-pieces-preview'
     | '/buyers/$buyerId/wood-piece-offers-list'
     | '/sellers/$sellerId/edit-wood-pieces'
     | '/sellers/$sellerId/invoice-preview'
@@ -526,6 +547,7 @@ export interface FileRouteTypes {
     | '/statistics/general'
     | '/treeSpecies/edit'
     | '/buyers/$buyerId/bought-pieces-list'
+    | '/buyers/$buyerId/bought-pieces-preview'
     | '/buyers/$buyerId/wood-piece-offers-list'
     | '/sellers/$sellerId/edit-wood-pieces'
     | '/sellers/$sellerId/invoice-preview'
@@ -549,6 +571,7 @@ export interface FileRouteTypes {
     | '/statistics/general'
     | '/treeSpecies/edit'
     | '/buyers/$buyerId/bought-pieces-list'
+    | '/buyers/$buyerId/bought-pieces-preview'
     | '/buyers/$buyerId/wood-piece-offers-list'
     | '/sellers/$sellerId/edit-wood-pieces'
     | '/sellers/$sellerId/invoice-preview'
@@ -635,6 +658,7 @@ export const routeTree = rootRoute
       "parent": "/buyers",
       "children": [
         "/buyers/$buyerId/bought-pieces-list",
+        "/buyers/$buyerId/bought-pieces-preview",
         "/buyers/$buyerId/wood-piece-offers-list"
       ]
     },
@@ -677,6 +701,10 @@ export const routeTree = rootRoute
     },
     "/buyers/$buyerId/bought-pieces-list": {
       "filePath": "buyers/$buyerId/bought-pieces-list.tsx",
+      "parent": "/buyers/$buyerId"
+    },
+    "/buyers/$buyerId/bought-pieces-preview": {
+      "filePath": "buyers/$buyerId/bought-pieces-preview.tsx",
       "parent": "/buyers/$buyerId"
     },
     "/buyers/$buyerId/wood-piece-offers-list": {

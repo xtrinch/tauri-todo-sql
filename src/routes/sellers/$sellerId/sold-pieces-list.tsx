@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
 import { PdfTableCol } from "../../../components/PdfTable";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
+import { slugifyFilenamePart } from "../../../utils/filename";
 import { PdfTypeEnum, saveToPDF } from "../../../utils/pdf";
 import { sellerQueryOptions } from "../../../utils/sellerService";
 import { settingsQueryOptions } from "../../../utils/settingsService";
@@ -21,7 +22,6 @@ import {
   WoodPiece,
   woodPiecesQueryOptions,
 } from "../../../utils/woodPieceService";
-import sanitize from "sanitize-filename";
 
 export const Route = createFileRoute("/sellers/$sellerId/sold-pieces-list")({
   component: SoldPiecesList,
@@ -366,7 +366,7 @@ function SoldPiecesList() {
           extensions: ["pdf"],
         },
       ],
-      defaultPath: `${t("soldPiecesPDFName")}-${sanitize(seller.seller_name)}`,
+      defaultPath: `${t("soldPiecesPDFName")}-${slugifyFilenamePart(seller.seller_name)}`,
     });
     if (path) {
       await saveToPDF(

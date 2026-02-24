@@ -90,7 +90,6 @@ export const PdfTable = (params: {
         }
       }
     }
-
     return val;
   };
 

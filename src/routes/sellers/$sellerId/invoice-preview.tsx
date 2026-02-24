@@ -15,13 +15,13 @@ import { CustomTable } from '../../../components/CustomTable'
 import { PdfTableCol } from '../../../components/PdfTable'
 import { TableCellReadonly } from '../../../components/TableCellReadonly'
 import { PdfTypeEnum, saveToPDF } from '../../../utils/pdf'
+import { slugifyFilenamePart } from '../../../utils/filename'
 import { sellerQueryOptions } from '../../../utils/sellerService'
 import { settingsQueryOptions } from '../../../utils/settingsService'
 import {
   WoodPiece,
   woodPiecesQueryOptions,
 } from '../../../utils/woodPieceService'
-import sanitize from 'sanitize-filename'
 
 export const Route = createFileRoute('/sellers/$sellerId/invoice-preview')({
   component: SoldPiecesList,
@@ -367,7 +367,7 @@ function SoldPiecesList() {
           extensions: ['pdf'],
         },
       ],
-      defaultPath: `${t('invoicePreviewPDFName')}-${sanitize(seller.seller_name)}`,
+      defaultPath: `${t('invoicePreviewPDFName')}-${slugifyFilenamePart(seller.seller_name)}`,
     })
     if (path) {
       await saveToPDF(

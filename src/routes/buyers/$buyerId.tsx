@@ -197,6 +197,7 @@ function BuyerComponent() {
         {(
           [
             ["/buyers/$buyerId/wood-piece-offers-list", t("woodPieceOffers")],
+            ["/buyers/$buyerId/bought-pieces-preview", t("boughtWoodPiecesPreview")],
             ["/buyers/$buyerId/bought-pieces-list", t("boughtWoodPieces")],
           ] as const
         ).map(([to, label]) => {
