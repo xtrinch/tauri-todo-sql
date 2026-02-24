@@ -167,9 +167,9 @@ export function DynamicStatsTable(props: {
           {t("totalVolume")}: {props.volume || 0} m3
         </div>
       )}
-      {props.averageOfferedPrice && (
+      {props.averageOfferedPrice !== undefined && (
         <div>
-          {t("averageOfferedPrice")}: {props.averageOfferedPrice || 0} EUR / m3
+          {t("averageOfferedPrice")}: {props.averageOfferedPrice.toFixed(2)} EUR / m3
         </div>
       )}
       <div className="flex flex-row space-x-5">

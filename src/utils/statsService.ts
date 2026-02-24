@@ -316,21 +316,14 @@ const ensureStats = async (opts: ListOptions): Promise<Statistics> => {
   };
 
   const averagePerSpeciesSql = `
-    SELECT 
-      *,
-      ROUND(AVG("offered_price"), 2) as "avg_offered_price",
-      ${opts.language === "sl" ? "tree_species_name_slo" : "tree_species_name"} as "tree_species_name"
+    SELECT
+      "tree_species_id" as "id",
+      ROUND(AVG("offered_price"), 2) as "avg_offered_price"
     FROM (
-      SELECT 
-        *,
-        "wpo"."offered_price" * "volume" as "offered_total_price"
-      FROM (
-        ${woodPiecesSql}
-      ) as wpo
+      ${woodPiecesSql}
     ) AS wp
-    LEFT JOIN "tree_species" ON "wp"."tree_species_id" = "tree_species"."id"
     WHERE "offered_price" > 0
-    GROUP BY "tree_species"."id"
+    GROUP BY "tree_species_id"
   `;
 
   let averagePerSpeciesResult: TreeSpeciesWithStats[] = [];
