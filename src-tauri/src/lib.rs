@@ -197,6 +197,49 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         kind: MigrationKind::Up,
     });
 
+    // Fix undo triggers for wood_pieces: generated column "volume" cannot be
+    // explicitly inserted/updated in SQLite.
+    let fix_wood_pieces_triggers_sql = Box::leak(
+        format!(
+            "
+            DROP TRIGGER IF EXISTS wood_pieces_insert;
+            DROP TRIGGER IF EXISTS wood_pieces_delete;
+            DROP TRIGGER IF EXISTS wood_pieces_update;
+
+            CREATE TRIGGER IF NOT EXISTS wood_pieces_insert AFTER INSERT ON wood_pieces
+            BEGIN
+                INSERT INTO undolog (sql) VALUES (
+                    'DELETE FROM wood_pieces WHERE id=' || quote(NEW.id)
+                );
+            END;
+
+            CREATE TRIGGER IF NOT EXISTS wood_pieces_delete AFTER DELETE ON wood_pieces
+            BEGIN
+                INSERT INTO undolog (sql) VALUES (
+                    'INSERT INTO wood_pieces ({0}) VALUES ({1});'
+                );
+            END;
+
+            CREATE TRIGGER IF NOT EXISTS wood_pieces_update AFTER UPDATE ON wood_pieces
+            BEGIN
+                INSERT INTO undolog (sql) VALUES (
+                    'UPDATE wood_pieces SET {2} WHERE id=' || quote(OLD.id)
+                );
+            END;
+            ",
+            get_column_names_without_generated("wood_pieces"),
+            get_delete_insert_statements_without_generated("wood_pieces"),
+            get_update_set_statements_without_generated("wood_pieces"),
+        )
+        .into_boxed_str(),
+    );
+    migrations.push(Migration {
+        version: (202) as i64,
+        description: "fix_wood_pieces_undo_triggers",
+        sql: fix_wood_pieces_triggers_sql,
+        kind: MigrationKind::Up,
+    });
+
     // Tauri builder
     tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
@@ -293,6 +336,7 @@ fn get_column_names(table: &str) -> &str {
         "buyers" => "buyer_name, address_line1, address_line2, additional_costs, is_vat_liable, used_bundle, used_loading, loading_costs, ident",
         "sellers" => "seller_name, address_line1, address_line2, iban, ident, is_flat_rate, is_vat_liable, used_transport, used_logging, used_logging_non_woods, additional_costs, transport_costs, logging_costs",
         "tree_species" => "tree_species_name, latin_name, tree_species_name_slo",
+        // Keep legacy migration SQL stable for already-applied versions.
         "wood_pieces" => "length, sequence_no, width, volume, plate_no, seller_id, tree_species_id, min_price, bypass_min_price",
         "wood_piece_offers" => "offered_price, wood_piece_id, buyer_id",
         "settings" => "licitator_fixed_cost, licitator_percentage, bundle_cost",
@@ -318,4 +362,30 @@ fn get_delete_insert_statements(table: &str) -> String {
         .map(|col| format!("' || quote(OLD.{}) || '", col)) // Apply quote() to OLD values
         .collect::<Vec<String>>() // Collect into a Vec<String>
         .join(", ") // Join with commas
+}
+
+// Helper functions for fix migrations that must exclude generated columns.
+fn get_column_names_without_generated(table: &str) -> &str {
+    match table {
+        "wood_pieces" => "length, sequence_no, width, plate_no, seller_id, tree_species_id, min_price, bypass_min_price",
+        _ => get_column_names(table),
+    }
+}
+
+fn get_update_set_statements_without_generated(table: &str) -> String {
+    get_column_names_without_generated(table)
+        .split(", ")
+        .filter(|col| *col != "id")
+        .map(|col| format!("{}=' || quote(OLD.{}) || '", col, col))
+        .collect::<Vec<String>>()
+        .join(", ")
+}
+
+fn get_delete_insert_statements_without_generated(table: &str) -> String {
+    get_column_names_without_generated(table)
+        .split(", ")
+        .filter(|col| *col != "id")
+        .map(|col| format!("' || quote(OLD.{}) || '", col))
+        .collect::<Vec<String>>()
+        .join(", ")
 }
