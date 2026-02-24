@@ -63,6 +63,7 @@ export interface SoldPiecesExportProps {
   woodPiecesData: WoodPiece[];
   rowsSummary: { label: string; value: string; bold?: boolean }[];
   colsSummary: PdfTableCol[];
+  isPreview?: boolean;
 }
 
 export const SoldPiecesExport = (params: SoldPiecesExportProps) => {
@@ -137,7 +138,7 @@ export const SoldPiecesExport = (params: SoldPiecesExportProps) => {
           <Image src={headerImage} style={styles.image} />
         </View>
         <View style={styles.header}>
-          <Text>{t("soldPieces")}</Text>
+          <Text>{params.isPreview ? t("invoicePreview") : t("soldPieces")}</Text>
         </View>
         <View style={styles.info}>
           <View style={styles.address}>

@@ -252,6 +252,7 @@ function SellerComponent() {
           [
             ["/sellers/$sellerId/edit-wood-pieces", t("editWoodPieces")],
             ["/sellers/$sellerId/wood-pieces-list", t("woodPieces")],
+            ["/sellers/$sellerId/invoice-preview", t("invoicePreview")],
             ["/sellers/$sellerId/sold-pieces-list", t("invoice")],
           ] as const
         ).map(([to, label]) => {
