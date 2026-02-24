@@ -15,6 +15,7 @@ fn export_to_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn Erro
         "wood_pieces",
         "wood_piece_offers",
         "settings",
+        "images",
     ];
     let mut json_map = Map::new();
 
@@ -67,6 +68,7 @@ fn get_column_names(table: &str) -> &str {
         "wood_pieces" => "id, length, sequence_no, width, plate_no, seller_id, tree_species_id, min_price, bypass_min_price",
         "wood_piece_offers" => "id, offered_price, wood_piece_id, buyer_id",
         "settings" => "id, licitator_fixed_cost, licitator_percentage, bundle_cost",
+        "images" => "id, image_key, mime_type, data_base64",
         _ => "",
     }
 }

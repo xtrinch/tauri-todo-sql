@@ -15,6 +15,10 @@ import { useTranslation } from 'react-i18next'
 import { CustomTable } from '../../../components/CustomTable'
 import { PdfTableCol } from '../../../components/PdfTable'
 import { TableCellReadonly } from '../../../components/TableCellReadonly'
+import {
+  imagesQueryOptions,
+  resolveImageSources,
+} from '../../../utils/imageService'
 import { PdfTypeEnum, saveToPDF } from '../../../utils/pdf'
 import { slugifyFilenamePart } from '../../../utils/filename'
 import { sellerQueryOptions } from '../../../utils/sellerService'
@@ -54,6 +58,14 @@ function SoldPiecesList() {
     }),
   )
   const settingsData = settingsQuery.data
+
+  const imagesQuery = useSuspenseQuery(
+    imagesQueryOptions({
+      ...Route.useLoaderDeps(),
+      language: i18n.language as 'en' | 'sl',
+    }),
+  )
+  const imageSources = resolveImageSources(imagesQuery.data)
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
@@ -379,6 +391,7 @@ function SoldPiecesList() {
           colsSummary: columns_summary,
           seller: seller,
           isPreview: true,
+          ...imageSources,
         },
         PdfTypeEnum.soldPieces,
         i18n.language,

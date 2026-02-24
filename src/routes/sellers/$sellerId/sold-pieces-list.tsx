@@ -16,6 +16,10 @@ import { CustomTable } from "../../../components/CustomTable";
 import { PdfTableCol } from "../../../components/PdfTable";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { slugifyFilenamePart } from "../../../utils/filename";
+import {
+  imagesQueryOptions,
+  resolveImageSources,
+} from "../../../utils/imageService";
 import { PdfTypeEnum, saveToPDF } from "../../../utils/pdf";
 import { sellerQueryOptions } from "../../../utils/sellerService";
 import { settingsQueryOptions } from "../../../utils/settingsService";
@@ -53,6 +57,14 @@ function SoldPiecesList() {
     })
   );
   const settingsData = settingsQuery.data;
+
+  const imagesQuery = useSuspenseQuery(
+    imagesQueryOptions({
+      ...Route.useLoaderDeps(),
+      language: i18n.language as "en" | "sl",
+    })
+  );
+  const imageSources = resolveImageSources(imagesQuery.data);
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
@@ -377,6 +389,7 @@ function SoldPiecesList() {
           rowsSummary: rows_summary,
           colsSummary: columns_summary,
           seller: seller,
+          ...imageSources,
         },
         PdfTypeEnum.soldPieces,
         i18n.language

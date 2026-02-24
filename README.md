@@ -22,3 +22,7 @@ TODO-like application running React on Tauri using Sqlite as a data source.
 ## Deploying
 
 Push to `release` branch, CI will pick it up and create a GH release for you, which can then be used for in-app updates.
+
+## Deploying new migrations
+
+Change _v12(n) string in code, it will use a new internal DB. The file used by the app should be saved and reimported into the application.

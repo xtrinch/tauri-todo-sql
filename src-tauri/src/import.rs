@@ -2,11 +2,19 @@ use rusqlite::{Connection, Result, ToSql};
 use serde_json::{Map, Value};
 use std::fs;
 use tauri::Manager;
-use crate::shared::{SQL_STATEMENT_TREE_SPECIES, SQL_STATEMENT_SETTINGS, get_connection};
+use crate::shared::{
+    SQL_STATEMENT_IMAGES, SQL_STATEMENT_SETTINGS, SQL_STATEMENT_TREE_SPECIES, get_connection,
+};
 
 fn truncate_db(conn: &Connection) -> Result<(), Box<dyn std::error::Error>> {
     // Define the specific import sequence
-    let import_sequence = vec!["buyers", "sellers", "wood_pieces", "wood_piece_offers"];
+    let import_sequence = vec![
+        "buyers",
+        "sellers",
+        "wood_pieces",
+        "wood_piece_offers",
+        "images",
+    ];
 
     // Truncate all tables in the import sequence
     for table in import_sequence.iter().rev() {
@@ -34,6 +42,12 @@ fn truncate_db(conn: &Connection) -> Result<(), Box<dyn std::error::Error>> {
         conn.execute_batch(SQL_STATEMENT_SETTINGS)?;
     }
 
+    // Check if we have image config rows
+    let images_count: i32 = conn.query_row("SELECT COUNT(*) FROM images;", [], |row| row.get(0))?;
+    if images_count == 0 {
+        conn.execute_batch(SQL_STATEMENT_IMAGES)?;
+    }
+
     Ok(())
 }
 
@@ -50,6 +64,7 @@ fn import_from_json(conn: &Connection, json_path: &str) -> Result<(), Box<dyn st
         "tree_species",
         "wood_pieces",
         "wood_piece_offers",
+        "images",
     ];
 
     // Truncate tables that are present in the JSON data

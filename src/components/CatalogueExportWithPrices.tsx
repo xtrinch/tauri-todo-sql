@@ -38,21 +38,19 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
-    width: 450, // Set the width of the image
-    height: "auto", // Maintain aspect ratio
-    borderWidth: "2px",
-    borderColor: "black",
-    borderStyle: "solid",
+    width: 450,
+    height: 120,
+    maxHeight: 120,
+    objectFit: "contain",
     marginBottom: 60,
     marginLeft: "auto",
     marginRight: "auto",
   },
   woodImage: {
     width: "100%",
-    height: "auto", // Maintain aspect ratio
-    borderWidth: "2px",
-    borderColor: "black",
-    borderStyle: "solid",
+    height: 220,
+    maxHeight: 220,
+    objectFit: "contain",
     marginBottom: 20,
     marginLeft: "auto",
     marginRight: "auto",
@@ -76,6 +74,8 @@ const styles = StyleSheet.create({
 export interface CatalogueExportWithPricesProps {
   woodPiecesData: WoodPiece[];
   statistics: Statistics;
+  headerImageSrc?: string;
+  woodImageSrc?: string;
 }
 
 export const CatalogueExportWithPrices = (
@@ -146,13 +146,13 @@ export const CatalogueExportWithPrices = (
     <Document>
       <Page size="A4" style={{ ...styles.page, ...styles.firstPage }}>
         <View>
-          <Image src={headerImage} style={styles.image} />
+          <Image src={params.headerImageSrc || headerImage} style={styles.image} />
         </View>
         <View style={styles.header}>
           <Text>{t("catalogueTitle")}</Text>
         </View>
         <View>
-          <Image src={woodImage} style={styles.woodImage} />
+          <Image src={params.woodImageSrc || woodImage} style={styles.woodImage} />
         </View>
         <View style={styles.header}>
           <Text>{t("sellingCatalogue")}</Text>

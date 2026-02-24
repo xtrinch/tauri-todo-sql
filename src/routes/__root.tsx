@@ -47,10 +47,10 @@ function RootComponent() {
   const [appVersion, setAppVersion] = useState<string>("");
   // whether app has unsaved changes
   const [changes, setChanges] = useState<boolean | null>(
-    localStorage.getItem("unsaved_changes_v11") === "true"
+    localStorage.getItem("unsaved_changes_v12") === "true"
   );
   const [filePath, setFilePath] = useState<string | null>(
-    localStorage.getItem("save_file_path_v11")
+    localStorage.getItem("save_file_path_v12")
   );
   const [fileMenuOpen, setFileMenuOpen] = useState<boolean>(false);
   const [languageMenuOpen, setLanguageMenuOpen] = useState<boolean>(false);
@@ -75,7 +75,7 @@ function RootComponent() {
 
   const saveOnly = async (path?: string) => {
     await savePath(path || filePath!);
-    localStorage.setItem("unsaved_changes_v11", "false");
+    localStorage.setItem("unsaved_changes_v12", "false");
     window.dispatchEvent(new Event("storage"));
     toast.success(t("saveSuccess"));
   };
@@ -93,7 +93,7 @@ function RootComponent() {
       toast.error(`${t("error")} ${JSON.stringify(error)}`);
       throw e;
     }
-    localStorage.setItem("unsaved_changes_v11", "false");
+    localStorage.setItem("unsaved_changes_v12", "false");
     window.dispatchEvent(new Event("storage"));
     unsetDatabase();
     await queryClient.invalidateQueries();
@@ -109,8 +109,8 @@ function RootComponent() {
 
   const resetApplicationData = async () => {
     if (await confirm({ confirmation: t("areYouSure") })) {
-      localStorage.removeItem("save_file_path_v11");
-      localStorage.setItem("unsaved_changes_v11", "false");
+      localStorage.removeItem("save_file_path_v12");
+      localStorage.setItem("unsaved_changes_v12", "false");
       window.dispatchEvent(new Event("storage"));
 
       try {
@@ -133,7 +133,7 @@ function RootComponent() {
       info(JSON.stringify(e));
       throw e;
     }
-    localStorage.setItem("unsaved_changes_v11", "false");
+    localStorage.setItem("unsaved_changes_v12", "false");
   };
 
   const saveAs = async () => {
@@ -266,18 +266,18 @@ function RootComponent() {
 
   useEffect(() => {
     if (filePath) {
-      localStorage.setItem("save_file_path_v11", filePath);
+      localStorage.setItem("save_file_path_v12", filePath);
     } else {
-      localStorage.removeItem("save_file_path_v11");
+      localStorage.removeItem("save_file_path_v12");
     }
   }, [filePath]);
 
   useEffect(() => {
     function checkUserData() {
       const localStorageChanges =
-        localStorage.getItem("unsaved_changes_v11") === "true";
+        localStorage.getItem("unsaved_changes_v12") === "true";
       setChanges(localStorageChanges);
-      const localStorageFilePath = localStorage.getItem("save_file_path_v11");
+      const localStorageFilePath = localStorage.getItem("save_file_path_v12");
       setFilePath(localStorageFilePath);
     }
 
@@ -470,6 +470,7 @@ function RootComponent() {
                   "/treeSpecies/edit",
                   `${t("treeSpeciesPlural")} (${treeSpeciesData.length})`,
                 ],
+                ["/images", `${t("images")}`],
                 ["/settings", `${t("settings")}`],
               ] as const
             ).map(([to, label]) => {

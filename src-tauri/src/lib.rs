@@ -21,10 +21,12 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let SQL_STATEMENT_SETTINGS = String::from(
         shared::SQL_STATEMENT_SETTINGS
     );
+    let SQL_STATEMENT_IMAGES = String::from(shared::SQL_STATEMENT_IMAGES);
 
     // Use Box::leak to ensure sql statements have a 'static lifetime
     let SQL_STATEMENT_TREE_SPECIES_static: &'static str = Box::leak(SQL_STATEMENT_TREE_SPECIES.into_boxed_str());
     let SQL_STATEMENT_SETTINGS_static: &'static str = Box::leak(SQL_STATEMENT_SETTINGS.into_boxed_str());
+    let SQL_STATEMENT_IMAGES_static: &'static str = Box::leak(SQL_STATEMENT_IMAGES.into_boxed_str());
 
     // Define tables
     let tables = vec![
@@ -33,7 +35,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         "tree_species",
         "wood_pieces",
         "wood_piece_offers",
-        "settings"
+        "settings",
+        "images",
     ];
 
     // Migrations with triggers for all tables
@@ -125,6 +128,14 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                     FOREIGN KEY(wood_piece_id) REFERENCES wood_pieces(id) ON DELETE RESTRICT
                 );"
             }
+            "images" => {
+                "CREATE TABLE IF NOT EXISTS images (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    image_key VARCHAR NOT NULL UNIQUE,
+                    mime_type VARCHAR,
+                    data_base64 TEXT
+                );"
+            }
             _ => "",
         };
 
@@ -196,6 +207,13 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         sql: SQL_STATEMENT_SETTINGS_static,
         kind: MigrationKind::Up,
     });
+    // Add images defaults insertion
+    migrations.push(Migration {
+        version: (202) as i64,
+        description: "insert_images_data",
+        sql: SQL_STATEMENT_IMAGES_static,
+        kind: MigrationKind::Up,
+    });
 
     // Tauri builder
     tauri::Builder::default()
@@ -210,7 +228,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(
             tauri_plugin_sql::Builder::default()
-                .add_migrations("sqlite:main_database_v11.db", migrations)
+                .add_migrations("sqlite:main_database_v12.db", migrations)
                 .build(),
         )
         .invoke_handler(tauri::generate_handler![
@@ -240,7 +258,7 @@ fn event_handler(window: &Window, event: &WindowEvent) {
             match window.path().app_data_dir() {
                 Ok(app_data_dir) => {
                     // Construct the path to the SQLite database file
-                    let sqlite_file = app_data_dir.join("main_database_v11.db");
+                    let sqlite_file = app_data_dir.join("main_database_v12.db");
 
                     // Attempt to remove the file
                     if sqlite_file.exists() {
@@ -274,7 +292,7 @@ fn on_setup(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
         .map_err(|e| format!("Failed to resolve app data directory: {}", e))?;
 
     // Construct the path to the SQLite database file
-    let sqlite_file = app_data_dir.join("main_database_v11.db");
+    let sqlite_file = app_data_dir.join("main_database_v12.db");
 
     // Attempt to remove the file
     if sqlite_file.exists() {
@@ -297,6 +315,7 @@ fn get_column_names(table: &str) -> &str {
         "wood_pieces" => "length, sequence_no, width, plate_no, seller_id, tree_species_id, min_price, bypass_min_price",
         "wood_piece_offers" => "offered_price, wood_piece_id, buyer_id",
         "settings" => "licitator_fixed_cost, licitator_percentage, bundle_cost",
+        "images" => "image_key, mime_type, data_base64",
         _ => "",
     }
 }

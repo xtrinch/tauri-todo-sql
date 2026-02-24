@@ -15,6 +15,7 @@ import { Route as StatisticsImport } from './routes/statistics'
 import { Route as SettingsImport } from './routes/settings'
 import { Route as SellersImport } from './routes/sellers'
 import { Route as InventoryImport } from './routes/inventory'
+import { Route as ImagesImport } from './routes/images'
 import { Route as BuyersImport } from './routes/buyers'
 import { Route as IndexImport } from './routes/index'
 import { Route as TreeSpeciesEditImport } from './routes/treeSpecies/edit'
@@ -57,6 +58,12 @@ const SellersRoute = SellersImport.update({
 const InventoryRoute = InventoryImport.update({
   id: '/inventory',
   path: '/inventory',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ImagesRoute = ImagesImport.update({
+  id: '/images',
+  path: '/images',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -193,6 +200,13 @@ declare module '@tanstack/react-router' {
       path: '/buyers'
       fullPath: '/buyers'
       preLoaderRoute: typeof BuyersImport
+      parentRoute: typeof rootRoute
+    }
+    '/images': {
+      id: '/images'
+      path: '/images'
+      fullPath: '/images'
+      preLoaderRoute: typeof ImagesImport
       parentRoute: typeof rootRoute
     }
     '/inventory': {
@@ -431,6 +445,7 @@ const StatisticsRouteWithChildren = StatisticsRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/buyers': typeof BuyersRouteWithChildren
+  '/images': typeof ImagesRoute
   '/inventory': typeof InventoryRouteWithChildren
   '/sellers': typeof SellersRouteWithChildren
   '/settings': typeof SettingsRoute
@@ -456,6 +471,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/buyers': typeof BuyersRouteWithChildren
+  '/images': typeof ImagesRoute
   '/inventory': typeof InventoryRouteWithChildren
   '/sellers': typeof SellersRouteWithChildren
   '/settings': typeof SettingsRoute
@@ -482,6 +498,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/buyers': typeof BuyersRouteWithChildren
+  '/images': typeof ImagesRoute
   '/inventory': typeof InventoryRouteWithChildren
   '/sellers': typeof SellersRouteWithChildren
   '/settings': typeof SettingsRoute
@@ -509,6 +526,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/buyers'
+    | '/images'
     | '/inventory'
     | '/sellers'
     | '/settings'
@@ -533,6 +551,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/buyers'
+    | '/images'
     | '/inventory'
     | '/sellers'
     | '/settings'
@@ -557,6 +576,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/buyers'
+    | '/images'
     | '/inventory'
     | '/sellers'
     | '/settings'
@@ -583,6 +603,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BuyersRoute: typeof BuyersRouteWithChildren
+  ImagesRoute: typeof ImagesRoute
   InventoryRoute: typeof InventoryRouteWithChildren
   SellersRoute: typeof SellersRouteWithChildren
   SettingsRoute: typeof SettingsRoute
@@ -593,6 +614,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BuyersRoute: BuyersRouteWithChildren,
+  ImagesRoute: ImagesRoute,
   InventoryRoute: InventoryRouteWithChildren,
   SellersRoute: SellersRouteWithChildren,
   SettingsRoute: SettingsRoute,
@@ -612,6 +634,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/buyers",
+        "/images",
         "/inventory",
         "/sellers",
         "/settings",
@@ -627,6 +650,9 @@ export const routeTree = rootRoute
       "children": [
         "/buyers/$buyerId"
       ]
+    },
+    "/images": {
+      "filePath": "images.tsx"
     },
     "/inventory": {
       "filePath": "inventory.tsx",

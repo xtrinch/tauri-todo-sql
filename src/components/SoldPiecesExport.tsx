@@ -26,11 +26,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   image: {
-    width: 450, // Set the width of the image
-    height: "auto", // Maintain aspect ratio
-    borderWidth: "2px",
-    borderColor: "black",
-    borderStyle: "solid",
+    width: 450,
+    height: 120,
+    maxHeight: 120,
+    objectFit: "contain",
     marginBottom: 40,
     marginLeft: "auto",
     marginRight: "auto",
@@ -64,6 +63,7 @@ export interface SoldPiecesExportProps {
   rowsSummary: { label: string; value: string; bold?: boolean }[];
   colsSummary: PdfTableCol[];
   isPreview?: boolean;
+  headerImageSrc?: string;
 }
 
 export const SoldPiecesExport = (params: SoldPiecesExportProps) => {
@@ -135,7 +135,7 @@ export const SoldPiecesExport = (params: SoldPiecesExportProps) => {
     <Document>
       <Page size="A4" style={styles.page}>
         <View>
-          <Image src={headerImage} style={styles.image} />
+          <Image src={params.headerImageSrc || headerImage} style={styles.image} />
         </View>
         <View style={styles.header}>
           <Text>{params.isPreview ? t("invoicePreview") : t("soldPieces")}</Text>

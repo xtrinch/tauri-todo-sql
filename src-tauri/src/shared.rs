@@ -28,6 +28,11 @@ pub const SQL_STATEMENT_TREE_SPECIES: &str = "
 pub const SQL_STATEMENT_SETTINGS: &str = "
     INSERT INTO settings (licitator_fixed_cost, licitator_percentage, bundle_cost) VALUES (22.0, 0.06, 7.0);";
 
+pub const SQL_STATEMENT_IMAGES: &str = "
+    INSERT OR IGNORE INTO images (image_key, mime_type, data_base64) VALUES
+        ('header', NULL, NULL),
+        ('wood', NULL, NULL);";
+
 pub fn get_connection(app_handle: tauri::AppHandle) -> Result<Connection, String> {
     // Get the app data directory path
     let app_data_dir = app_handle
@@ -36,7 +41,7 @@ pub fn get_connection(app_handle: tauri::AppHandle) -> Result<Connection, String
         .map_err(|e| format!("Failed to resolve app data directory: {}", e))?;
 
     // Construct the path to the SQLite database file
-    let sqlite_file = app_data_dir.join("main_database_v11.db");
+    let sqlite_file = app_data_dir.join("main_database_v12.db");
 
     // Open the SQLite connection
     Connection::open(sqlite_file).map_err(|e| e.to_string())

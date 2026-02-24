@@ -14,6 +14,10 @@ import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../components/CustomTable";
 import { TableCellReadonly } from "../../components/TableCellReadonly";
 import { PdfTypeEnum, saveToPDF } from "../../utils/pdf";
+import {
+  imagesQueryOptions,
+  resolveImageSources,
+} from "../../utils/imageService";
 import { statsQueryOptions } from "../../utils/statsService";
 import {
   WoodPiece,
@@ -44,6 +48,14 @@ function CatalogueForBuyersComponent() {
     })
   );
   const statistics = statisticsQuery.data;
+
+  const imagesQuery = useSuspenseQuery(
+    imagesQueryOptions({
+      ...Route.useLoaderDeps(),
+      language: i18n.language as "en" | "sl",
+    })
+  );
+  const imageSources = resolveImageSources(imagesQuery.data);
 
   const columns = useMemo<ColumnDef<WoodPiece>[]>(
     () => [
@@ -127,7 +139,7 @@ function CatalogueForBuyersComponent() {
       try {
         await saveToPDF(
           path,
-          { woodPiecesData: woodPieces, statistics },
+          { woodPiecesData: woodPieces, statistics, ...imageSources },
           PdfTypeEnum.catalogForBuyers,
           i18n.language
         );
