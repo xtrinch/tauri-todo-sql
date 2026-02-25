@@ -19,6 +19,7 @@ export enum PdfTypeEnum {
   boughtPieces = "boughtPieces",
   boughtPiecesPreview = "boughtPiecesPreview",
   statistics = "statistics",
+  offerStatistics = "offerStatistics",
   statisticsForBuyers = "statisticsForBuyers",
   treeSpecies = "treeSpecies",
 }

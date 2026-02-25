@@ -29,6 +29,7 @@ function Statistics() {
         {(
           [
             ["/statistics/general", t("generalStatistics")],
+            ["/statistics/offer-statistics", t("offerStatistics")],
             ["/statistics/for-buyers", t("statisticsForBuyers")],
           ] as const
         ).map(([to, label]) => {

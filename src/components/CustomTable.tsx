@@ -9,6 +9,7 @@ export function CustomTable<TableItem>({
   trhClassName,
   trfClassName,
   containerClassName,
+  containerRef,
   sizeEstimate = 45,
   hasFooter,
   header,
@@ -18,12 +19,13 @@ export function CustomTable<TableItem>({
   trhClassName?: string;
   trfClassName?: string;
   containerClassName?: string;
+  containerRef?: React.MutableRefObject<HTMLDivElement | null>;
   sizeEstimate?: number;
   hasFooter?: boolean;
   header?: ReactElement;
 }) {
   useFormTab();
-  const parentRef = useRef<HTMLDivElement>(null);
+  const parentRef = useRef<HTMLDivElement | null>(null);
   const { rows } = table.getRowModel();
   const getItemKey = useCallback((index: number) => {
     return rows[index]?.id;
@@ -48,7 +50,12 @@ export function CustomTable<TableItem>({
 
   return (
     <div
-      ref={parentRef}
+      ref={(node) => {
+        parentRef.current = node;
+        if (containerRef) {
+          containerRef.current = node;
+        }
+      }}
       className={`${containerClassName || ""} overflow-auto will-change-transform contain-paint`}
     >
       {header || ""}

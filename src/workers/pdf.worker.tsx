@@ -4,6 +4,7 @@ import { BoughtPiecesExportProps } from "../components/BoughtPiecesExport";
 import { BoughtPiecesPreviewExportProps } from "../components/BoughtPiecesPreviewExport";
 import { CatalogueExportForBuyersProps } from "../components/CatalogueExportForBuyers";
 import { CatalogueExportWithPricesProps } from "../components/CatalogueExportWithPrices";
+import { GeneralStatsExportProps } from "../components/GeneralStatsExport";
 import { StatsForBuyersExportProps } from "../components/StatsForBuyersExport";
 import { SellerPiecesExportProps } from "../components/SellerPiecesExport";
 import { SoldPiecesExportProps } from "../components/SoldPiecesExport";
@@ -53,12 +54,26 @@ const renderPDFInWorker = async (
   let blob: Blob = new Blob();
   switch (type) {
     case "statistics":
-      const { StatsExport } = await import("../components/StatsExport");
+      const { GeneralStatsExport } = await import(
+        "../components/GeneralStatsExport"
+      );
 
-      const statsData: StatsExportProps = JSON.parse(props);
+      const statsData: GeneralStatsExportProps = JSON.parse(props);
 
       try {
-        blob = await pdf(<StatsExport {...statsData} />).toBlob();
+        blob = await pdf(<GeneralStatsExport {...statsData} />).toBlob();
+      } catch (e) {
+        throw e;
+      }
+
+      break;
+    case "offerStatistics":
+      const { StatsExport } = await import("../components/StatsExport");
+
+      const offerStatsData: StatsExportProps = JSON.parse(props);
+
+      try {
+        blob = await pdf(<StatsExport {...offerStatsData} />).toBlob();
       } catch (e) {
         throw e;
       }

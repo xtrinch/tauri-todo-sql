@@ -14,9 +14,9 @@ const styles = StyleSheet.create({
     paddingBottom: "50px",
     fontSize: 12,
   },
-  header: {
-    fontSize: 24,
-    marginBottom: 15,
+  title: {
+    fontSize: 20,
+    marginBottom: 14,
     fontWeight: "bold",
   },
   subheader: {
@@ -24,14 +24,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   subsubheader: {
-    fontSize: 14,
-    marginBottom: 5,
-  },
-  statistics: {
-    fontSize: 12,
-    height: 100,
-  },
-  statisticsHeader: {
     fontSize: 14,
     marginBottom: 5,
   },
@@ -51,32 +43,10 @@ const styles = StyleSheet.create({
 
 export interface StatsExportProps {
   statistics: Statistics;
-  overallData: { label: string; value: string; unit: string; bold?: boolean }[];
 }
 
 export const StatsExport = (params: StatsExportProps) => {
   const { t } = useTranslation();
-
-  const columnsOverall = useMemo<PdfTableCol[]>(
-    () => [
-      {
-        accessorKey: "label",
-        size: 70,
-        header: () => t("summary"),
-      },
-      {
-        accessorKey: "value",
-        size: 20,
-        header: () => t("value"),
-      },
-      {
-        accessorKey: "unit",
-        size: 14,
-        header: () => t("unit"),
-      },
-    ],
-    []
-  );
 
   const columnsTopThreeAllSpecies = useMemo<PdfTableCol[]>(
     () => [
@@ -200,13 +170,10 @@ export const StatsExport = (params: StatsExportProps) => {
   return (
     <Document>
       <Page size="A4" style={styles.page} break={true}>
+        <View style={styles.title}>
+          <Text>{t("offerStatistics")}</Text>
+        </View>
         <View style={styles.statView}>
-          <View style={styles.statView} wrap={false}>
-            <View style={styles.subheader}>
-              <Text>{t("statistics")}</Text>
-            </View>
-            <PdfTable data={params.overallData} columns={columnsOverall} />
-          </View>
           <View style={styles.subheader}>
             <Text>{t("topThreeOffers")}</Text>
           </View>
@@ -233,41 +200,41 @@ export const StatsExport = (params: StatsExportProps) => {
             </View>
           )}
         </View>
-        {params.statistics.top_logs_by_species?.map((ts) => (
-          <>
-            {ts.top_logs_per_volume?.length && ts.top_logs_total?.length && (
-              <View style={styles.statView}>
-                <View style={styles.subheader}>
-                  <Text>{ts.tree_species_name}</Text>
-                </View>
-                {ts.top_logs_per_volume?.length > 0 && (
-                  <View style={styles.statsTable} wrap={false}>
-                    <View style={styles.subsubheader}>
-                      <Text>{t("topThreeOffersPerTotalPrice")}</Text>
-                    </View>
-                    <PdfTable
-                      columns={columnsTopThreePerSpecies}
-                      key={ts.id}
-                      data={ts.top_logs_per_volume || []}
-                    />
-                  </View>
-                )}
-                {ts.top_logs_total?.length > 0 && (
-                  <View style={styles.statsTable} wrap={false}>
-                    <View style={styles.subsubheader}>
-                      <Text>{t("topThreeOffersPerVolumePrice")}</Text>
-                    </View>
-                    <PdfTable
-                      columns={columnsTopThreePerSpecies}
-                      key={ts.id}
-                      data={ts.top_logs_total || []}
-                    />
-                  </View>
-                )}
+        {params.statistics.top_logs_by_species?.map((ts) => {
+          if (!ts.top_logs_per_volume?.length && !ts.top_logs_total?.length) {
+            return null;
+          }
+
+          return (
+            <View key={ts.id} style={styles.statView}>
+              <View style={styles.subheader}>
+                <Text>{ts.tree_species_name}</Text>
               </View>
-            )}
-          </>
-        ))}
+              {(ts.top_logs_per_volume?.length || 0) > 0 && (
+                <View style={styles.statsTable} wrap={false}>
+                  <View style={styles.subsubheader}>
+                    <Text>{t("topThreeOffersPerVolumePrice")}</Text>
+                  </View>
+                  <PdfTable
+                    columns={columnsTopThreePerSpecies}
+                    data={ts.top_logs_per_volume || []}
+                  />
+                </View>
+              )}
+              {(ts.top_logs_total?.length || 0) > 0 && (
+                <View style={styles.statsTable} wrap={false}>
+                  <View style={styles.subsubheader}>
+                    <Text>{t("topThreeOffersPerTotalPrice")}</Text>
+                  </View>
+                  <PdfTable
+                    columns={columnsTopThreePerSpecies}
+                    data={ts.top_logs_total || []}
+                  />
+                </View>
+              )}
+            </View>
+          );
+        })}
         <Text
           render={({ pageNumber, totalPages }) =>
             `${pageNumber} / ${totalPages}`

@@ -87,7 +87,7 @@ function ListInventoryComponent() {
     () =>
       buyers.map((ts) => ({
         value: ts.id,
-        label: ts.buyer_name,
+        label: `${ts.buyer_name}${ts.ident ? ` (${ts.ident})` : ""}`,
       })),
     [buyers]
   );
@@ -224,7 +224,11 @@ function ListInventoryComponent() {
         meta: {
           readonly: true,
         },
-        cell: TableCellReadonly,
+        cell: ({ row, getValue }) => {
+          const buyerName = getValue() as string | undefined;
+          const buyerIdent = row.original.buyer_ident;
+          return `${buyerName || ""}${buyerIdent ? ` (${buyerIdent})` : ""}`;
+        },
       },
     ],
     []

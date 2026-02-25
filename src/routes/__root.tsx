@@ -32,6 +32,8 @@ import { treeSpeciesQueryOptions } from "../utils/treeSpeciesService";
 import { useUndo } from "../utils/undo";
 import { woodPiecesCountQueryOptions } from "../utils/woodPieceService";
 
+const LANGUAGE_STORAGE_KEY = "language_v1";
+
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
@@ -289,8 +291,17 @@ function RootComponent() {
   }, []);
 
   useEffect(() => {
-    i18n.changeLanguage("sl");
-  }, []);
+    const savedLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    if (savedLanguage === "en" || savedLanguage === "sl") {
+      void i18n.changeLanguage(savedLanguage);
+    }
+  }, [i18n]);
+
+  useEffect(() => {
+    if (i18n.language === "en" || i18n.language === "sl") {
+      localStorage.setItem(LANGUAGE_STORAGE_KEY, i18n.language);
+    }
+  }, [i18n.language]);
 
   useEffect(() => {
     function disableContextMenu(e: Event) {

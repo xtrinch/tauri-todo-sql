@@ -6,7 +6,8 @@ import {
   Row,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../../components/CustomTable";
@@ -34,6 +35,9 @@ export const Route = createFileRoute("/buyers/$buyerId/wood-piece-offers-list")(
 
 function WoodPiecesList() {
   const { t, i18n } = useTranslation();
+  const tableContainerRef = useRef<HTMLDivElement | null>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showScrollBottom, setShowScrollBottom] = useState(false);
 
   const params = Route.useParams();
 
@@ -175,13 +179,92 @@ function WoodPiecesList() {
     },
   });
 
+  useEffect(() => {
+    const container = tableContainerRef.current;
+    if (!container) {
+      return;
+    }
+
+    const threshold = 2;
+    const updateScrollButtons = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const isAtTop = scrollTop <= threshold;
+      const isAtBottom =
+        scrollTop + clientHeight >= scrollHeight - threshold;
+      setShowScrollTop(!isAtTop);
+      setShowScrollBottom(!isAtBottom);
+    };
+
+    updateScrollButtons();
+    const rafId = window.requestAnimationFrame(updateScrollButtons);
+    container.addEventListener("scroll", updateScrollButtons, {
+      passive: true,
+    });
+    window.addEventListener("resize", updateScrollButtons);
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      container.removeEventListener("scroll", updateScrollButtons);
+      window.removeEventListener("resize", updateScrollButtons);
+    };
+  }, [woodPieces.length]);
+
+  const scrollToBottom = () => {
+    if (!tableContainerRef.current) {
+      return;
+    }
+
+    tableContainerRef.current.scrollTo({
+      top: tableContainerRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  };
+
+  const scrollToTop = () => {
+    if (!tableContainerRef.current) {
+      return;
+    }
+
+    tableContainerRef.current.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <div className="">
+    <div className="relative">
       <CustomTable
         table={table}
         containerClassName="p-3 h-[calc(100vh-279px)]"
+        containerRef={tableContainerRef}
         hasFooter={true}
       />
+      <div className="absolute right-6 bottom-6 z-10 flex flex-col gap-2">
+        <button
+          type="button"
+          onClick={scrollToTop}
+          title={t("scrollToTop")}
+          aria-label={t("scrollToTop")}
+          disabled={!showScrollTop}
+          className="h-10 w-10 rounded-full bg-blue-400 text-white shadow-md hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span className="flex items-center justify-center">
+            <FaAngleUp />
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={scrollToBottom}
+          title={t("scrollToBottom")}
+          aria-label={t("scrollToBottom")}
+          disabled={!showScrollBottom}
+          className="h-10 w-10 rounded-full bg-blue-400 text-white shadow-md hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span className="flex items-center justify-center">
+            <FaAngleDown />
+          </span>
+        </button>
+      </div>
     </div>
   );
 }

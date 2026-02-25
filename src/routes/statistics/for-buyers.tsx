@@ -227,14 +227,16 @@ function SpeciesStatsTable(props: {
   });
 
   return (
-    <div className="flex flex-col space-y-2">
-      <div className="flex items-baseline gap-3 flex-wrap">
-        <h4 className="font-bold">{props.title}</h4>
-        <div className="text-sm text-gray-700">
-          {t("totalPieces")}: {props.totalPieces}
-        </div>
-        <div className="text-sm text-gray-700">
-          {t("totalVolume")}: {props.totalVolume} m3
+    <div className="flex flex-col space-y-6">
+      <div className="flex flex-col space-y-4">
+        <h2 className="text-xl font-bold">{props.title}</h2>
+        <div className="flex items-baseline gap-3 flex-wrap text-base text-gray-700">
+          <div>
+            {t("totalPieces")}: {props.totalPieces}
+          </div>
+          <div>
+            {t("totalVolume")}: {props.totalVolume} m3
+          </div>
         </div>
       </div>
       <CustomTable

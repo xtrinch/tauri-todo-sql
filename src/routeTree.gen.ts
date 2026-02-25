@@ -19,6 +19,7 @@ import { Route as ImagesImport } from './routes/images'
 import { Route as BuyersImport } from './routes/buyers'
 import { Route as IndexImport } from './routes/index'
 import { Route as TreeSpeciesEditImport } from './routes/treeSpecies/edit'
+import { Route as StatisticsOfferStatisticsImport } from './routes/statistics/offer-statistics'
 import { Route as StatisticsGeneralImport } from './routes/statistics/general'
 import { Route as StatisticsForBuyersImport } from './routes/statistics/for-buyers'
 import { Route as SellersSellerIdImport } from './routes/sellers/$sellerId'
@@ -83,6 +84,12 @@ const TreeSpeciesEditRoute = TreeSpeciesEditImport.update({
   id: '/treeSpecies/edit',
   path: '/treeSpecies/edit',
   getParentRoute: () => rootRoute,
+} as any)
+
+const StatisticsOfferStatisticsRoute = StatisticsOfferStatisticsImport.update({
+  id: '/offer-statistics',
+  path: '/offer-statistics',
+  getParentRoute: () => StatisticsRoute,
 } as any)
 
 const StatisticsGeneralRoute = StatisticsGeneralImport.update({
@@ -293,6 +300,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StatisticsGeneralImport
       parentRoute: typeof StatisticsImport
     }
+    '/statistics/offer-statistics': {
+      id: '/statistics/offer-statistics'
+      path: '/offer-statistics'
+      fullPath: '/statistics/offer-statistics'
+      preLoaderRoute: typeof StatisticsOfferStatisticsImport
+      parentRoute: typeof StatisticsImport
+    }
     '/treeSpecies/edit': {
       id: '/treeSpecies/edit'
       path: '/treeSpecies/edit'
@@ -431,11 +445,13 @@ const SellersRouteWithChildren =
 interface StatisticsRouteChildren {
   StatisticsForBuyersRoute: typeof StatisticsForBuyersRoute
   StatisticsGeneralRoute: typeof StatisticsGeneralRoute
+  StatisticsOfferStatisticsRoute: typeof StatisticsOfferStatisticsRoute
 }
 
 const StatisticsRouteChildren: StatisticsRouteChildren = {
   StatisticsForBuyersRoute: StatisticsForBuyersRoute,
   StatisticsGeneralRoute: StatisticsGeneralRoute,
+  StatisticsOfferStatisticsRoute: StatisticsOfferStatisticsRoute,
 }
 
 const StatisticsRouteWithChildren = StatisticsRoute._addFileChildren(
@@ -458,6 +474,7 @@ export interface FileRoutesByFullPath {
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/statistics/for-buyers': typeof StatisticsForBuyersRoute
   '/statistics/general': typeof StatisticsGeneralRoute
+  '/statistics/offer-statistics': typeof StatisticsOfferStatisticsRoute
   '/treeSpecies/edit': typeof TreeSpeciesEditRoute
   '/buyers/$buyerId/bought-pieces-list': typeof BuyersBuyerIdBoughtPiecesListRoute
   '/buyers/$buyerId/bought-pieces-preview': typeof BuyersBuyerIdBoughtPiecesPreviewRoute
@@ -484,6 +501,7 @@ export interface FileRoutesByTo {
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/statistics/for-buyers': typeof StatisticsForBuyersRoute
   '/statistics/general': typeof StatisticsGeneralRoute
+  '/statistics/offer-statistics': typeof StatisticsOfferStatisticsRoute
   '/treeSpecies/edit': typeof TreeSpeciesEditRoute
   '/buyers/$buyerId/bought-pieces-list': typeof BuyersBuyerIdBoughtPiecesListRoute
   '/buyers/$buyerId/bought-pieces-preview': typeof BuyersBuyerIdBoughtPiecesPreviewRoute
@@ -511,6 +529,7 @@ export interface FileRoutesById {
   '/sellers/$sellerId': typeof SellersSellerIdRouteWithChildren
   '/statistics/for-buyers': typeof StatisticsForBuyersRoute
   '/statistics/general': typeof StatisticsGeneralRoute
+  '/statistics/offer-statistics': typeof StatisticsOfferStatisticsRoute
   '/treeSpecies/edit': typeof TreeSpeciesEditRoute
   '/buyers/$buyerId/bought-pieces-list': typeof BuyersBuyerIdBoughtPiecesListRoute
   '/buyers/$buyerId/bought-pieces-preview': typeof BuyersBuyerIdBoughtPiecesPreviewRoute
@@ -539,6 +558,7 @@ export interface FileRouteTypes {
     | '/sellers/$sellerId'
     | '/statistics/for-buyers'
     | '/statistics/general'
+    | '/statistics/offer-statistics'
     | '/treeSpecies/edit'
     | '/buyers/$buyerId/bought-pieces-list'
     | '/buyers/$buyerId/bought-pieces-preview'
@@ -564,6 +584,7 @@ export interface FileRouteTypes {
     | '/sellers/$sellerId'
     | '/statistics/for-buyers'
     | '/statistics/general'
+    | '/statistics/offer-statistics'
     | '/treeSpecies/edit'
     | '/buyers/$buyerId/bought-pieces-list'
     | '/buyers/$buyerId/bought-pieces-preview'
@@ -589,6 +610,7 @@ export interface FileRouteTypes {
     | '/sellers/$sellerId'
     | '/statistics/for-buyers'
     | '/statistics/general'
+    | '/statistics/offer-statistics'
     | '/treeSpecies/edit'
     | '/buyers/$buyerId/bought-pieces-list'
     | '/buyers/$buyerId/bought-pieces-preview'
@@ -676,7 +698,8 @@ export const routeTree = rootRoute
       "filePath": "statistics.tsx",
       "children": [
         "/statistics/for-buyers",
-        "/statistics/general"
+        "/statistics/general",
+        "/statistics/offer-statistics"
       ]
     },
     "/buyers/$buyerId": {
@@ -720,6 +743,10 @@ export const routeTree = rootRoute
     },
     "/statistics/general": {
       "filePath": "statistics/general.tsx",
+      "parent": "/statistics"
+    },
+    "/statistics/offer-statistics": {
+      "filePath": "statistics/offer-statistics.tsx",
       "parent": "/statistics"
     },
     "/treeSpecies/edit": {

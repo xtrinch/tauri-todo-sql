@@ -12,7 +12,6 @@ import { FaFilePdf } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { CustomTable } from "../../components/CustomTable";
-import { DynamicStatsTable } from "../../components/DynamicStatsTable";
 import { TableCellReadonly } from "../../components/TableCellReadonly";
 import { PdfTypeEnum, saveToPDF } from "../../utils/pdf";
 import { settingsQueryOptions } from "../../utils/settingsService";
@@ -219,8 +218,9 @@ function StatisticsComponent() {
                 await saveToPDF(
                     path,
                     {
-                        statistics: statisticsQuery.data,
-                        overallData: data,
+                        totalData: data,
+                        incomeData: dataIncoming,
+                        balanceData: dataBalance,
                     },
                     PdfTypeEnum.statistics,
                     i18n.language
@@ -278,30 +278,6 @@ function StatisticsComponent() {
                     trhClassName="border-b"
                     containerClassName="!overflow-visible"
                 />
-                <DynamicStatsTable
-                    title={t("statsPerSpecies")}
-                    woodPieces={statisticsQuery.data.top_logs.top_logs_per_volume || []}
-                    woodPiecesTotal={statisticsQuery.data.top_logs.top_logs_total || []}
-                    includeTreeSpecies
-                    volume={statisticsQuery.data.total_volume || 0}
-                />
-                {statisticsQuery.data.top_logs_by_species.map((ts) => {
-                    if (!ts.top_logs_per_volume?.length) {
-                        return <></>;
-                    }
-                    return (
-                        <DynamicStatsTable
-                            key={ts.id}
-                            title={ts.tree_species_name}
-                            woodPieces={ts.top_logs_per_volume || []}
-                            woodPiecesTotal={ts.top_logs_total || []}
-                            volume={ts.volume}
-                            averageOfferedPrice={
-                                statisticsQuery.data.stats_by_species[ts.id]?.avg_offered_price
-                            }
-                        />
-                    );
-                })}
             </div>
         </>
     );
