@@ -156,6 +156,8 @@ function BuyersComponent() {
         <button
           className="bg-green-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 w-10 h-10 m-2 justify-center items-center flex text-2xl"
           onClick={onAdd}
+          title={t("addNew")}
+          aria-label={t("addNew")}
         >
           <FaPlus />
         </button>

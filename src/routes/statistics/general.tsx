@@ -247,6 +247,7 @@ function StatisticsComponent() {
                     <button
                         className="absolute right-0 top-0 bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
                         onClick={exportToFile}
+                        title={t("exportStatistics")}
                     >
                         <span className="inline-flex items-center gap-2">
                             <FaFilePdf aria-hidden />

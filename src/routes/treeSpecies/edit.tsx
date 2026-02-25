@@ -153,6 +153,7 @@ function TreeSpeciesEdit() {
         <button
           className="absolute right-6 top-0 z-10 bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
           onClick={exportToFile}
+          title={t("exportTreeSpecies")}
         >
           <span className="inline-flex items-center gap-2">
             <FaFilePdf aria-hidden />

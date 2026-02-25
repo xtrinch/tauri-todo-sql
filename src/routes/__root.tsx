@@ -347,6 +347,7 @@ function RootComponent() {
                   className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10 text-2xl"
                   onClick={() => saveOnly()}
                   title={t("save")}
+                  aria-label={t("save")}
                 >
                   <FaRegFloppyDisk />
                 </button>
@@ -356,6 +357,7 @@ function RootComponent() {
               className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10 text-2xl"
               onClick={() => undo()}
               title={t("undo")}
+              aria-label={t("undo")}
             >
               <FaArrowRotateLeft />
             </button>
@@ -368,6 +370,7 @@ function RootComponent() {
                   aria-expanded="true"
                   aria-haspopup="true"
                   onMouseEnter={() => setFileMenuOpen(true)}
+                  title={t("options")}
                 >
                   {t("options")}
                   <FaAngleDown />
@@ -379,6 +382,7 @@ function RootComponent() {
                   aria-expanded="true"
                   aria-haspopup="true"
                   onMouseEnter={() => setLanguageMenuOpen(true)}
+                  title={t("language")}
                 >
                   {t("language")}
                   <FaAngleDown />
@@ -399,6 +403,7 @@ function RootComponent() {
                     <button
                       className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
                       onClick={() => checkForUpdates()}
+                      title={t("checkForUpdates")}
                     >
                       {t("checkForUpdates")}
                     </button>
@@ -414,6 +419,7 @@ function RootComponent() {
                         <button
                           className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
                           onClick={() => resetToSaved()}
+                          title={t("resetToSaved")}
                         >
                           {t("resetToSaved")}
                         </button>
@@ -422,18 +428,21 @@ function RootComponent() {
                     <button
                       className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
                       onClick={() => saveAs()}
+                      title={t("saveAs")}
                     >
                       {t("saveAs")}
                     </button>
                     <button
                       className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
                       onClick={() => loadFile()}
+                      title={t("open")}
                     >
                       {t("open")}
                     </button>
                     <button
                       className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
                       onClick={() => resetApplicationData()}
+                      title={t("resetApplicationData")}
                     >
                       {t("resetApplicationData")}
                     </button>
@@ -454,12 +463,14 @@ function RootComponent() {
                     <button
                       className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
                       onClick={() => i18n.changeLanguage("sl")}
+                      title={t("languageSl")}
                     >
                       sl
                     </button>
                     <button
                       className="w-full block p-2 disabled:opacity-50 h-10 text-sm text-gray-700 px-4 text-left bg-white "
                       onClick={() => i18n.changeLanguage("en")}
+                      title={t("languageEn")}
                     >
                       en
                     </button>

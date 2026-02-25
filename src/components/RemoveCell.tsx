@@ -28,6 +28,7 @@ export const RemoveCell = <TableItem,>({
         tabIndex={-1}
         className="bg-red-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 w-10 h-10 flex justify-center items-center text-xl"
         title={t("remove")}
+        aria-label={t("remove")}
       >
         <FaX />
       </button>

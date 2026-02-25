@@ -2,6 +2,7 @@ import { queryOptions, useMutation } from "@tanstack/react-query";
 import { info } from "@tauri-apps/plugin-log";
 import { queryClient } from "../main";
 import { getDatabase, getDatabaseForModify } from "./database";
+import { normalizeForSearch, slovenianInsensitiveSql } from "./search";
 
 type PickAsRequired<TValue, TKey extends keyof TValue> = Omit<TValue, TKey> &
   Required<Pick<TValue, TKey>>;
@@ -24,10 +25,17 @@ const ensureBuyers = async (opts: {
   sortDirection?: "DESC" | "ASC";
 }) => {
   const db = await getDatabase();
+  const normalizedFilter = opts.filterBy
+    ? `%${normalizeForSearch(opts.filterBy)}%`
+    : undefined;
   const result = await db.select(
-    `SELECT * from "buyers" ${opts.filterBy ? `WHERE ("buyer_name" LIKE lower($1) OR lower("ident") LIKE lower($1))` : ""} 
+    `SELECT * from "buyers" ${
+      opts.filterBy
+        ? `WHERE (${slovenianInsensitiveSql('"buyer_name"')} LIKE $1 OR ${slovenianInsensitiveSql('"ident"')} LIKE $1)`
+        : ""
+    } 
     ORDER BY ${opts.sortBy || "buyer_name"} ${opts.sortDirection || "DESC"}`,
-    [opts.filterBy ? `%${opts.filterBy.replace(/š|č|ž/g, "")}%` : undefined]
+    [normalizedFilter]
   );
 
   const sellers = result as Buyer[];

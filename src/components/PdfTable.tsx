@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from "@react-pdf/renderer";
 import { compact, isNaN } from "lodash";
+import { useMemo } from "react";
 
 const styles = StyleSheet.create({
   tableColStyle: {
@@ -93,6 +94,53 @@ export const PdfTable = (params: {
     return val;
   };
 
+  const headerCellStyles = useMemo(
+    () =>
+      columns.map((col, idx) =>
+        compact([
+          styles.tableColHeaderStyle,
+          idx == 0 ? styles.firstTableColHeaderStyle : null,
+          {
+            width: `${col.size}%`,
+            fontWeight: col.bold ? "bold" : undefined,
+          },
+        ])
+      ),
+    [columns]
+  );
+
+  const dataCellStyles = useMemo(
+    () =>
+      columns.map((col, idx) =>
+        compact([
+          styles.tableColStyle,
+          idx == 0 ? styles.firstTableColStyle : null,
+          { width: `${col.size}%` },
+        ])
+      ),
+    [columns]
+  );
+
+  const footerCellStyles = useMemo(
+    () =>
+      columns.map((col, idx) =>
+        compact([
+          styles.tableColFooterStyle,
+          idx == 0 ? styles.firstTableColFooterStyle : null,
+          {
+            width: `${col.size}%`,
+            fontWeight: col.bold ? "bold" : undefined,
+          },
+        ])
+      ),
+    [columns]
+  );
+
+  const formattedRows = useMemo(
+    () => params.data.map((piece) => columns.map((col) => getValue(col, piece))),
+    [params.data, columns]
+  );
+
   return (
     <View style={styles.tableStyle}>
       <View
@@ -100,33 +148,16 @@ export const PdfTable = (params: {
         fixed={!params.hideHeaderOnSubsequentPages}
       >
         {columns.map((col, idx) => (
-          <View
-            style={compact([
-              styles.tableColHeaderStyle,
-              idx == 0 ? styles.firstTableColHeaderStyle : null,
-              {
-                width: `${col.size}%`,
-                fontWeight: col.bold ? "bold" : undefined,
-              },
-            ])}
-            key={idx}
-          >
+          <View style={headerCellStyles[idx]} key={idx}>
             {col.header && <Text>{col.header()}</Text>}
           </View>
         ))}
       </View>
-      {params.data.map((piece, index) => (
+      {formattedRows.map((cells, index) => (
         <View style={styles.tableRowStyle} wrap={false} key={index}>
-          {columns.map((col, idx) => (
-            <View
-              style={compact([
-                styles.tableColStyle,
-                idx == 0 ? styles.firstTableColStyle : null,
-                { width: `${col.size}%` },
-              ])}
-              key={idx}
-            >
-              <Text>{getValue(col, piece)}</Text>
+          {cells.map((cellValue, idx) => (
+            <View style={dataCellStyles[idx]} key={idx}>
+              <Text>{cellValue}</Text>
             </View>
           ))}
         </View>
@@ -134,17 +165,7 @@ export const PdfTable = (params: {
       {hasFooter && (
         <View style={styles.tableRowStyle}>
           {columns.map((col, idx) => (
-            <View
-              style={compact([
-                styles.tableColFooterStyle,
-                idx == 0 ? styles.firstTableColFooterStyle : null,
-                {
-                  width: `${col.size}%`,
-                  fontWeight: col.bold ? "bold" : undefined,
-                },
-              ])}
-              key={idx}
-            >
+            <View style={footerCellStyles[idx]} key={idx}>
               {col.footer && <>{col.footer(params.data)}</>}
             </View>
           ))}

@@ -34,6 +34,8 @@ const Confirmation: ConfirmDialog<Props, boolean> = (props) => {
             <button
               className="bg-red-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 w-10 h-10 flex justify-center items-center text-xl"
               onClick={() => props.proceed(false)}
+              title={props.cancelLabel || t("cancel")}
+              aria-label={props.cancelLabel || t("cancel")}
             >
               <FaX />
             </button>
@@ -44,6 +46,7 @@ const Confirmation: ConfirmDialog<Props, boolean> = (props) => {
               <button
                 onClick={() => props.proceed(false)}
                 className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+                title={props.cancelLabel || t("cancel")}
               >
                 {props.cancelLabel || t("cancel")}
               </button>
@@ -51,6 +54,7 @@ const Confirmation: ConfirmDialog<Props, boolean> = (props) => {
             <button
               onClick={() => props.proceed(true)}
               className="button-l bg-red-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+              title={props.okLabel || t("ok")}
             >
               {props.okLabel || t("ok")}
             </button>

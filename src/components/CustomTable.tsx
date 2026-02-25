@@ -29,7 +29,7 @@ export function CustomTable<TableItem>({
   const { rows } = table.getRowModel();
   const getItemKey = useCallback((index: number) => {
     return rows[index]?.id;
-  }, []);
+  }, [rows]);
 
   const virtualizer = useVirtualizer({
     count: rows.length,
@@ -43,9 +43,9 @@ export function CustomTable<TableItem>({
   const [paddingTop, paddingBottom] =
     items.length > 0
       ? [
-          Math.max(0, items[0].start - virtualizer.options.scrollMargin),
-          Math.max(0, virtualizer.getTotalSize() - items[items.length - 1].end),
-        ]
+        Math.max(0, items[0].start - virtualizer.options.scrollMargin),
+        Math.max(0, virtualizer.getTotalSize() - items[items.length - 1].end),
+      ]
       : [0, 0];
 
   return (
@@ -83,9 +83,9 @@ export function CustomTable<TableItem>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </th>
                 ))}
               </tr>
@@ -99,7 +99,7 @@ export function CustomTable<TableItem>({
                 <tr
                   key={row.id}
                   className={`${trClassName}`}
-                  data-index={index}
+                  data-index={virtualRow.index}
                   ref={virtualizer.measureElement}
                 >
                   <MemoizedListItem
@@ -136,9 +136,9 @@ export function CustomTable<TableItem>({
                         {footer.isPlaceholder
                           ? null
                           : flexRender(
-                              footer.column.columnDef.footer,
-                              footer.getContext()
-                            )}
+                            footer.column.columnDef.footer,
+                            footer.getContext()
+                          )}
                       </th>
                     ))}
                   </tr>

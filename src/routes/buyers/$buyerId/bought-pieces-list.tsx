@@ -347,6 +347,7 @@ function BoughtPiecesList() {
         <button
           className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
           onClick={exportToFile}
+          title={t("exportInvoice")}
         >
           <span className="inline-flex items-center gap-2">
             <FaFilePdf aria-hidden />

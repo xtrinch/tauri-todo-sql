@@ -119,6 +119,7 @@ function ImagesComponent() {
                 className="bg-blue-400 rounded px-3 py-2 uppercase text-white font-black disabled:opacity-50"
                 onClick={() => replaceImage(imageCard.key)}
                 disabled={updateImageMutation.isPending}
+                title={t("replaceImage")}
               >
                 {t("replaceImage")}
               </button>
