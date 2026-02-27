@@ -33,6 +33,7 @@ export interface WoodPiece {
   duplicate_plate_no?: boolean;
   duplicate_seq_no?: boolean;
   min_price_reached?: boolean;
+  is_sold?: boolean;
 }
 
 interface ListOptions {
@@ -84,6 +85,16 @@ export const ensureWoodPieces = async (opts: ListOptions) => {
           THEN 1
         ELSE 0
       END as "min_price_reached",
+      CASE
+        WHEN COALESCE("wood_piece_offers"."offered_price", 0) > 0
+          AND (
+            COALESCE("wood_pieces"."min_price", 0) <= 0
+            OR COALESCE("wood_piece_offers"."offered_price", 0) >= COALESCE("wood_pieces"."min_price", 0)
+            OR COALESCE("wood_pieces"."bypass_min_price", 0) = 1
+          )
+          THEN 1
+        ELSE 0
+      END as "is_sold",
       ${opts.language === "sl" ? "tree_species_name_slo" : "tree_species_name"} as "tree_species_name"
     FROM "wood_pieces"
     LEFT JOIN "tree_species" ON "wood_pieces"."tree_species_id" = "tree_species"."id"

@@ -29,14 +29,6 @@ export const Route = createFileRoute("/inventory/catalogue-for-sellers")({
   component: CatalogueForSellersComponent,
 });
 
-const isWoodPieceSold = (woodPiece: WoodPiece) => {
-  const hasOffer = Number(woodPiece.offered_price || 0) > 0;
-  const minPriceReached = Boolean(woodPiece.min_price_reached);
-  const bypassMinPrice = Boolean(woodPiece.bypass_min_price);
-
-  return hasOffer && (minPriceReached || bypassMinPrice);
-};
-
 function CatalogueForSellersComponent() {
   const { t, i18n } = useTranslation();
 
@@ -131,7 +123,7 @@ function CatalogueForSellersComponent() {
       {
         id: "seller_ident",
         accessorFn: (row) =>
-          isWoodPieceSold(row) ? row.seller_ident || row.ident || "" : "",
+          Boolean(row.is_sold) ? row.seller_ident || row.ident || "" : "",
         header: () => t("sellerIdent"),
         size: 200,
       },

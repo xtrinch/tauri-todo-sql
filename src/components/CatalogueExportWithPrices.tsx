@@ -79,14 +79,6 @@ export interface CatalogueExportWithPricesProps {
   woodImageSrc?: string;
 }
 
-const isWoodPieceSold = (woodPiece: WoodPiece) => {
-  const hasOffer = Number(woodPiece.offered_price || 0) > 0;
-  const minPriceReached = Boolean(woodPiece.min_price_reached);
-  const bypassMinPrice = Boolean(woodPiece.bypass_min_price);
-
-  return hasOffer && (minPriceReached || bypassMinPrice);
-};
-
 export const CatalogueExportWithPrices = (
   params: CatalogueExportWithPricesProps
 ) => {
@@ -96,7 +88,7 @@ export const CatalogueExportWithPrices = (
       (params.woodPiecesData || []).map((piece) => ({
         ...piece,
         seller_ident_for_catalog:
-          params.includeSellerIdentifier && isWoodPieceSold(piece)
+          params.includeSellerIdentifier && Boolean(piece.is_sold)
             ? piece.seller_ident || piece.ident || ""
             : "",
       })),
