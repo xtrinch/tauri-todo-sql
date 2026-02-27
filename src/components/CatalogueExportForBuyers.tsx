@@ -127,6 +127,11 @@ export const CatalogueExportForBuyers = (
         },
       },
       {
+        accessorKey: "buyer_ident",
+        header: () => t("buyerIdent"),
+        size: 20,
+      },
+      {
         accessorKey: "no_key",
         header: () => `${t("offeredPriceM3")} (EUR)`,
         size: 20,

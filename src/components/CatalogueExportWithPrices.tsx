@@ -74,14 +74,34 @@ const styles = StyleSheet.create({
 export interface CatalogueExportWithPricesProps {
   woodPiecesData: WoodPiece[];
   statistics: Statistics;
+  includeSellerIdentifier?: boolean;
   headerImageSrc?: string;
   woodImageSrc?: string;
 }
+
+const isWoodPieceSold = (woodPiece: WoodPiece) => {
+  const hasOffer = Number(woodPiece.offered_price || 0) > 0;
+  const minPriceReached = Boolean(woodPiece.min_price_reached);
+  const bypassMinPrice = Boolean(woodPiece.bypass_min_price);
+
+  return hasOffer && (minPriceReached || bypassMinPrice);
+};
 
 export const CatalogueExportWithPrices = (
   params: CatalogueExportWithPricesProps
 ) => {
   const { t } = useTranslation();
+  const dataForExport = useMemo(
+    () =>
+      (params.woodPiecesData || []).map((piece) => ({
+        ...piece,
+        seller_ident_for_catalog:
+          params.includeSellerIdentifier && isWoodPieceSold(piece)
+            ? piece.seller_ident || piece.ident || ""
+            : "",
+      })),
+    [params.includeSellerIdentifier, params.woodPiecesData]
+  );
 
   const columns = useMemo<PdfTableCol[]>(
     () => [
@@ -138,8 +158,17 @@ export const CatalogueExportWithPrices = (
           type: "float",
         },
       },
+      ...(params.includeSellerIdentifier
+        ? [
+            {
+              accessorKey: "seller_ident_for_catalog",
+              header: () => t("sellerIdent"),
+              size: 15,
+            },
+          ]
+        : []),
     ],
-    []
+    [params.includeSellerIdentifier]
   );
 
   return (
@@ -178,7 +207,7 @@ export const CatalogueExportWithPrices = (
       </Page>
       <Page size="A4" style={styles.page}>
         <View>
-          <PdfTable data={params.woodPiecesData || []} columns={columns} />
+          <PdfTable data={dataForExport} columns={columns} />
         </View>
         <Text
           render={({ pageNumber, totalPages }) =>

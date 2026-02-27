@@ -67,6 +67,7 @@ const resources = {
       catalogueForSellers: "Catalogue for sellers",
       catalogueForBuyers: "Catalogue for buyers",
       sellerIdent: "Seller identifier",
+      buyerIdent: "Buyer identifier",
       isFlatRate: "Flat rate",
       isVatLiable: "VAT liable",
       totalGross: "Total gross",
@@ -103,6 +104,11 @@ const resources = {
       boughtPiecesPDFName: "bought-pieces",
       boughtPieces: "Bought pieces",
       boughtPiecesPreviewPDFName: "bought-pieces-preview",
+      catalogueForBuyersPDFName: "catalogue-for-buyers",
+      catalogueForSellersWithoutIdentifierPDFName:
+        "catalogue-for-sellers-without-identifier",
+      catalogueForSellersWithIdentifierPDFName:
+        "catalogue-for-sellers-with-identifier",
       boughtPiecesPreview: "Preview of bought pieces",
       boughtPiecesPreviewNotice:
         "This preview includes wood pieces where this buyer has the highest offer, even when the seller's expected minimum price was not reached.",
@@ -110,6 +116,8 @@ const resources = {
       noData: "No data",
       exportForBuyers: "Export for buyers",
       exportWithPrices: "Export with max. prices",
+      exportWithoutSellerIdentifier: "Export without seller identifier",
+      exportWithSellerIdentifier: "Export with seller identifier",
       yes: "Yes",
       no: "No",
       cancel: "Cancel",
@@ -266,6 +274,7 @@ const resources = {
       catalogueForSellers: "Katalog za prodajalce",
       catalogueForBuyers: "Katalog za kupce",
       sellerIdent: "Identifikator prodajalca",
+      buyerIdent: "Identifikator kupca",
       isFlatRate: "Pavšalist",
       isVatLiable: "DDV zavezanec",
       totalGross: "Skupaj bruto",
@@ -303,6 +312,11 @@ const resources = {
       boughtPiecesPDFName: "kupljeni-kosi",
       boughtPieces: "Kupljeni kosi",
       boughtPiecesPreviewPDFName: "predogled-kupljenih-kosov",
+      catalogueForBuyersPDFName: "katalog-za-kupce",
+      catalogueForSellersWithoutIdentifierPDFName:
+        "katalog-za-prodajalce-brez-identifikatorja",
+      catalogueForSellersWithIdentifierPDFName:
+        "katalog-za-prodajalce-z-identifikatorjem",
       boughtPiecesPreview: "Predogled kupljenih kosov",
       boughtPiecesPreviewNotice:
         "Ta predogled vključuje hlode, kjer ima ta kupec najvišjo ponudbo, tudi če pričakovana cena prodajalca ni dosežena.",
@@ -310,6 +324,8 @@ const resources = {
       noData: "Ni podatkov",
       exportForBuyers: "Izvozi za kupce",
       exportWithPrices: "Izvozi s ponujenimi cenami",
+      exportWithoutSellerIdentifier: "Izvozi brez identifikatorja prodajalca",
+      exportWithSellerIdentifier: "Izvozi z identifikatorjem prodajalca",
       yes: "Da",
       no: "Ne",
       cancel: "Zavrni",

@@ -103,8 +103,8 @@ function CatalogueForBuyersComponent() {
         },
       },
       {
-        accessorKey: "ident",
-        header: () => t("sellerIdent"),
+        accessorKey: "buyer_ident",
+        header: () => t("buyerIdent"),
         size: 200,
       },
     ],
@@ -129,7 +129,7 @@ function CatalogueForBuyersComponent() {
           extensions: ["pdf"],
         },
       ],
-      defaultPath: t("sellingCatalogue").replace(" ", "-"),
+      defaultPath: t("catalogueForBuyersPDFName"),
     });
     let toastId: string;
     if (path) {

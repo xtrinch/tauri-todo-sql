@@ -29,6 +29,14 @@ export const Route = createFileRoute("/inventory/catalogue-for-sellers")({
   component: CatalogueForSellersComponent,
 });
 
+const isWoodPieceSold = (woodPiece: WoodPiece) => {
+  const hasOffer = Number(woodPiece.offered_price || 0) > 0;
+  const minPriceReached = Boolean(woodPiece.min_price_reached);
+  const bypassMinPrice = Boolean(woodPiece.bypass_min_price);
+
+  return hasOffer && (minPriceReached || bypassMinPrice);
+};
+
 function CatalogueForSellersComponent() {
   const { t, i18n } = useTranslation();
 
@@ -121,7 +129,9 @@ function CatalogueForSellersComponent() {
         },
       },
       {
-        accessorKey: "ident",
+        id: "seller_ident",
+        accessorFn: (row) =>
+          isWoodPieceSold(row) ? row.seller_ident || row.ident || "" : "",
         header: () => t("sellerIdent"),
         size: 200,
       },
@@ -139,7 +149,7 @@ function CatalogueForSellersComponent() {
     meta: {},
   });
 
-  const exportToFileWithPrices = async () => {
+  const exportToFileWithPrices = async (includeSellerIdentifier: boolean) => {
     const path = await save({
       filters: [
         {
@@ -147,7 +157,9 @@ function CatalogueForSellersComponent() {
           extensions: ["pdf"],
         },
       ],
-      defaultPath: t("catalogue").toLocaleLowerCase(),
+      defaultPath: includeSellerIdentifier
+        ? t("catalogueForSellersWithIdentifierPDFName")
+        : t("catalogueForSellersWithoutIdentifierPDFName"),
     });
     let toastId: string;
     if (path) {
@@ -157,7 +169,12 @@ function CatalogueForSellersComponent() {
       try {
         await saveToPDF(
           path,
-          { woodPiecesData: woodPieces, statistics, ...imageSources },
+          {
+            woodPiecesData: woodPieces,
+            statistics,
+            includeSellerIdentifier,
+            ...imageSources,
+          },
           PdfTypeEnum.catalogWithPrices,
           i18n.language
         );
@@ -184,12 +201,22 @@ function CatalogueForSellersComponent() {
         <div className="flex flex-row space-x-3 mb-3">
           <button
             className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
-            onClick={exportToFileWithPrices}
-            title={t("exportWithPrices")}
+            onClick={() => exportToFileWithPrices(false)}
+            title={t("exportWithoutSellerIdentifier")}
           >
             <span className="inline-flex items-center gap-2">
               <FaFilePdf aria-hidden />
-              {t("exportWithPrices")}
+              {t("exportWithoutSellerIdentifier")}
+            </span>
+          </button>
+          <button
+            className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+            onClick={() => exportToFileWithPrices(true)}
+            title={t("exportWithSellerIdentifier")}
+          >
+            <span className="inline-flex items-center gap-2">
+              <FaFilePdf aria-hidden />
+              {t("exportWithSellerIdentifier")}
             </span>
           </button>
         </div>
