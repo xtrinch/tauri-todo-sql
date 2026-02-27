@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
 export interface CatalogueExportForBuyersProps {
   woodPiecesData: WoodPiece[];
   statistics: Statistics;
+  includeBuyerIdentifier?: boolean;
   headerImageSrc?: string;
   woodImageSrc?: string;
 }
@@ -83,6 +84,18 @@ export const CatalogueExportForBuyers = (
   params: CatalogueExportForBuyersProps
 ) => {
   const { t } = useTranslation();
+  const includeBuyerIdentifier = params.includeBuyerIdentifier ?? true;
+  const dataForExport = useMemo(
+    () =>
+      (params.woodPiecesData || []).map((piece) => ({
+        ...piece,
+        buyer_ident_for_catalog:
+          includeBuyerIdentifier && Boolean(piece.is_sold)
+            ? piece.buyer_ident || ""
+            : "",
+      })),
+    [includeBuyerIdentifier, params.woodPiecesData]
+  );
 
   const columns = useMemo<PdfTableCol[]>(
     () => [
@@ -126,18 +139,22 @@ export const CatalogueExportForBuyers = (
           type: "float",
         },
       },
-      {
-        accessorKey: "buyer_ident",
-        header: () => t("buyerIdent"),
-        size: 20,
-      },
+      ...(includeBuyerIdentifier
+        ? [
+            {
+              accessorKey: "buyer_ident_for_catalog",
+              header: () => t("buyerIdent"),
+              size: 20,
+            },
+          ]
+        : []),
       {
         accessorKey: "no_key",
         header: () => `${t("offeredPriceM3")} (EUR)`,
         size: 20,
       },
     ],
-    []
+    [includeBuyerIdentifier]
   );
 
   return (
@@ -182,7 +199,7 @@ export const CatalogueExportForBuyers = (
       </Page>
       <Page size="A4" style={styles.page}>
         <View>
-          <PdfTable data={params.woodPiecesData} columns={columns} />
+          <PdfTable data={dataForExport} columns={columns} />
         </View>
         <Text
           render={({ pageNumber, totalPages }) =>

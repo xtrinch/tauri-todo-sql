@@ -105,6 +105,10 @@ const resources = {
       boughtPieces: "Bought pieces",
       boughtPiecesPreviewPDFName: "bought-pieces-preview",
       catalogueForBuyersPDFName: "catalogue-for-buyers",
+      catalogueForBuyersWithoutIdentifierPDFName:
+        "catalogue-for-buyers-without-identifier",
+      catalogueForBuyersWithIdentifierPDFName:
+        "catalogue-for-buyers-with-identifier",
       catalogueForSellersWithoutIdentifierPDFName:
         "catalogue-for-sellers-without-identifier",
       catalogueForSellersWithIdentifierPDFName:
@@ -116,6 +120,8 @@ const resources = {
       noData: "No data",
       exportForBuyers: "Export for buyers",
       exportWithPrices: "Export with max. prices",
+      exportWithoutBuyerIdentifier: "Export without buyer identifier",
+      exportWithBuyerIdentifier: "Export with buyer identifier",
       exportWithoutSellerIdentifier: "Export without seller identifier",
       exportWithSellerIdentifier: "Export with seller identifier",
       yes: "Yes",
@@ -313,6 +319,10 @@ const resources = {
       boughtPieces: "Kupljeni kosi",
       boughtPiecesPreviewPDFName: "predogled-kupljenih-kosov",
       catalogueForBuyersPDFName: "katalog-za-kupce",
+      catalogueForBuyersWithoutIdentifierPDFName:
+        "katalog-za-kupce-brez-identifikatorja",
+      catalogueForBuyersWithIdentifierPDFName:
+        "katalog-za-kupce-z-identifikatorjem",
       catalogueForSellersWithoutIdentifierPDFName:
         "katalog-za-prodajalce-brez-identifikatorja",
       catalogueForSellersWithIdentifierPDFName:
@@ -324,6 +334,8 @@ const resources = {
       noData: "Ni podatkov",
       exportForBuyers: "Izvozi za kupce",
       exportWithPrices: "Izvozi s ponujenimi cenami",
+      exportWithoutBuyerIdentifier: "Izvozi brez identifikatorja kupca",
+      exportWithBuyerIdentifier: "Izvozi z identifikatorjem kupca",
       exportWithoutSellerIdentifier: "Izvozi brez identifikatorja prodajalca",
       exportWithSellerIdentifier: "Izvozi z identifikatorjem prodajalca",
       yes: "Da",

@@ -121,9 +121,7 @@ function CatalogueForSellersComponent() {
         },
       },
       {
-        id: "seller_ident",
-        accessorFn: (row) =>
-          Boolean(row.is_sold) ? row.seller_ident || row.ident || "" : "",
+        accessorKey: "seller_ident",
         header: () => t("sellerIdent"),
         size: 200,
       },

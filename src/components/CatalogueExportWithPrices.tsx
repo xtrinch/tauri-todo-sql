@@ -88,7 +88,7 @@ export const CatalogueExportWithPrices = (
       (params.woodPiecesData || []).map((piece) => ({
         ...piece,
         seller_ident_for_catalog:
-          params.includeSellerIdentifier && Boolean(piece.is_sold)
+          params.includeSellerIdentifier
             ? piece.seller_ident || piece.ident || ""
             : "",
       })),

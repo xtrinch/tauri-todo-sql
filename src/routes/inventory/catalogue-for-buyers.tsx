@@ -103,7 +103,9 @@ function CatalogueForBuyersComponent() {
         },
       },
       {
-        accessorKey: "buyer_ident",
+        id: "buyer_ident",
+        accessorFn: (row) =>
+          Boolean(row.is_sold) ? row.buyer_ident || "" : "",
         header: () => t("buyerIdent"),
         size: 200,
       },
@@ -121,7 +123,7 @@ function CatalogueForBuyersComponent() {
     meta: {},
   });
 
-  const exportToFileForBuyers = async () => {
+  const exportToFileForBuyers = async (includeBuyerIdentifier: boolean) => {
     const path = await save({
       filters: [
         {
@@ -129,7 +131,9 @@ function CatalogueForBuyersComponent() {
           extensions: ["pdf"],
         },
       ],
-      defaultPath: t("catalogueForBuyersPDFName"),
+      defaultPath: includeBuyerIdentifier
+        ? t("catalogueForBuyersWithIdentifierPDFName")
+        : t("catalogueForBuyersWithoutIdentifierPDFName"),
     });
     let toastId: string;
     if (path) {
@@ -139,7 +143,12 @@ function CatalogueForBuyersComponent() {
       try {
         await saveToPDF(
           path,
-          { woodPiecesData: woodPieces, statistics, ...imageSources },
+          {
+            woodPiecesData: woodPieces,
+            statistics,
+            includeBuyerIdentifier,
+            ...imageSources,
+          },
           PdfTypeEnum.catalogForBuyers,
           i18n.language
         );
@@ -167,12 +176,22 @@ function CatalogueForBuyersComponent() {
         <div className="flex flex-row space-x-3 mb-3">
           <button
             className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
-            onClick={exportToFileForBuyers}
-            title={t("exportForBuyers")}
+            onClick={() => exportToFileForBuyers(false)}
+            title={t("exportWithoutBuyerIdentifier")}
           >
             <span className="inline-flex items-center gap-2">
               <FaFilePdf aria-hidden />
-              {t("exportForBuyers")}
+              {t("exportWithoutBuyerIdentifier")}
+            </span>
+          </button>
+          <button
+            className="bg-blue-400 rounded p-2 uppercase text-white font-black disabled:opacity-50 h-10"
+            onClick={() => exportToFileForBuyers(true)}
+            title={t("exportWithBuyerIdentifier")}
+          >
+            <span className="inline-flex items-center gap-2">
+              <FaFilePdf aria-hidden />
+              {t("exportWithBuyerIdentifier")}
             </span>
           </button>
         </div>
