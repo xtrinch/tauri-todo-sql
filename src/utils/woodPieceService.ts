@@ -95,8 +95,6 @@ export const ensureWoodPieces = async (opts: ListOptions) => {
           THEN 1
         ELSE 0
       END as "is_sold",
-      TRIM(COALESCE("wood_pieces"."plate_no", "")) as "plate_no",
-      TRIM(COALESCE("buyers"."buyer_name", "")) as "buyer_name",
       ${opts.language === "sl" ? "tree_species_name_slo" : "tree_species_name"} as "tree_species_name"
     FROM "wood_pieces"
     LEFT JOIN "tree_species" ON "wood_pieces"."tree_species_id" = "tree_species"."id"
@@ -214,13 +212,9 @@ const ensureWoodPiecesCount = async () => {
 
 export async function fetchWoodPieceById(id: number) {
   const db = await getDatabase();
-  const result = await db.select(
-    `SELECT
-      *,
-      TRIM(COALESCE("plate_no", "")) as "plate_no"
-    from "wood_pieces" where id = $1`,
-    [id]
-  );
+  const result = await db.select(`SELECT * from "wood_pieces" where id = $1`, [
+    id,
+  ]);
   const woodPiece = (result as WoodPiece[])[0];
   return woodPiece;
 }

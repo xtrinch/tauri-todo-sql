@@ -29,10 +29,7 @@ const ensureBuyers = async (opts: {
     ? `%${normalizeForSearch(opts.filterBy)}%`
     : undefined;
   const result = await db.select(
-    `SELECT
-      *,
-      TRIM(COALESCE("buyer_name", "")) as "buyer_name"
-    FROM "buyers" ${
+    `SELECT * from "buyers" ${
       opts.filterBy
         ? `WHERE (${slovenianInsensitiveSql('"buyer_name"')} LIKE $1 OR ${slovenianInsensitiveSql('"ident"')} LIKE $1)`
         : ""
@@ -47,13 +44,7 @@ const ensureBuyers = async (opts: {
 
 export async function fetchBuyerById(id: number) {
   const db = await getDatabase();
-  const result = await db.select(
-    `SELECT
-      *,
-      TRIM(COALESCE("buyer_name", "")) as "buyer_name"
-    FROM "buyers" where id = $1`,
-    [id]
-  );
+  const result = await db.select(`SELECT * from "buyers" where id = $1`, [id]);
   const buyer = (result as Buyer[])[0];
   return buyer;
 }
