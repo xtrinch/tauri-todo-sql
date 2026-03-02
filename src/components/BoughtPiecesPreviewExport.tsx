@@ -15,6 +15,7 @@ import { WoodPiece } from "../utils/woodPieceService";
 import { PdfTable, PdfTableCol } from "./PdfTable";
 
 Font.register({ family: "Roboto", src: font });
+const BOUGHT_PIECES_PREVIEW_PDF_CHUNK_SIZE = 24;
 
 const styles = StyleSheet.create({
   page: {
@@ -170,7 +171,7 @@ export const BoughtPiecesPreviewExport = (
 
   // TODO: non-chunked version does not work, figure out why
   const chunkedWoodData: BoughtPiecesPreviewPdfRow[][] = useMemo(() => {
-    return chunk(previewRows, 32);
+    return chunk(previewRows, BOUGHT_PIECES_PREVIEW_PDF_CHUNK_SIZE);
   }, [previewRows]);
 
   return (

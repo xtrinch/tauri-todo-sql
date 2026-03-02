@@ -17,6 +17,7 @@ import { CustomTable } from "../../../components/CustomTable";
 import { PdfTableCol } from "../../../components/PdfTable";
 import { TableCellReadonly } from "../../../components/TableCellReadonly";
 import { buyerQueryOptions } from "../../../utils/buyerService";
+import { slugifyFilenamePart } from "../../../utils/filename";
 import { PdfTypeEnum, saveToPDF } from "../../../utils/pdf";
 import { settingsQueryOptions } from "../../../utils/settingsService";
 import {
@@ -291,7 +292,7 @@ function BoughtPiecesList() {
           extensions: ["pdf"],
         },
       ],
-      defaultPath: t("boughtPiecesPDFName"),
+      defaultPath: `${t("boughtPiecesPDFName")}-${slugifyFilenamePart(buyer.buyer_name)}`,
     });
     let toastId: string;
     if (path) {

@@ -29,7 +29,10 @@ const ensureBuyers = async (opts: {
     ? `%${normalizeForSearch(opts.filterBy)}%`
     : undefined;
   const result = await db.select(
-    `SELECT * from "buyers" ${
+    `SELECT
+      *,
+      TRIM(COALESCE("buyer_name", "")) as "buyer_name"
+    FROM "buyers" ${
       opts.filterBy
         ? `WHERE (${slovenianInsensitiveSql('"buyer_name"')} LIKE $1 OR ${slovenianInsensitiveSql('"ident"')} LIKE $1)`
         : ""
@@ -38,13 +41,19 @@ const ensureBuyers = async (opts: {
     [normalizedFilter]
   );
 
-  const sellers = result as Buyer[];
-  return sellers;
+  const buyers = result as Buyer[];
+  return buyers;
 };
 
 export async function fetchBuyerById(id: number) {
   const db = await getDatabase();
-  const result = await db.select(`SELECT * from "buyers" where id = $1`, [id]);
+  const result = await db.select(
+    `SELECT
+      *,
+      TRIM(COALESCE("buyer_name", "")) as "buyer_name"
+    FROM "buyers" where id = $1`,
+    [id]
+  );
   const buyer = (result as Buyer[])[0];
   return buyer;
 }
@@ -60,7 +69,7 @@ export async function postBuyer(partialBuyer: Partial<Buyer>): Promise<Buyer> {
 
   const db = await getDatabaseForModify();
   const result = await db.execute(
-    `INSERT INTO "buyers" ("buyer_name") values ($1)`,
+    `INSERT INTO "buyers" ("buyer_name") values (TRIM($1))`,
     [buyer.buyer_name]
   );
 
@@ -75,7 +84,7 @@ export async function patchBuyer({
   await db.execute(
     `UPDATE "buyers" 
       SET 
-        "buyer_name" = COALESCE($2, "buyer_name"), 
+        "buyer_name" = COALESCE(TRIM($2), "buyer_name"), 
         "address_line1" = COALESCE($3, "address_line1"), 
         "address_line2" = COALESCE($4, "address_line2"),
         "is_vat_liable" = COALESCE($5, "is_vat_liable"),

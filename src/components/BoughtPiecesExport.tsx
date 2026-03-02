@@ -15,6 +15,7 @@ import { WoodPiece } from "../utils/woodPieceService";
 import { PdfTable, PdfTableCol } from "./PdfTable";
 
 Font.register({ family: "Roboto", src: font });
+const BOUGHT_PIECES_PDF_CHUNK_SIZE = 24;
 
 const styles = StyleSheet.create({
   page: {
@@ -150,7 +151,7 @@ export const BoughtPiecesExport = (params: BoughtPiecesExportProps) => {
 
   // TODO: non-chunked version does not work, figure out why
   const chunkedWoodData: WoodPiece[][] = useMemo(() => {
-    return chunk(params.woodPiecesData, 32);
+    return chunk(params.woodPiecesData, BOUGHT_PIECES_PDF_CHUNK_SIZE);
   }, [params.woodPiecesData]);
 
   return (
@@ -168,8 +169,8 @@ export const BoughtPiecesExport = (params: BoughtPiecesExportProps) => {
       </Page>
       <Page size="A4" style={styles.page}>
         <View style={styles.topTable}>
-          {chunkedWoodData.map((chunk) => (
-            <View wrap={false}>
+          {chunkedWoodData.map((chunk, index) => (
+            <View wrap={false} key={index}>
               <PdfTable
                 data={chunk}
                 columns={columns}
