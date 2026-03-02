@@ -2694,7 +2694,7 @@ dependencies = [
 
 [[package]]
 name = "licitacija"
-version = "1.0.12"
+version = "1.0.13"
 dependencies = [
  "cargo-xwin",
  "csv",
