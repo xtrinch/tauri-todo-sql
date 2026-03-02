@@ -79,7 +79,7 @@ export async function postSeller(
       "used_logging_non_woods",
       "logging_costs"
     ) values (
-      $1, 
+      TRIM($1), 
       $2, 
       $3,
       $4,
@@ -122,7 +122,7 @@ export async function patchSeller({
   await db.execute(
     `UPDATE "sellers" 
       SET 
-        "seller_name" = COALESCE($2, "seller_name"), 
+        "seller_name" = COALESCE(TRIM($2), "seller_name"), 
         "address_line1" = COALESCE($3, "address_line1"), 
         "address_line2" = COALESCE($4, "address_line2"),
         "iban" = COALESCE($5, "iban"),
